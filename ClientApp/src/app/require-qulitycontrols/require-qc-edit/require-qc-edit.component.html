@@ -1,0 +1,253 @@
+<div *ngIf="editValue; else elseBlock">
+  <mat-horizontal-stepper [linear]="true" #stepper="matHorizontalStepper">
+    <mat-step [stepControl]="editValueForm">
+      <ng-template matStepLabel>
+        <strong><b>Request quality control information</b></strong>
+      </ng-template>
+      <form [formGroup]="editValueForm">
+        <div class="form-container-column">
+          <mat-accordion class="headers-align">
+            <mat-expansion-panel class="my-1" [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Request information panel
+                </mat-panel-title>
+                <mat-panel-description>
+                  Type your information request quality control
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <!--Row1-->
+              <div class="row-form">
+                <div class="left-content">
+                  <mat-form-field hintLabel="Code will automatically generated.">
+                    <input matInput placeholder="Require No" readonly
+                           id="RequireQualityNo" formControlName="RequireQualityNo">
+                  </mat-form-field>
+                </div>
+
+                <div class="right-content">
+                  <div class="row-form w-75">
+                    <div class="left-content">
+                      <mat-form-field>
+                        <input matInput [matDatepicker]="RequireDate" placeholder="Choose a date"
+                               id="RequireDate" formControlName="RequireDate" required>
+                        <mat-datepicker-toggle matSuffix [for]="RequireDate"></mat-datepicker-toggle>
+                        <mat-datepicker #RequireDate></mat-datepicker>
+                        <mat-error *ngIf="editValueForm.controls.RequireDate.hasError('required')">
+                          Date is <strong>required</strong>
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+
+                    <div class="right-content">
+                      <mat-form-field hintLabel="HH:mm:ss">
+                        <input matInput type="time" placeholder="Time quality control"
+                               id="RequireQcTime" formControlName="RequireQcTime" required>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--Row2-->
+              <div class="row-form">
+                <div class="left-content">
+                  <mat-form-field>
+                    <input matInput placeholder="Selected employee require" class="click-input"
+                           (click)="openDialog('Employee')" readonly required
+                           id="RequireEmpString" formControlName="RequireEmpString">
+                  </mat-form-field>
+                </div>
+
+                <div class="right-content">
+                  <mat-form-field>
+                    <input matInput placeholder="Selected group" class="click-input"
+                           (click)="openDialog('GroupMis')" readonly required
+                           id="GroupMISString" formControlName="GroupMISString">
+                  </mat-form-field>
+                </div>
+              </div>
+              <!--Row3-->
+              <div class="row-form">
+                <div class="left-content">
+                  <mat-form-field>
+                    <mat-select placeholder="Branch"
+                                required [disabled]="forFail"
+                                id="BranchId" formControlName="BranchId">
+                      <mat-option *ngFor="let branch of branchs" [value]="branch.BranchId">
+                        {{ branch.Name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="right-content">
+                  <mat-form-field>
+                    <input matInput placeholder="Selected job number" class="click-input"
+                           (click)="openDialog('Project')" readonly required
+                           id="ProjectCodeDetailString" formControlName="ProjectCodeDetailString">
+                  </mat-form-field>
+                </div>
+
+              </div>
+              <!--Row4-->
+              <div class="row-form">
+                <div class="left-content">
+                  <mat-form-field>
+                    <mat-select placeholder="InspectionPoint"
+                                required [disabled]="forFail"
+                                id="InspectionPointId" formControlName="InspectionPointId">
+                      <mat-option *ngFor="let inspection of inspections" [value]="inspection.InspectionPointId">
+                        {{ inspection.Name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="right-content">
+                  <mat-form-field>
+                    <mat-select placeholder="WorkActivity"
+                                required [disabled]="forFail"
+                                id="WorkActivityId" formControlName="WorkActivityId">
+                      <mat-option *ngFor="let workActivitie of workActivities" [value]="workActivitie.WorkActivityId">
+                        {{ workActivitie.Name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!--Row5-->
+              <div class="row-form">
+                <div class="left-content">
+                  <mat-form-field>
+                    <mat-select placeholder="WorkGroup QC"
+                                required [disabled]="forFail"
+                                id="WorkGroupQualityControlId" formControlName="WorkGroupQualityControlId">
+                      <mat-option *ngFor="let workGroupQc of workGroupQcs" [value]="workGroupQc.WorkGroupQualityControlId">
+                        {{ workGroupQc.Name }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="right-content">
+                  <mat-form-field>
+                    <input matInput placeholder="Email" type="email"
+                           id="MailReply" formControlName="MailReply">
+                    <mat-hint>Reply mail.</mat-hint>
+                    <mat-error *ngIf="editValueForm.controls.MailReply.hasError('email')">
+                      Please enter a valid email address
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <!--Row6-->
+              <!--
+               <div class="row-form">
+                <div class="left-content">
+                  <mat-form-field>
+                    <input matInput placeholder="Selected location" class="click-input"
+                           (click)="openDialog('Location')" readonly required
+                           id="LocationQualityControlString" formControlName="LocationQualityControlString">
+                  </mat-form-field>
+                </div>
+                <div class="right-content">
+                  &nbsp;
+                </div>
+              </div>
+              -->
+              <!--Row7-->
+              <div class="row-form">
+                <div class="left-content">
+                  <mat-form-field hintLabel="Max 250 characters">
+                    <textarea matInput placeholder="Description" rows="3"
+                              id="Description" formControlName="Description"></textarea>
+                    <mat-hint [align]="end">{{editValueForm.controls.Description.value?.length || 0}}/250</mat-hint>
+                  </mat-form-field>
+                </div>
+
+                <div class="right-content">
+                  <mat-form-field>
+                    <textarea matInput placeholder="Remark"
+                              maxlength="250" rows="3"
+                              id="Remark" formControlName="Remark"></textarea>
+                  </mat-form-field>
+                </div>
+              </div>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="my-1">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Attach file panel
+                </mat-panel-title>
+                <mat-panel-description>
+                  Total attach files {{attachFiles?.length || 0}}
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <!--Row8-->
+              <div class="row-form">
+                <div class="left-content" *ngIf="!forFail">
+                  <app-attach-file id="AttactFile" (results)="onUpdateAttachResults($event)">
+                  </app-attach-file>
+                </div>
+
+                <div class="right-content">
+                  <div *ngIf="attachFiles && attachFiles.length > 0">
+                    <table class="table table-hover table-sm small">
+                      <colgroup>
+                        <col span="1" style="width: 80%;">
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th>File Name</th>
+                          <th>Remove</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let file of attachFiles; let num2 = index">
+                          <td (click)="onOpenNewLink(file.FileAddress)" style="cursor:pointer;">
+                            {{num2 + 1}}. {{file.FileName}}
+                          </td>
+                          <td>
+                            <div *ngIf="!forFail">
+                              <a class="btn btn-sm btn-danger" matTooltip="Remove Attach File" (click)="onDeleteAttachFile(file)">
+                                <em class="fa fa-remove"></em>
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>
+        <strong><b>Request Item && Mark No</b></strong>
+      </ng-template>
+      <div class="form-container-column">
+        <div class="my-0" *ngIf="!forFail">
+          <button mat-mini-fab color="primary" (click)="actionMarkNo()"
+                  matTooltip="Add Mark No">
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
+        </div>
+        <div *ngIf="editValue.MasterLists">
+          <app-require-qc-masterlist-table [dataRows]="editValue.MasterLists" (returnSelected)="actionMarkNo($event)"
+                                           [readOnly]="forFail">
+          </app-require-qc-masterlist-table>
+        </div>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>
+
+<ng-template #elseBlock>
+  <mat-progress-bar mode="indeterminate" style="margin-top:50px;"></mat-progress-bar>
+  Waiting... for loading
+</ng-template>

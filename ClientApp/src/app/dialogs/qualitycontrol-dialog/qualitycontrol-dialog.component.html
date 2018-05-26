@@ -1,0 +1,25 @@
+<div class="master-dialog-vh">
+  <H5 style="color:cadetblue">Quality Control information.</H5>
+  <div class="child-container" *ngIf="qualityControl;else ElseDialog">
+    <div class="center-content">
+      <div class="child-container" style="min-height:35px;">
+        <span class="mx-2"></span>
+        <button type="button" mat-raised-button color="accent" (click)="onCancelClick()"
+                matTooltip="Go Back" class="ml-auto">
+          Close
+        </button>
+      </div>
+      <hr class="w-75 mt-1" />
+      <!--style="transform:scale(0.9,0.9);transform-origin: top left;"-->
+      <div *ngIf="qualityControl">
+        <app-qualitycontrol-view-extend [displayValue]="qualityControl">
+        </app-qualitycontrol-view-extend>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #ElseDialog>
+  <div style="display: flex;justify-content: center;align-items:center;">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

@@ -1,0 +1,128 @@
+
+/* Structure */
+.example-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  position: relative;
+
+  @media only screen and (max-width: 699px) {
+    max-height: 450px;
+  }
+
+  @media only screen and (min-width: 700px) and (max-width: 1024px) {
+    max-height: 550px;
+  }
+
+  @media only screen and (min-width: 1025px) and (max-width: 3600px) {
+    max-height: 600px;
+  }
+}
+
+.example-header {
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  padding-left: 24px;
+  font-size: 20px;
+}
+
+/*Table Style*/
+.example-table {
+  overflow: auto;
+
+  @media only screen and (max-width: 699px) {
+    min-height: calc(100vh - 300px);
+  }
+
+  @media only screen and (min-width: 700px) and (max-width: 1024px) {
+    min-height: calc(100vh - 265px);
+  }
+
+  @media only screen and (min-width: 1025px) and (max-width: 3600px) {
+    min-height: calc(100vh - 220px);
+  }
+}
+
+.intab-table {
+  overflow: auto;
+  /*@media only screen and (max-width: 1024px) {
+    min-height: calc(100vh - 400px);
+  }
+
+  @media only screen and (max-width: 1700px) {
+    min-height: calc(100vh - 335px);
+  }*/
+}
+
+.dialog-table {
+  overflow: auto;
+
+  /*@media only screen and (max-width: 1024px) {
+    min-height: calc(100vh - 200px);
+  }
+  @media only screen and (max-width: 1700px) {
+    min-height: calc(100vh - 400px);
+  }*/
+}
+
+.dialog-table-notextbox {
+  overflow: auto;
+
+  @media only screen and (max-width: 1024px) {
+    min-height: calc(100vh - 425px);
+  }
+
+  @media only screen and (max-width: 1700px) {
+    min-height: calc(100vh - 325px);
+  }
+}
+
+.example-loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 56px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.example-rate-limit-reached {
+  color: #980000;
+  max-width: 360px;
+  text-align: center;
+}
+
+.mat-row-highlight {
+  background-color:lightgray; /* green */
+}
+
+.mat-row-highlight-light {
+  background-color: lightsalmon; /* green */
+}
+
+.mat-row-highlight-green {
+  background-color: darkseagreen; /* green */
+}
+
+
+/* Column Widths */
+.mat-column-number,
+.mat-column-state {
+  max-width: 64px;
+}
+
+.mat-column-created {
+  max-width: 124px;
+}
+
+.mat-column-select {
+  overflow: initial;
+  white-space: unset !important;
+  flex: 0 0 35px !important;
+  width: 35px !important;
+}

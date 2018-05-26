@@ -1,0 +1,34 @@
+@import "../../shared/styles/table.style.scss";
+
+.is-cancel {
+  background-color: red;
+
+  .mat-cell {
+    color: white;
+  }
+  // color: red !important;
+}
+
+.is-require {
+  background-color: darksalmon;
+
+  .mat-cell {
+    color: white;
+  }
+  // color: red !important;
+}
+
+.is-wait {
+  background-color: gold;
+  // color: gold !important;
+}
+
+.is-complate {
+  background-color: lightgreen;
+  // color: lightgreen !important;
+}
+
+.is-revise {
+  background-color: darkcyan;
+  // color: lightgreen !important;
+}
