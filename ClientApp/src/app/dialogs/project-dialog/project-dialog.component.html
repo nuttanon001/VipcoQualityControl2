@@ -3,12 +3,11 @@
   <div class="child-container">
     <div class="center-content">
       <div class="row-content">
-        <!--Row Left Content-->
-        <div class="row-left-content">
+        <div class="w-100">
           <dialog-project-table (returnSelected)="onSelectedValue($event)"></dialog-project-table>
         </div>
-        <!--Row Right Content-->
-        <div class="row-right-content">
+        <span class="mx-1"></span>
+        <div *ngIf="mode > 1">
           <dialog-project-detail-table [fastSelected]="true" [dataRows]="projectDetails"
                                        (returnSelected)="onSelectedOptionValue($event)"></dialog-project-detail-table>
         </div>

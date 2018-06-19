@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewContainerRef, ViewEncapsulation } from "@angular/core";
 import { FormBuilder, FormGroup, FormControl, Validators } from "@angular/forms";
-import { Router, ActivatedRoute } from "@angular/router";
+import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 // rxjs
 import { Observable } from "rxjs/Rx";
 import { Subscription } from "rxjs/Subscription";
@@ -64,7 +64,20 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
     }
 
     this.requireQc = new Array;
-    this.buildForm();
+    //this.buildForm();
+
+    this.route.paramMap.subscribe((param: ParamMap) => {
+      let key: number = Number(param.get("condition") || 0);
+      if (key) {
+        this.status = key;
+        this.buildForm();
+
+        if (this.reportForm) {
+          this.onValueChanged();
+        }
+      }
+      
+    }, error => console.error(error));
   }
 
   // destroy
@@ -118,9 +131,9 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
         let Width100: string = "100px";
         let Width125: string = "125px";
         let Width150: string = "150px";
-
+        let MainGroupName = (this.status === 1 ? "WorkGroup-QC" : "WeldingData");
         // column Row1
-        this.columnUpper.push({ header: "WorkGroup-QC", rowspan: 2, style: { "width": Width150, } });
+        this.columnUpper.push({ header: MainGroupName, rowspan: 2, style: { "width": Width150, } });
         for (let detail of dbDataSchedule.ColumnUpper) {
           // debug here
           //console.log("detail", JSON.stringify(detail));
@@ -131,7 +144,7 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
           });
         }
         // debug here
-        console.log("columnUpper", JSON.stringify(this.columnUpper));
+        // console.log("columnUpper", JSON.stringify(this.columnUpper));
         // column Row2
         this.columnLower = new Array;
         for (let name of dbDataSchedule.ColumnLower) {
@@ -141,7 +154,7 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
         }
 
         this.columns.push({
-          header: "WorkGroup-QC", field: "WorkGroupQcName",
+          header: MainGroupName, field: "WorkGroupQcName",
           style: { "width": Width150 }, styleclass: "time-col",
         });
 
@@ -229,22 +242,29 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
   // on selected data
   onSelectRow(master?: RequireQc): void {
     if (master) {
-      this.serviceDialogs.dialogSelectRequireQualityControl(master.RequireQualityControlId, this.viewContainerRef)
-        .subscribe(conditionNumber => {
-          if (conditionNumber) {
-            if (conditionNumber === -1) {
-              this.onUpdateRequireMaintenance(master.RequireQualityControlId);
-              setTimeout(() => { this.onGetData(this.reportForm.value); }, 750);
-            } else if (conditionNumber === 2) {
-              setTimeout(() => { this.onGetData(this.reportForm.value); }, 750);
-            } else if (conditionNumber === 1) {
-              this.router.navigate(["qualitycontrol/", master.RequireQualityControlId]);
-            } else if (conditionNumber === 3) {
-              this.RequireQualityControlId = master.RequireQualityControlId;
-              this.loadReport = !this.loadReport;
+      if (this.status === 1) {
+        this.serviceDialogs.dialogSelectRequireQualityControl(master.RequireQualityControlId, this.viewContainerRef)
+          .subscribe(conditionNumber => {
+            if (conditionNumber) {
+              if (conditionNumber === -1) {
+                this.onUpdateRequireMaintenance(master.RequireQualityControlId);
+                setTimeout(() => { this.onGetData(this.reportForm.value); }, 750);
+              } else if (conditionNumber === 2) {
+                setTimeout(() => { this.onGetData(this.reportForm.value); }, 750);
+              } else if (conditionNumber === 1) {
+                this.router.navigate(["qualitycontrol/", master.RequireQualityControlId]);
+              } else if (conditionNumber === 3) {
+                this.RequireQualityControlId = master.RequireQualityControlId;
+                this.loadReport = !this.loadReport;
+              }
             }
-          }
-        });
+          });
+      }
+      // For Welding Workgroup
+      else if (this.status === 2) {
+        this.router.navigate(["qc-welder/", master.RequireQualityControlId]);
+        // TODO
+      }
     }
   }
 

@@ -8,6 +8,7 @@ import { RequireHasMasterService } from "../../require-qulitycontrols/shared/req
 import { QualityControlService } from "../../quality-controls/shared/quality-control.service";
 import { QualityControl } from "../../quality-controls/shared/quality-control.model";
 import { QcReasonsService } from "../../quality-control-reasons/shared/qc-reasons.service";
+import { RequireMoreWorkactivityService } from "../../require-qulitycontrols/shared/require-more-workactivity.service";
 
 @Component({
   selector: 'app-qualitycontrol-dialog',
@@ -18,6 +19,7 @@ import { QcReasonsService } from "../../quality-control-reasons/shared/qc-reason
     RequireHasMasterService,
     RequireQualityControlService,
     QcReasonsService,
+    RequireMoreWorkactivityService,
   ]
 })
 

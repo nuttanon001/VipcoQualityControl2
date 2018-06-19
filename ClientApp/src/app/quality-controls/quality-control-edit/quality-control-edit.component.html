@@ -101,10 +101,38 @@
           </button>
         </div>
         <div>
-          <app-quality-control-has-markno-table [dataRows]="editValue.QualityHasMasterLists"
-                                                (returnSelected)="onItemMarkNoChange($event)">
-          </app-quality-control-has-markno-table>
-        </div>
+          <mat-accordion class="headers-align">
+            <mat-expansion-panel class="my-1" [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Quality Control Item
+                </mat-panel-title>
+                <mat-panel-description>
+                  Total List(s) {{editValue?.QualityHasMasterLists?.length || 0}}
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <!--Table MasterList-->
+              <app-quality-control-has-markno-table [dataRows]="editValue.QualityHasMasterLists"
+                                                    (returnSelected)="onItemMarkNoChange($event)">
+              </app-quality-control-has-markno-table>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="my-1" *ngIf="editValue?.QualityControlWeldings?.length > 0">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  NDE-Welding
+                </mat-panel-title>
+                <mat-panel-description>
+                  Total List(s) {{editValue?.QualityControlWeldings?.length || 0}}
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <!--Table QcWeled-->
+              <app-quality-control-has-welde-table [dataRows]="editValue.QualityControlWeldings"
+                                                   (returnSelected)="onItemQcWeledChange($event)">
+              </app-quality-control-has-welde-table>
+            </mat-expansion-panel>
+            </mat-accordion>
+          </div>
       </div>
     </mat-step>
   </mat-horizontal-stepper>

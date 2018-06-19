@@ -16,8 +16,15 @@ namespace VipcoQualityControl.Models.QualityControls
         public string Description { get; set; }
         [StringLength(200)]
         public string Remark { get; set; }
+        public TypeWorkActivity TypeWorkActivity { get; set; }
         // FK
         // RequireQualityControl
         public virtual ICollection<RequireQualityControl> RequireQualityControls { get; set; }
+    }
+
+    public enum TypeWorkActivity
+    {
+        QC_QA = 1,
+        NDE
     }
 }

@@ -13,5 +13,6 @@ namespace VipcoQualityControl.ViewModels
         public ICollection<RequireHasMasterProjectViewModel> QualityHasMasterLists { get; set; }
         public DateTime? QualityControlResultTime { get; set; }
         public string QualityControlResultTimeString { get; set; }
+        public ICollection<QualityControlWelding> QualityControlWeldings { get; set; }
     }
 }

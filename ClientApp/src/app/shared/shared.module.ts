@@ -6,6 +6,8 @@ import { RequireQcMasterlistTableComponent } from '../require-qulitycontrols/req
 import { QualityControlHasMarknoTableComponent } from '../quality-controls/quality-control-has-markno-table/quality-control-has-markno-table.component';
 import { FormsModule } from '@angular/forms';
 import { QualityControlHasRequireComponent } from '../quality-controls/quality-control-has-require/quality-control-has-require.component';
+import { FilterPipe } from './pipe/filter.pipe';
+import { GroupbyPipe } from './pipe/groupby.pipe';
 
 // Component
 //import { ItemMaintenEmployeeTableComponent } from '../item-maintenances/item-mainten-employee-table/item-mainten-employee-table.component';
@@ -22,6 +24,8 @@ import { QualityControlHasRequireComponent } from '../quality-controls/quality-c
     RequireQcMasterlistTableComponent,
     QualityControlHasRequireComponent,
     QualityControlHasMarknoTableComponent,
+    FilterPipe,
+    GroupbyPipe,
     //ItemMaintenEmployeeTableComponent,
     //ItemMaintenHasRequireComponent,
     //ItemMaintenRequisitionTableComponent,
@@ -30,6 +34,7 @@ import { QualityControlHasRequireComponent } from '../quality-controls/quality-c
     RequireQcMasterlistTableComponent,
     QualityControlHasRequireComponent,
     QualityControlHasMarknoTableComponent,
+    GroupbyPipe,
     //ItemMaintenEmployeeTableComponent,
     //ItemMaintenHasRequireComponent,
     //ItemMaintenRequisitionTableComponent,

@@ -44,6 +44,23 @@
   }
 }
 
+/*Table Style*/
+.example-table-edition2 {
+  overflow: auto;
+
+  @media only screen and (max-width: 699px) {
+    min-height: calc(100vh - 250px);
+  }
+
+  @media only screen and (min-width: 700px) and (max-width: 1024px) {
+    min-height: calc(100vh - 285px);
+  }
+
+  @media only screen and (min-width: 1025px) and (max-width: 3600px) {
+    min-height: calc(100vh - 275px);
+  }
+}
+
 .intab-table {
   overflow: auto;
   /*@media only screen and (max-width: 1024px) {

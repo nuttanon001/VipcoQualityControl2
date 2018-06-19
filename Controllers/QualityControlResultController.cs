@@ -32,6 +32,7 @@ namespace VipcoQualityControl.Controllers
         private readonly IRepositoryMachine<ProjectCodeDetail> repositoryProject;
         private readonly IRepositoryMachine<Employee> repositoryEmployee;
         private readonly IRepositoryQualityControl<WorkGroupHasWorkShop> repositoryWorkShop;
+        private readonly IRepositoryMachine<EmployeeGroupMis> repositoryGroupMis;
         private readonly EmailClass EmailClass;
         public QualityControlResultController(IRepositoryQualityControl<QualityControlResult> repo,
             IRepositoryQualityControl<RequireHasMasterProject> repoRequireHasMaster,
@@ -41,10 +42,12 @@ namespace VipcoQualityControl.Controllers
             IRepositoryMachine<Employee> repoEmployee,
             IRepositoryMachine<ProjectCodeDetail> repoProject,
             IRepositoryQualityControl<WorkGroupHasWorkShop> repoWorkShop,
+            IRepositoryMachine<EmployeeGroupMis> repoGroupMis,
             IMapper mapper) : base(repo, mapper) {
             //Repository Machine
             this.repositoryEmployee = repoEmployee;
             this.repositoryProject = repoProject;
+            this.repositoryGroupMis = repoGroupMis;
             //Repository Quality Control
             this.repositoryRequireQualityControl = repoRequireRequireQualityControl;
             this.repositoryRequireHasMaster = repoRequireHasMaster;
@@ -345,23 +348,93 @@ namespace VipcoQualityControl.Controllers
         }
 
         #region Report
+
         [HttpGet("QuailtyControlReport")]
-        public async Task<IActionResult> QuailtyControlReport(int key)
+        public async Task<IActionResult> QuailtyControlReport(int key,string type = "RequireQc")
         {
             if (key > 0)
             {
                 var RequireQC = new RequireQualityControl();
-                var QuailtyControlData = await this.repository.GetAsync(key, true);
-                if (QuailtyControlData != null)
-                    RequireQC = QuailtyControlData.RequireQualityControl;
-                else
+                if (type == "RequireQc")
                     RequireQC = await this.repositoryRequireQualityControl.GetAsync(key, true);
+                else
+                {
+                    var QuailtyControlData = await this.repository.GetAsync(key, true);
+                    RequireQC = QuailtyControlData.RequireQualityControl;
+                }
 
                 if (RequireQC != null)
                 {
                     var Project = await this.repositoryProject.GetAsync(RequireQC.ProjectCodeDetailId ?? 0, true);
                     var workActivities = (await this.repositoryWorkActivity.GetAllAsync()).ToList();
-                    var ListCount = workActivities.Count();
+
+                    var WorkActivitiesCheck = new List<WorkActivitiesCheckViewModel>();
+                    var WorkActivityCheck = new WorkActivitiesCheckViewModel();
+                    var Index = 0;
+                    var Count = 0;
+                    foreach (var itemWork in workActivities)
+                    {
+                        var Already = false;
+                        if (Index % 4 == 0)
+                        {
+                            WorkActivityCheck = new WorkActivitiesCheckViewModel();
+                            Index = 0;
+                        }
+
+                        if (Index == 0)
+                        {
+                            WorkActivityCheck.InspectionCheck1 = RequireQC.RequireQcMoreWorkActvities.Any(x => x.WorkActivityId == itemWork.WorkActivityId) ? "1" : "";
+                            WorkActivityCheck.InspectionName1 = itemWork.Name;
+                        }
+                        else if (Index == 1)
+                        {
+                            WorkActivityCheck.InspectionCheck2 = RequireQC.RequireQcMoreWorkActvities.Any(x => x.WorkActivityId == itemWork.WorkActivityId) ? "1" : "";
+                            WorkActivityCheck.InspectionName2 = itemWork.Name;
+                        }
+                        else if (Index == 2)
+                        {
+                            WorkActivityCheck.InspectionCheck3 = RequireQC.RequireQcMoreWorkActvities.Any(x => x.WorkActivityId == itemWork.WorkActivityId) ? "1" : "";
+                            WorkActivityCheck.InspectionName3 = itemWork.Name;
+                        }
+                        else if (Index == 3)
+                        {
+                            WorkActivityCheck.InspectionCheck4 = RequireQC.RequireQcMoreWorkActvities.Any(x => x.WorkActivityId == itemWork.WorkActivityId) ? "1" : "";
+                            WorkActivityCheck.InspectionName4 = itemWork.Name;
+                            Already = true;
+                            WorkActivitiesCheck.Add(new WorkActivitiesCheckViewModel()
+                            {
+                                InspectionCheck1 = WorkActivityCheck.InspectionCheck1,
+                                InspectionCheck2 = WorkActivityCheck.InspectionCheck2,
+                                InspectionCheck3 = WorkActivityCheck.InspectionCheck3,
+                                InspectionCheck4 = WorkActivityCheck.InspectionCheck4,
+                                InspectionName1 = WorkActivityCheck.InspectionName1,
+                                InspectionName2 = WorkActivityCheck.InspectionName2,
+                                InspectionName3 = WorkActivityCheck.InspectionName3,
+                                InspectionName4 = WorkActivityCheck.InspectionName4
+                            });
+                        }
+                        Index++;
+                        Count++;
+
+                        if (Count >= workActivities.Count())
+                        {
+                            if (!Already)
+                            {
+                                WorkActivitiesCheck.Add(new WorkActivitiesCheckViewModel()
+                                {
+                                    InspectionCheck1 = WorkActivityCheck.InspectionCheck1,
+                                    InspectionCheck2 = WorkActivityCheck.InspectionCheck2,
+                                    InspectionCheck3 = WorkActivityCheck.InspectionCheck3,
+                                    InspectionCheck4 = WorkActivityCheck.InspectionCheck4,
+                                    InspectionName1 = WorkActivityCheck.InspectionName1,
+                                    InspectionName2 = WorkActivityCheck.InspectionName2,
+                                    InspectionName3 = WorkActivityCheck.InspectionName3,
+                                    InspectionName4 = WorkActivityCheck.InspectionName4
+                                });
+                            }
+                        }
+                    }
+
                     var MarkNos = (await this.repositoryRequireHasMaster.GetAllAsQueryable()
                                             .Where(x => x.RequireQualityControlId == RequireQC.RequireQualityControlId)
                                             .ToListAsync())
@@ -371,16 +444,28 @@ namespace VipcoQualityControl.Controllers
                                                 item.MasterProjectList.DrawingNo,
                                                 item.MasterProjectList.MarkNo,
                                                 item.MasterProjectList.Name,
-                                                Box = "-",
-                                                Unit = "-",
+                                                item.MasterProjectList.Box,
+                                                item.MasterProjectList.UnitNo,
                                                 item.Quantity,
                                                 TestResult = item.PassQuantity,
                                                 Remark = item.QualityControlReason != null ? item.QualityControlReason.Name : ""
                                             }).ToList();
 
-                    var workActivityId = RequireQC?.WorkActivityId ?? 0;
+                    var workActivityId = RequireQC?.RequireQcMoreWorkActvities.Select(x => x.WorkActivityId).ToList();
                     var WorkShop = (await this.repositoryWorkShop.GetAllAsQueryable()
                                               .FirstOrDefaultAsync(x => x.GroupMis == RequireQC.GroupMIS));
+                    var locationInfo = "";
+                    if (RequireQC.Branch != null)
+                    {
+                        if (RequireQC.Branch.Name.IndexOf("Subcontract") != -1)
+                        {
+                            var groupName = await this.repositoryGroupMis.GetAsync(RequireQC.GroupMIS);
+                            locationInfo = groupName != null ? groupName.GroupDesc : (WorkShop != null ? WorkShop.LocationQualityControl.Name : "-");
+                        }
+                        else
+                            locationInfo = WorkShop != null ? WorkShop.LocationQualityControl.Name : "-";
+                    }
+
                     var HasDataReport = new
                     {
                         JobNo = Project?.ProjectCodeMaster?.ProjectCode ?? "",
@@ -388,65 +473,8 @@ namespace VipcoQualityControl.Controllers
                         Branch = RequireQC?.Branch?.Name ?? "",
                         RequireDate = RequireQC.RequireDate.ToString("dd/MM/yy"),
                         RequireTime = RequireQC.RequireDate.ToString("HH:mm"),
-                        Location = WorkShop != null ? WorkShop.LocationQualityControl.Name : "-",
-                        Inspections = new[]
-                        {
-                                new
-                                {
-                                    InspectionCheck1 = ListCount >= 1 ? (workActivities[0].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName1 = ListCount >= 1 ? workActivities[0].Name : "",
-                                    InspectionCheck2 = ListCount >= 2 ? (workActivities[1].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName2 = ListCount >= 2 ? workActivities[1].Name : "",
-                                    InspectionCheck3 = ListCount >= 3 ? (workActivities[2].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName3 = ListCount >= 3 ? workActivities[2].Name : "",
-                                    InspectionCheck4 = ListCount >= 4 ? (workActivities[3].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName4 = ListCount >= 4 ? workActivities[3].Name : "",
-                                },
-                                new
-                                {
-                                    InspectionCheck1 = ListCount >= 5 ? (workActivities[4].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName1 = ListCount >= 5 ? workActivities[4].Name : "",
-                                    InspectionCheck2 = ListCount >= 6 ? (workActivities[5].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName2 = ListCount >= 6 ? workActivities[5].Name : "",
-                                    InspectionCheck3 = ListCount >= 7 ? (workActivities[6].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName3 = ListCount >= 7 ? workActivities[6].Name : "",
-                                    InspectionCheck4 = ListCount >= 8 ? (workActivities[7].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName4 = ListCount >= 8 ? workActivities[7].Name : "",
-                                },
-                                 new
-                                {
-                                    InspectionCheck1 = ListCount >= 9 ? (workActivities[8].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName1 = ListCount >= 9 ? workActivities[8].Name : "",
-                                    InspectionCheck2 = ListCount >= 10 ? (workActivities[9].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName2 = ListCount >= 10 ? workActivities[9].Name : "",
-                                    InspectionCheck3 = ListCount >= 11 ? (workActivities[10].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName3 = ListCount >= 11 ? workActivities[10].Name : "",
-                                    InspectionCheck4 = ListCount >= 12 ? (workActivities[11].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName4 = ListCount >= 12 ? workActivities[11].Name : "",
-                                },
-                                 new
-                                {
-                                    InspectionCheck1 = ListCount >= 13 ? (workActivities[12].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName1 = ListCount >= 13 ? workActivities[12].Name : "",
-                                    InspectionCheck2 = ListCount >= 14 ? (workActivities[13].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName2 = ListCount >= 14 ? workActivities[13].Name : "",
-                                    InspectionCheck3 = ListCount >= 15 ? (workActivities[14].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName3 = ListCount >= 15 ? workActivities[14].Name : "",
-                                    InspectionCheck4 = ListCount >= 16 ? (workActivities[15].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName4 = ListCount >= 16 ? workActivities[15].Name : "",
-                                },
-                                 new
-                                {
-                                    InspectionCheck1 = ListCount >= 17 ? (workActivities[16].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName1 = ListCount >= 17 ? workActivities[16].Name : "",
-                                    InspectionCheck2 = ListCount >= 18 ? (workActivities[17].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName2 = ListCount >= 18 ? workActivities[17].Name : "",
-                                    InspectionCheck3 = ListCount >= 19 ? (workActivities[18].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName3 = ListCount >= 19 ? workActivities[18].Name : "",
-                                    InspectionCheck4 = ListCount >= 20 ? (workActivities[19].WorkActivityId == workActivityId ? "1" : "") : "",
-                                    InspectionName4 = ListCount >= 20 ? workActivities[19].Name : "",
-                                }
-                            },
+                        Location = locationInfo,
+                        Inspections = WorkActivitiesCheck,
                         ListMarkNos = MarkNos,
                     };
 

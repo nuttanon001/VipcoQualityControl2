@@ -27,7 +27,7 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
       "RequireQualityControlService",
       "RequireQualityControlId",
       httpErrorHandler
-    )
+    );
   }
 
   // ===================== RequireQualityControlSchedule ===========\\

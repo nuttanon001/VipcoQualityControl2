@@ -1,6 +1,7 @@
 import { BaseModel } from "../../shared/base-model.model";
 import { QualityControlStatus } from "./quality-control-status.enum";
 import { RequireQcHasMasterList } from "../../require-qulitycontrols/shared/require-qc-has-master-list.model";
+import { QcWelder } from "../../quality-control-welders/shared/qc-welder.model";
 
 export interface QualityControl extends BaseModel {
   QualityControlResultId: number;
@@ -21,4 +22,5 @@ export interface QualityControl extends BaseModel {
   QualityHasMasterLists?: Array<RequireQcHasMasterList>;
   QualityControlResultTime?: Date;
   QualityControlResultTimeString?: any;
+  QualityControlWeldings?: Array<QcWelder>;
 }

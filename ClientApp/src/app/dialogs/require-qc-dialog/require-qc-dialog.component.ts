@@ -7,6 +7,7 @@ import { RequireQcChange } from "../../require-qulitycontrols/shared/require-qc-
 import { AuthService } from "../../core/auth/auth.service";
 import { MasterListService } from "../../master-lists/shared/master-list.service";
 import { RequireQualityControlService } from "../../require-qulitycontrols/shared/require-qc.service";
+import { RequireMoreWorkactivityService } from "../../require-qulitycontrols/shared/require-more-workactivity.service";
 
 @Component({
   selector: 'app-require-qc-dialog',
@@ -14,7 +15,8 @@ import { RequireQualityControlService } from "../../require-qulitycontrols/share
   styleUrls: ['./require-qc-dialog.component.scss'],
   providers: [
     RequireQualityControlService,
-    MasterListService
+    MasterListService,
+    RequireMoreWorkactivityService
   ]
 })
 export class RequireQcDialogComponent implements OnInit {

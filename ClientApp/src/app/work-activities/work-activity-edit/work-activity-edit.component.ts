@@ -13,7 +13,7 @@ import { WorkActivityService, WorkActivityCommunicateService } from "../shared/w
 
 @Component({
   selector: 'app-work-activity-edit',
-  templateUrl: '../../shared/base-edit-component.html',
+  templateUrl: './work-activity-edit.component.html',
   styleUrls: ['./work-activity-edit.component.scss']
 })
 export class WorkActivityEditComponent extends BaseEditComponent<WorkActivity, WorkActivityService> {
@@ -57,6 +57,11 @@ export class WorkActivityEditComponent extends BaseEditComponent<WorkActivity, W
         [
           Validators.required,
           Validators.maxLength(50)
+        ]
+      ],
+      TypeWorkActivity: [this.editValue.TypeWorkActivity,
+        [
+          Validators.required
         ]
       ],
       Description: [this.editValue.Description,

@@ -44,6 +44,7 @@ namespace VipcoQualityControl.Controllers
                                                          x.Name
                                                      })
                                                  .Distinct()
+                                                 .Take(10)
                                                  .ToListAsync();
             if (QueryData != null)
                 return new JsonResult(QueryData, this.DefaultJsonSettings);

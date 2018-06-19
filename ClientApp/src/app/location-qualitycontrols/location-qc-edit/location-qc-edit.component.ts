@@ -10,6 +10,7 @@ import { AuthService } from "../../core/auth/auth.service";
 import { DialogsService } from "../../dialogs/shared/dialogs.service";
 import { LocationQcService, LocationQcCommunicateService } from "../shared/location-qc.service";
 import { WorkgroupHasWorkshop } from "../shared/workgroup-has-workshop.model";
+import { A11yModule } from "@angular/cdk/a11y";
 
 @Component({
   selector: 'app-location-qc-edit',
@@ -39,6 +40,9 @@ export class LocationQcEditComponent extends BaseEditComponent<LocationQc, Locat
       this.service.getOneKeyNumber(value)
         .subscribe(dbData => {
           this.editValue = dbData;
+          if (!this.editValue.WorkGroupHasWorkShops) {
+            this.editValue.WorkGroupHasWorkShops = new Array;
+          }
         }, error => console.error(error), () => this.buildForm());
     } else {
       this.editValue = {

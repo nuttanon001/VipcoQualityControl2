@@ -138,9 +138,8 @@ namespace VipcoQualityControl.Controllers
                     var UpdateData = await this.repository.UpdateAsync(uUser, key);
                     if (UpdateData != null)
                     {
-                        var Includes = new List<string> { "EmpCodeNavigation" };
                         return new JsonResult(
-                           this.mapper.Map<User, UserViewModel>(await this.repository.GetAsynvWithIncludes(key, "UserId", Includes)),
+                           this.mapper.Map<User, UserViewModel>(await this.repository.GetAsync(key,true)),
                            this.DefaultJsonSettings);
                     }
                 }

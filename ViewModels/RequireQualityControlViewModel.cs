@@ -20,5 +20,6 @@ namespace VipcoQualityControl.ViewModels
         public DateTime? RequireQcTime { get; set; }
         public string RequireQcTimeString { get; set; }
         public ICollection<MasterProjectList> MasterLists { get; set; }
+        public ICollection<WorkActivity> MoreWorkActvities { get; set; }
     }
 }

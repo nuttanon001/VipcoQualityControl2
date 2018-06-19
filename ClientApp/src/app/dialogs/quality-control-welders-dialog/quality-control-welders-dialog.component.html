@@ -1,0 +1,127 @@
+<div class="m-3" style="width:750px;height:auto;">
+  <H5 style="color:cadetblue">Create NDE welder informateion</H5>
+  <div *ngIf="editValueForm" class="form-container-column">
+    <form [formGroup]="editValueForm">
+      <!-- ProjectCodeMasterString -->
+      <mat-form-field>
+        <input matInput placeholder="Job/Number"
+               readonly formControlName="ProjectCodeMasterString">
+      </mat-form-field>
+      <!-- WeldingDate -->
+      <mat-form-field>
+        <input matInput [matDatepicker]="WeldingDate" placeholder="Choose a date"
+               formControlName="WeldingDate" required>
+        <mat-datepicker-toggle matSuffix [for]="WeldingDate"></mat-datepicker-toggle>
+        <mat-datepicker #WeldingDate></mat-datepicker>
+        <mat-error *ngIf="editValueForm.controls.WeldingDate.hasError('required')">
+          Date is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <!-- MarkNo -->
+      <mat-form-field hintLabel="*Required and max 100 characters">
+        <input matInput placeholder="Enter mark-no" [matAutocomplete]="markNoauto"
+               required maxlength="100"
+               formControlName="MarkNo">
+        <mat-autocomplete #markNoauto="matAutocomplete">
+          <mat-option *ngFor="let master of masterLists" [value]="master.MarkNo">
+            <span>{{ master.MarkNo }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint [align]="end">{{editValueForm.controls.MarkNo.value?.length || 0}}/100</mat-hint>
+        <mat-error *ngIf="editValueForm.controls.MarkNo.hasError('required')">
+          MarkNo is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <!-- MarkNoPreview -->
+      <mat-form-field hintLabel="*Required and max 100 characters">
+        <input matInput placeholder="Enter mark-no preview" [matAutocomplete]="MarkNoPreview"
+               required maxlength="100"
+               formControlName="MarkNoPreview">
+        <mat-autocomplete #MarkNoPreview="matAutocomplete">
+          <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
+            <span>{{ result.AutoComplate }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint [align]="end">{{editValueForm.controls.MarkNoPreview.value?.length || 0}}/100</mat-hint>
+        <mat-error *ngIf="editValueForm.controls.MarkNoPreview.hasError('required')">
+          Mark no preview is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <!-- WelderNo -->
+      <mat-form-field hintLabel="*Required and max 100 characters">
+        <input matInput placeholder="Enter welder-no" [matAutocomplete]="WelderNo"
+               required maxlength="100"
+               formControlName="WelderNo">
+        <mat-autocomplete #WelderNo="matAutocomplete">
+          <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
+            <span>{{ result.AutoComplate }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint [align]="end">{{editValueForm.controls.WelderNo.value?.length || 0}}/100</mat-hint>
+        <mat-error *ngIf="editValueForm.controls.WelderNo.hasError('required')">
+          Welder no is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <!-- ProcessWeld -->
+      <mat-form-field hintLabel="*Required and max 100 characters">
+        <input matInput placeholder="Enter process weld" [matAutocomplete]="ProcessWeld"
+               required maxlength="100"
+               formControlName="ProcessWeld">
+        <mat-autocomplete #ProcessWeld="matAutocomplete">
+          <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
+            <span>{{ result.AutoComplate }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <mat-hint [align]="end">{{editValueForm.controls.ProcessWeld.value?.length || 0}}/100</mat-hint>
+        <mat-error *ngIf="editValueForm.controls.ProcessWeld.hasError('required')">
+          Process weld no is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
+      <!-- JointNo -->
+      <mat-form-field hintLabel="*JointNo more then 0">
+        <input matInput placeholder="Enter joint-no"
+               type="number" min="0" formControlName="JointNo">
+        <mat-error *ngIf="editValueForm.controls.JointNo.hasError('min')">
+          JointNo minimum number is 0
+        </mat-error>
+      </mat-form-field>
+      <!-- Thickness -->
+      <mat-form-field hintLabel="*Thickness more then 0">
+        <input matInput placeholder="Enter thickness-no"
+               type="number" min="0" formControlName="Thickness">
+        <mat-error *ngIf="editValueForm.controls.Thickness.hasError('min')">
+          Thickness minimum number is 0
+        </mat-error>
+      </mat-form-field>
+      <!-- TestLength -->
+      <mat-form-field hintLabel="*TestLength more then 0">
+        <input matInput placeholder="Enter Test-length"
+               type="number" required min="0" formControlName="TestLength">
+        <mat-error *ngIf="editValueForm.controls.TestLength.hasError('min')">
+          TestLength minimum number is 0
+        </mat-error>
+      </mat-form-field>
+      <!-- Remark -->
+      <mat-form-field hintLabel="Max 200 characters">
+        <input matInput placeholder="Enter remark"
+               maxlength="200"
+               formControlName="Remark">
+        <mat-hint [align]="end">{{editValueForm.controls.Remark.value?.length || 0}}/200</mat-hint>
+      </mat-form-field>
+    </form>
+    <hr class="w-75 my-3" />
+    <div class="row-form">
+      <div class="left-content">
+        <button mat-mini-fab color="primary" (click)="onSubmitForm()"
+                matTooltip="Add new welder quality control" [disabled]="!editValueForm.valid">
+          <mat-icon aria-hidden="true">add</mat-icon>
+        </button>
+        &nbsp;&nbsp;
+        <button mat-mini-fab color="warn" (click)="onCancelForm()"
+                matTooltip="Cancel">
+          <mat-icon aria-hidden="true">close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

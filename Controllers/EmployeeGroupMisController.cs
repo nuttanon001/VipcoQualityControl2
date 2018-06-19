@@ -31,6 +31,7 @@ namespace VipcoQualityControl.Controllers
         public async Task<IActionResult> GetGroupMisByEmpCode(string EmpCode)
         {
             var HasData = await this.repository.GetAllAsQueryable()
+                                    .Where(x => !x.GroupMis.StartsWith("00"))
                                     .FirstOrDefaultAsync(x => x.Employee.Any(z => z.EmpCode == EmpCode));
             return new JsonResult(HasData, this.DefaultJsonSettings);
         }
@@ -38,7 +39,7 @@ namespace VipcoQualityControl.Controllers
         [HttpPost("GetScroll")]
         public async Task<IActionResult> GetScroll([FromBody] ScrollViewModel Scroll)
         {
-            var QueryData = this.repository.GetAllAsQueryable();
+            var QueryData = this.repository.GetAllAsQueryable().Where(x => !x.GroupMis.StartsWith("00"));
             // Where
             if (!string.IsNullOrEmpty(Scroll.Where))
             {

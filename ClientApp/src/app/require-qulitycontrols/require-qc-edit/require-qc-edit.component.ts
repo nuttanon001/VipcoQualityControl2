@@ -1,5 +1,5 @@
 // angular
-import { Component, ViewContainerRef, group, Input } from "@angular/core";
+import { Component, ViewContainerRef, Input } from "@angular/core";
 import { FormBuilder, FormControl, Validators, AbstractControl } from "@angular/forms";
 // models
 import { RequireQc } from "../shared/require-qc.model";
@@ -22,9 +22,12 @@ import { EmployeeGroupMisService } from "../../employees/shared/employee-group-m
 import { WorkGroupQcService } from "../../workgroup-qulitycontrols/shared/workgroup-qc.service";
 import { InspectionPointService } from "../../inspection-points/shared/inspection-point.service";
 import { RequireQualityControlCommunicateService, RequireQualityControlService } from "../shared/require-qc.service";
-import { ArgumentOutOfRangeError } from "rxjs";
 import { MasterListService } from "../../master-lists/shared/master-list.service";
-import { transformMenu } from "@angular/material";
+import { RequireMoreWorkactivityService } from "../shared/require-more-workactivity.service";
+// Rxjs
+import { filter } from "rxjs/operator/filter";
+import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
+import { TypeworkActivity } from "../../work-activities/shared/typework-activity.enum";
 
 @Component({
   selector: 'app-require-qc-edit',
@@ -35,6 +38,7 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
   constructor(
     service: RequireQualityControlService,
     serviceCom: RequireQualityControlCommunicateService,
+    private serviceRequireMoreActivity: RequireMoreWorkactivityService,
     private serviceBranch: BranchService,
     private serviceMarkNo: MasterListService,
     private serviceGroupMis: EmployeeGroupMisService,
@@ -87,6 +91,9 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
                       Creator: item.Creator,
                       MarkNo: item.MarkNo,
                       Name: item.Name,
+                      UnitNo: item.UnitNo,
+                      DrawingNo: item.DrawingNo,
+                      Box: item.Box,
                       Quantity: item.Quantity,
                       MasterProjectListId: item.MasterProjectListId
                     });
@@ -99,7 +106,6 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
               });
           }, error => console.error(error), () => this.buildForm());
       } else { // Form fail require quality control
-        //Debug here
         this.forFail = true;
 
         this.editValue = value;
@@ -108,6 +114,7 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
         this.editValue.RequireQcTimeString = (new Date(this.editValue.RequireDate.getTime() + 60 * 60000)).toLocaleTimeString("th-TH", { hour12: false });
         this.editValue.RequireQcTime = this.editValue.RequireQcTimeString;
         this.buildForm();
+
       }
     } else {
       this.editValue = {
@@ -175,11 +182,7 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
           Validators.required
         ]
       ],
-      WorkActivityId: [this.editValue.WorkActivityId,
-        [
-          Validators.required
-        ]
-      ],
+      WorkActivityId: [this.editValue.WorkActivityId],
       BranchId: [this.editValue.BranchId,
         [
           Validators.required
@@ -213,11 +216,36 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
       RequireStatusString: [this.editValue.RequireStatusString],
       MasterLists: [this.editValue.MasterLists],
       RequireQcTime: [this.editValue.RequireQcTime],
+      MoreWorkActvities: [this.editValue.MoreWorkActvities],
       // Attach File
       AttachFile: [this.editValue.AttachFile],
       RemoveAttach: [this.editValue.RemoveAttach],
     });
     this.editValueForm.valueChanges.subscribe((data: any) => this.onValueChanged(data));
+
+    const ControlMoreActivities: AbstractControl | undefined = this.editValueForm.get("MoreWorkActvities");
+    if (ControlMoreActivities) {
+      ControlMoreActivities.valueChanges
+        .pipe(
+          debounceTime(500),
+          distinctUntilChanged()).subscribe((data: Array<WorkActivity>) => {
+            if (data) {
+              let isNde = data.find((work) => work.TypeWorkActivity === TypeworkActivity.NDE);
+              let isQc = data.find((work) => work.TypeWorkActivity === TypeworkActivity.QC_QA);
+
+              if (isNde && isQc) {
+                this.serviceDialogs.error("Warning Message",
+                  "Cannot select both type of work-activity.", this.viewContainerRef)
+                  .subscribe(result => {
+                    //Patch value to Form
+                    this.editValueForm.patchValue({
+                      MoreWorkActvities: undefined
+                    });
+                  });
+              }
+            }
+          });
+    }
   }
 
   // get branchs
@@ -272,7 +300,47 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
       this.serviceWorkActivity.getAll()
         .subscribe(dbWorkActivity => {
           this.workActivities = [...dbWorkActivity];
-      });
+          //dbWorkActivity.forEach((item) => {
+          //  this.workActivities.push({
+          //    CreateDate: item.CreateDate,
+          //    Creator: item.Creator,
+          //    Description: item.Description,
+          //    Name: item.Name,
+          //    Remark: item.Remark,
+          //    TypeWorkActivity: item.TypeWorkActivity,
+          //    WorkActivityId:item.WorkActivityId
+          //  })
+          //});
+
+          //debug here
+          // console.log("Data is", JSON.stringify(this.workActivities));
+
+          let id: number = this.editValue.RequireQualityControlId || this.editValue.ParentRequireQcId;
+          if (id) {
+            this.serviceRequireMoreActivity.getByMasterId(id)
+              .subscribe(dbData => {
+                if (!this.editValue.MoreWorkActvities) {
+                  this.editValue.MoreWorkActvities = new Array;
+                }
+
+                if (dbData) {
+                  dbData.forEach((item) => {
+                    let copy = this.workActivities.find((work) => work.WorkActivityId == item.WorkActivityId);
+                    // console.log(JSON.stringify(copy));
+                    if (copy) {
+                      this.editValue.MoreWorkActvities.push(copy);
+                    }
+                  });
+                  // debug here
+                  // console.log("Data is", JSON.stringify(this.editValue.MoreWorkActvities));
+                  //Patch value to Form
+                  this.editValueForm.patchValue({
+                    MoreWorkActvities: this.editValue.MoreWorkActvities
+                  });
+                }
+              });
+          }
+        });
     }
   }
 
@@ -432,6 +500,25 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
         isValid = false;
       } 
     }
+
+    if (this.editValue.MoreWorkActvities) {
+      this.editValue.MoreWorkActvities.forEach((item, index) => {
+        if (this.editValue.MoreWorkActvities) {
+          let newData: WorkActivity = {
+            CreateDate: item.CreateDate,
+            Creator: item.Creator,
+            Description: item.Description,
+            Name: item.Name,
+            Remark: item.Remark,
+            TypeWorkActivity: item.TypeWorkActivity,
+            WorkActivityId: item.WorkActivityId,
+          };
+
+          this.editValue.MoreWorkActvities[index] = newData;
+        }
+      });
+    }
+
     this.communicateService.toParent([this.editValue, isValid]);
   }
 

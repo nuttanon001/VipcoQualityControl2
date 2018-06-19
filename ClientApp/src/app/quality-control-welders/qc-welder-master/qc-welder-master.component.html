@@ -1,0 +1,28 @@
+<div class="master-container">
+  <div class="master-form-content">
+    <!--Title-->
+    <h5 class="card-title text-info">
+      Require quality-control welder information
+    </h5>
+    <div *ngIf="requireQc" class="ml-5">
+      <button mat-icon-button color="primary" (click)="onUpdateQcWelderToRequierQc()"
+              matTooltip="Request-UT now" [disabled]="!qcWelders.length > 0">
+        <mat-icon>assignment_turned</mat-icon>
+        <span>Select Request-UT for {{requireQc.RequireQualityNo}} item(s) is {{qcWelders.length || 0}}</span>
+      </button>
+    </div>
+  </div>
+  <div *ngIf="onLoading" class="on-loading">
+    <mat-spinner *ngIf="onLoading"></mat-spinner>
+  </div>
+  <div class="child-container">
+    <!--Center-->
+    <div class="center-content">
+      <!--Component-->
+      <app-qc-welder-table (returnSelectedWith)="onDetailView($event)"
+                           (returnSelectesd)="onRequireQcSelected($event)"
+                           [isMultiple]="requireQc ? true : false"
+                           [isDisabled]="false" [isOnlyCreate]="true"></app-qc-welder-table>
+    </div>
+  </div>
+</div>

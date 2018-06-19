@@ -9,9 +9,9 @@
   height: calc(100vh - 200px);
   height: -webkit-calc(100vh - 200px); */
   .row-form {
-    min-height:50px;
-    margin-top:2px;
-    margin-bottom:2px;
+    min-height: 50px;
+    margin-top: 2px;
+    margin-bottom: 2px;
     display: flex;
     flex-direction: row;
 
@@ -38,6 +38,13 @@
         width: 95%;
       }
     }
+  }
+
+  mat-form-field {
+    width: 95%;
+    min-height: 50px;
+    margin-left: 2px;
+    margin-right: 2px;
   }
 }
 

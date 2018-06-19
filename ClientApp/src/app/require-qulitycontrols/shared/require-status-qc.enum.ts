@@ -7,4 +7,6 @@ export enum RequireStatusQc {
   QcFail,
   Cancel,
   Revise,
+  Welding,
+  WeldingReq
 }

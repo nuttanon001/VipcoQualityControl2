@@ -87,10 +87,30 @@ export class RequireQcMasterComponent
         this.dialogsService.error("Access Deny", "คำขอตรวจสอบคุณภาพ ได้รับการดำเนินการไม่สามารถแก้ไขได้ !!!", this.viewContainerRef);
         return;
       }
+
+      // Only user who creator can edit or update
+      if (this.authService.getAuth) {
+        if (this.authService.getAuth.LevelUser < 3) {
+          if (this.authService.getAuth.UserName !== editValue.Creator) {
+            this.dialogsService.error("Access Denied", "You don't have permission to access.", this.viewContainerRef);
+            return;
+          }
+        }
+      }
     }
+    
 
     if (this.forFail) {
       if (this.displayValue) {
+        if (this.authService.getAuth) {
+          if (this.authService.getAuth.LevelUser < 3) {
+            if (this.authService.getAuth.UserName !== this.displayValue.Creator) {
+              this.dialogsService.error("Access Denied", "You don't have permission to access.", this.viewContainerRef);
+              return;
+            }
+          }
+        }
+
         this.service.getGenarateFromFailRequireQualityControl(this.displayValue.RequireQualityControlId)
           .subscribe(dbData => {
             super.onDetailEdit(dbData);
@@ -113,6 +133,9 @@ export class RequireQcMasterComponent
     // change timezone
     value = this.changeTimezone(value);
     // insert data
+    // debug here
+    console.log("Data is", JSON.stringify(value));
+
     this.service.addModel(value).subscribe(
       (complete: any) => {
         if (complete && attachs) {

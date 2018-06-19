@@ -44,35 +44,46 @@ export class MasterListDialogComponent implements OnInit {
     this.editValueForm = this.fb.group({
       MasterProjectListId: [this.masterList.MasterProjectListId],
       Name: [this.masterList.Name,
-      [
-        Validators.maxLength(50)
-      ]
+        [
+          Validators.maxLength(50)
+        ]
       ],
       Description: [this.masterList.Description,
-      [
-        Validators.maxLength(200)
-      ]
+        [
+          Validators.maxLength(200)
+        ]
       ],
       Remark: [this.masterList.Remark],
       DrawingNo: [this.masterList.DrawingNo,
-      [
-        Validators.maxLength(200)
-      ]
+        [
+          Validators.required,
+          Validators.maxLength(200)
+        ]
       ],
       MarkNo: [this.masterList.MarkNo,
-      [
-        Validators.required,
-        Validators.maxLength(150),
-      ]
+        [
+          Validators.required,
+          Validators.maxLength(150),
+        ]
       ],
       Length: [this.masterList.Length],
       Width: [this.masterList.Width],
       Heigth: [this.masterList.Heigth],
       Weigth: [this.masterList.Weigth],
       Quantity: [this.masterList.Quantity,
-        [
+        [ 
           Validators.min(1),
           Validators.required,
+        ]
+      ],
+      UnitNo: [this.masterList.UnitNo,
+        [
+          Validators.min(0)
+        ]
+      ],
+      Box: [this.masterList.Box,
+        [
+          Validators.min(0)
         ]
       ],
       Revised: [this.masterList.Revised],

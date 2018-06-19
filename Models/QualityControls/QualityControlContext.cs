@@ -30,8 +30,10 @@ namespace VipcoQualityControl.Models.QualityControls
             modelBuilder.Entity<MasterProjectList>().ToTable("MasterProjectList");
             modelBuilder.Entity<Permission>().ToTable("Permission");
             modelBuilder.Entity<QualityControlResult>().ToTable("QualityControlResult");
+            modelBuilder.Entity<QualityControlWelding>().ToTable("QualityControlWelding");
             modelBuilder.Entity<RequireHasAttach>().ToTable("RequireHasAttach");
             modelBuilder.Entity<RequireHasMasterProject>().ToTable("RequireHasMasterProject");
+            modelBuilder.Entity<RequireQcMoreWorkActvity>().ToTable("RequireQcMoreWorkActvity");
             modelBuilder.Entity<RequireQualityControl>().ToTable("RequireQualityControl");
             modelBuilder.Entity<WorkActivity>().ToTable("WorkActivity")
                 .HasIndex(w => w.Name).IsUnique();
@@ -48,8 +50,10 @@ namespace VipcoQualityControl.Models.QualityControls
         public DbSet<MasterProjectList> MasterProjectLists { get; set; }
         public DbSet<Permission> Permissions { get; set; }
         public DbSet<QualityControlResult> QualityControlResults { get; set; }
+        public DbSet<QualityControlWelding> QualityControlWeldings { get; set; }
         public DbSet<RequireHasAttach> RequireHasAttachs { get; set; }
         public DbSet<RequireHasMasterProject> RequireHasMasterProjects { get; set; }
+        public DbSet<RequireQcMoreWorkActvity> RequireQcMoreWorkActvities { get; set; }
         public DbSet<RequireQualityControl> RequireQualityControls { get; set; }
         public DbSet<WorkActivity> WorkActivities { get; set; }
         public DbSet<WorkGroupHasWorkShop> WorkGroupHasWorkShop { get; set; }

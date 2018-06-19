@@ -91,6 +91,11 @@ import { RegisterComponent } from "./users/register/register.component";
         path: "require-qc",
         loadChildren: './require-qulitycontrols/require-qc.module#RequireQcModule',
       },
+      {
+        path: "qc-welder",
+        loadChildren: './quality-control-welders/qc-welder.module#QcWelderModule',
+        canActivate: [AuthGuard],
+      },
       { path: "**", redirectTo: "home" },
     ]),
   ],

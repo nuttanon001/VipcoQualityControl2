@@ -1,5 +1,6 @@
 import { NgModule } from "@angular/core";
 import {
+  MatAutocompleteModule,
   MatButtonModule,
   MatCardModule,
   MatCheckboxModule,
@@ -71,6 +72,7 @@ import { AttachFileViewComponent } from '../attach-file-view/attach-file-view.co
   ],
   imports: [
     // material
+    MatAutocompleteModule,
     MatButtonModule,
     MatCheckboxModule,
     MatProgressBarModule,
@@ -117,6 +119,7 @@ import { AttachFileViewComponent } from '../attach-file-view/attach-file-view.co
   ],
   exports: [
     // material
+    MatAutocompleteModule,
     MatButtonModule,
     MatCheckboxModule,
     MatProgressBarModule,

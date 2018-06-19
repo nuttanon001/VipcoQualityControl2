@@ -24,6 +24,8 @@ import { LocationQc } from "../../location-qualitycontrols/shared/location-qc";
 import { LocationDialogComponent } from "../location-dialog/location-dialog.component";
 import { RequireQcDialogComponent } from "../require-qc-dialog/require-qc-dialog.component";
 import { QualitycontrolDialogComponent } from "../qualitycontrol-dialog/qualitycontrol-dialog.component";
+import { QcWelder } from "../../quality-control-welders/shared/qc-welder.model";
+import { QualityControlWeldersDialogComponent } from "../quality-control-welders-dialog/quality-control-welders-dialog.component";
 
 @Injectable()
 export class DialogsService {
@@ -261,6 +263,24 @@ export class DialogsService {
 
     // open dialog
     dialogRef = this.dialog.open(QualitycontrolDialogComponent, config);
+    return dialogRef.afterClosed();
+  }
+  /**
+   * Dialog create quailty control welder data
+   * @param viewContainerRef
+   * @param masterList
+   */
+  public dialogCreateOrUpdateWelderInfo(viewContainerRef: ViewContainerRef, qcWelder: QcWelder): Observable<QcWelder> {
+    let dialogRef: MatDialogRef<QualityControlWeldersDialogComponent>;
+    let config: MatDialogConfig = new MatDialogConfig();
+
+    //config
+    config.viewContainerRef = viewContainerRef;
+    config.data = qcWelder;
+    config.hasBackdrop = true;
+
+    // open dialog
+    dialogRef = this.dialog.open(QualityControlWeldersDialogComponent, config);
     return dialogRef.afterClosed();
   }
 

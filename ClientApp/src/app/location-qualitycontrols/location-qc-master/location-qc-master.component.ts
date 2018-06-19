@@ -78,7 +78,7 @@ export class LocationQcMasterComponent extends BaseMasterComponent<LocationQc, L
       // console.log(value);
       this.service.getOneKeyNumber(value)
         .subscribe(dbData => {
-          console.log(JSON.stringify(dbData));
+          // console.log(JSON.stringify(dbData));
           this.displayValue = dbData;
           setTimeout(() => this.comService.toChildEdit(this.displayValue), 1000);
         }, error => this.displayValue = undefined);

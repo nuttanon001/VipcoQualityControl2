@@ -48,6 +48,8 @@ namespace VipcoQualityControl.Models.QualityControls
         public virtual Branch Branch { get; set; }
         // RequireHasMasterProject
         public virtual ICollection<RequireHasMasterProject> RequireHasMasterProjects { get; set; }
+        // RequireQcMoreWorkActivity
+        public virtual ICollection<RequireQcMoreWorkActvity> RequireQcMoreWorkActvities { get; set; }
         // RequireHasAttach
         public virtual ICollection<RequireHasAttach> RequireHasAttaches { get; set; }
         // WorkQualityControl
@@ -66,5 +68,7 @@ namespace VipcoQualityControl.Models.QualityControls
         QcFail,
         Cancel,
         Revise,
+        Welding,
+        WeldingReq,
     }
 }

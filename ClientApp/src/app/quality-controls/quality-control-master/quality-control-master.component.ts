@@ -112,4 +112,16 @@ export class QualityControlMasterComponent extends BaseMasterComponent<QualityCo
       this.location.back();
     }
   }
+
+  onSaveComplete(): void {
+    this.dialogsService.context("System message", "Save completed.", this.viewContainerRef)
+      .subscribe(result => {
+        this.canSave = false;
+        this.ShowEdit = false;
+        this.onBack();
+        this.editValue = undefined;
+        this.onDetailView(undefined);
+        this.onReloadData();
+      });
+  }
 }

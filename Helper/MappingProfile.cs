@@ -61,6 +61,7 @@ namespace VipcoQualityControl.Helper
                 .ForMember(x => x.ParentRequireQc,o => o.Ignore())
                 .ForMember(x => x.WorkQualityControl,o => o.Ignore())
                 .ForMember(x => x.RequireHasAttaches,o => o.Ignore())
+                .ForMember(x => x.RequireQcMoreWorkActvities,o => o.Ignore())
                 .ForMember(x => x.WorkGroupQualityControl, o => o.Ignore());
             CreateMap<RequireQualityControlViewModel, RequireQualityControl>();
             #endregion
@@ -70,6 +71,12 @@ namespace VipcoQualityControl.Helper
             CreateMap<RequireHasMasterProject, RequireHasMasterProjectViewModel>()
                 .ForMember(x => x.MarkNoString,
                             o => o.MapFrom(s => s.MasterProjectList == null ? "No Data" : s.MasterProjectList.MarkNo))
+                .ForMember(x => x.DrawingNo,
+                            o => o.MapFrom(s => s.MasterProjectList == null ? "No Data" : s.MasterProjectList.DrawingNo))
+                .ForMember(x => x.UnitNo,
+                            o => o.MapFrom(s => s.MasterProjectList == null ? 0 : s.MasterProjectList.UnitNo))
+                .ForMember(x => x.Box,
+                            o => o.MapFrom(s => s.MasterProjectList == null ? 0 : s.MasterProjectList.Box))
                 .ForMember(x => x.MasterProjectList, o => o.Ignore())
                 .ForMember(x => x.RequireQualityControl,o => o.Ignore());
 
@@ -132,6 +139,26 @@ namespace VipcoQualityControl.Helper
                             o => o.MapFrom(s => s.RequireQualityControl == null ? "NoData" : s.RequireQualityControl.WorkGroupQualityControl.Name))
                 .ForMember(x => x.QualityControlStatusString, o => o.MapFrom(s => System.Enum.GetName(typeof(QualityControlStatus), s.QualityControlStatus)))
                 .ForMember(x => x.RequireQualityControl,o => o.Ignore());
+
+            #endregion
+
+            #region QualityControlWelding
+
+            CreateMap<QualityControlWelding, QualityControlWeldingViewModel>()
+                .ForMember(x => x.ParentQcWelding, o => o.Ignore())
+                .ForMember(x => x.QualityControlReason, o => o.Ignore())
+                .ForMember(x => x.RequireQualityControlNo,o => 
+                                o.MapFrom(s => s.RequireQualityControl == null ? "-" : s.RequireQualityControl.RequireQualityNo))
+                .ForMember(x => x.RequireQualityControl, o => o.Ignore());
+
+            #endregion
+
+            #region RequireQcMoreWorkActvity
+
+            CreateMap<RequireQcMoreWorkActvity, RequireQcMoreWorkActvityViewModel>()
+                .ForMember(x => x.WorkActivityName, o => o.MapFrom(s => s.WorkActivity.Name))
+                .ForMember(x => x.RequireQualityControl, o => o.Ignore())
+                .ForMember(x => x.WorkActivity, o => o.Ignore());
 
             #endregion
         }

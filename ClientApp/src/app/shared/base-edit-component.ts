@@ -43,6 +43,10 @@ export abstract class BaseEditComponent<Model, Service>
     if (!this.editValueForm) { return; }
     const form = this.editValueForm;
     // on form valid or not
+
+    //debug here
+    // console.log(JSON.stringify(form.value));
+
     this.onFormValid(form.valid);
   }
   // on valid data

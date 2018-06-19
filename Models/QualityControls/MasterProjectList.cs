@@ -20,6 +20,8 @@ namespace VipcoQualityControl.Models.QualityControls
         public string DrawingNo { get; set; }
         [StringLength(200)]
         public string MarkNo { get; set; }
+        public int? UnitNo { get; set; }
+        public int? Box { get; set; }
         public double? Length { get; set; }
         public double? Width { get; set; }
         public double? Heigth { get; set; }

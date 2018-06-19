@@ -140,7 +140,7 @@
         </td>
         <!--Col4-->
         <td colspan="3" class="label text-left line-no-btm">
-          &nbsp;&nbsp;&nbsp;[&nbsp;&radic;&nbsp;] ในโรงงาน
+          &nbsp;&nbsp;&nbsp;[&nbsp;{{ReportData.Branch !== 'Subcontract' ? '&radic;' : '&nbsp;'}}&nbsp;] ในโรงงาน
         </td>
       </tr>
       <tr>
@@ -179,7 +179,7 @@
         </td>
         <!--Col4-->
         <td colspan="3" class="label text-left line-no-top">
-          &nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;] นอกสถานที่ &nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;[&nbsp;{{ReportData.Branch === 'Subcontract' ? '&radic;' : '&nbsp;'}}&nbsp;] นอกสถานที่ &nbsp;&nbsp;&nbsp;
         </td>
       </tr>
       <tr>
@@ -614,7 +614,7 @@
           {{item.RowNumber}}
         </td>
         <td class="label text-left line-btm line-right" colspan="3">
-          {{item.DrawingNo || "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-"}}
+          &nbsp;{{item.DrawingNo || "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-"}}
         </td>
         <td class="label text-center line-btm line-right" colspan="2">
           {{item.MarkNo || "-"}}
@@ -626,16 +626,16 @@
           {{item.Box}}
         </td>
         <td class="label text-center line-btm line-right" colspan="1">
-          {{item.Unit}}
+          {{item.UnitNo}}
         </td>
         <td class="label text-center line-btm line-right" colspan="1">
           {{item.Quantity}}
         </td>
         <td class="label text-center line-btm line-right" colspan="1">
-          {{item.TestResult || "-"}}
+          {{item.TestResult || ""}}
         </td>
         <td class="label text-center line-btm line-right" colspan="1">
-          {{item.Remark || "-"}}
+          {{item.Remark || ""}}
         </td>
       </tr>
     </tbody>

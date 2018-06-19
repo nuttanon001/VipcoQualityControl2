@@ -51,7 +51,8 @@
         </a>
         <mat-menu class="mouseleave" #menu2="matMenu" [overlapTrigger]="true">
           <div (mouseleave)="menuOnCloseMenu(2)" style="padding-top:20px;">
-            <button mat-menu-item [routerLink]="['/require-qc/require-waiting']" routerLinkActive="active">
+            <!-- get data require-waiting only waiting  -->
+            <button mat-menu-item [routerLink]="['/require-qc/require-waiting','1']" routerLinkActive="active">
               <mat-icon>date_range</mat-icon>
               <span>&nbsp;Require-Schedule&nbsp;</span>
             </button>
@@ -85,22 +86,27 @@
         </mat-menu>
       </li>
 
-      <!--<li class="nav-item mx-1" *ngIf="GetLevel3">
+      <li class="nav-item mx-1" *ngIf="GetLevel2">
         <a #subMenu2="matMenuTrigger" [matMenuTriggerFor]="menu3"
            (mouseover)="menuOnOpenMenu(3)"
            class="nav-link">
           <i class="fa fa-home fa-lg" aria-hidden="true"></i>
-          For Admin
+          For Welder
         </a>
         <mat-menu class="mouseleave" #menu3="matMenu" [overlapTrigger]="true">
           <div (mouseleave)="menuOnCloseMenu(3)" style="padding-top:20px;">
-            <button mat-menu-item [routerLink]="['/branch']" routerLinkActive="active">
-              <mat-icon>room</mat-icon>
-              <span>&nbsp;Branch&nbsp;</span>
+            <!-- get data require-waiting only waiting  -->
+            <button mat-menu-item [routerLink]="['/require-qc/require-waiting','2']" routerLinkActive="active">
+              <mat-icon>date_range</mat-icon>
+              <span>&nbsp;Require-NDE-Welding&nbsp;</span>
+            </button>
+            <button mat-menu-item [routerLink]="['/qc-welder']" routerLinkActive="active">
+              <mat-icon>timeline</mat-icon>
+              <span>&nbsp;NDE Welder&nbsp;</span>
             </button>
           </div>
         </mat-menu>
-      </li>-->
+      </li>
     </ul>
 
     <ul class="navbar-nav">

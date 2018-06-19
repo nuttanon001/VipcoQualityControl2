@@ -33,7 +33,7 @@ export class WorkgroupQcEditComponent extends BaseEditComponent<WorkGroupQc, Wor
   }
 
   // Parameter
-
+  haveEmail = true;
   // on get data by key
   onGetDataByKey(value?: WorkGroupQc): void {
     if (value) {
@@ -57,6 +57,11 @@ export class WorkgroupQcEditComponent extends BaseEditComponent<WorkGroupQc, Wor
         [
           Validators.required,
           Validators.maxLength(50)
+        ]
+      ],
+      Email: [this.editValue.Email,
+        [
+          Validators.maxLength(250) 
         ]
       ],
       Description: [this.editValue.Description,

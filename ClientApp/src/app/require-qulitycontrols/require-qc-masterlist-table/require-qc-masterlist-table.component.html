@@ -21,12 +21,26 @@
         </mat-checkbox>
       </mat-cell>
     </ng-container>
+    <!-- DrawingNo Column -->
+    <ng-container matColumnDef="DrawingNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        DrawingNo
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ row.DrawingNo }}</mat-cell>
+    </ng-container>
     <!-- MarkNo Column -->
     <ng-container matColumnDef="MarkNo">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         MarkNo
       </mat-header-cell>
       <mat-cell *matCellDef="let row">{{ row.MarkNo }}</mat-cell>
+    </ng-container>
+    <!--UnitNo Column-->
+    <ng-container matColumnDef="UnitNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        UnitNo
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row.UnitNo | number) || '-' }}</mat-cell>
     </ng-container>
     <!-- Quantity Column -->
     <ng-container matColumnDef="Quantity">
@@ -35,14 +49,14 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let row">{{ row.Quantity | number }}</mat-cell>
     </ng-container>
-    <!--FailQuantity-->
+    <!--FailQuantity Column-->
     <ng-container matColumnDef="FailQuantity">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         FailQuantity
       </mat-header-cell>
       <mat-cell *matCellDef="let row">{{ row.FailQuantity | number }}</mat-cell>
     </ng-container>
-    RemarkExter
+    <!--RemarkExter Column-->
     <ng-container matColumnDef="RemarkExter">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         Remark
@@ -75,4 +89,3 @@
                  [showFirstLastButtons]="true">
   </mat-paginator>
 </div>
-

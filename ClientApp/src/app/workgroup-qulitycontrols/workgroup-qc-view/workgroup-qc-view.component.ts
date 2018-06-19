@@ -17,7 +17,7 @@ export class WorkgroupQcViewComponent extends BaseViewComponent<WorkGroupQc> {
     super();
     this.titelLabel = "Workgroup Quailtycontrol information view";
   }
-
+  haveEmail: boolean = true;
   // load more data
   onLoadMoreData(workgroupQc: WorkGroupQc) {
   }

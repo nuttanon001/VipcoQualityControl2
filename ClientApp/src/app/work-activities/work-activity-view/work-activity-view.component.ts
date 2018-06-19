@@ -8,7 +8,7 @@ import { BaseViewComponent } from "../../shared/base-view-component";
 
 @Component({
   selector: 'app-work-activity-view',
-  templateUrl: '../../shared/base-view-component.html',
+  templateUrl: './work-activity-view.component.html',
   styleUrls: ['./work-activity-view.component.scss']
 })
 

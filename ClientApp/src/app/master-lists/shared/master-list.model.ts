@@ -12,7 +12,9 @@ export interface MasterList extends BaseModel {
   Heigth? : number;
   Weigth? : number;
   Quantity? : number;
-  Revised? : number;
+  Revised?: number;
+  UnitNo?: number;
+  Box?: number;
   //FK
   ProjectCodeDetailId? : number;
   //ViewModel

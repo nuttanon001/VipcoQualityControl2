@@ -5,6 +5,7 @@ import { RequireQcViewComponent } from '../../require-qulitycontrols/require-qc-
 // Services
 import { MasterListService } from '../../master-lists/shared/master-list.service';
 import { RequireQualityControlService } from '../../require-qulitycontrols/shared/require-qc.service';
+import { RequireMoreWorkactivityService } from '../../require-qulitycontrols/shared/require-more-workactivity.service';
 
 @Component({
   selector: 'app-quality-control-has-require',
@@ -17,8 +18,9 @@ export class QualityControlHasRequireComponent extends RequireQcViewComponent {
   constructor(
     service: RequireQualityControlService,
     serviceMasterList: MasterListService,
+    serviceMoreWorkActivities: RequireMoreWorkactivityService,
   ) {
-    super(service, serviceMasterList);
+    super(service, serviceMasterList, serviceMoreWorkActivities);
     this.noMasterList = true;
   }
 }

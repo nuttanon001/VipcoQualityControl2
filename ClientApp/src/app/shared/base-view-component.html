@@ -13,6 +13,13 @@
           <div class="my-value">
             {{displayValue.Name || "-"}}
           </div>
+
+          <div class="my-label" *ngIf="haveEmail">
+            Mail :
+          </div>
+          <div class="my-value" *ngIf="haveEmail">
+            {{displayValue.Email || "-"}}
+          </div>
         </div>
 
         <div class="row my-1">

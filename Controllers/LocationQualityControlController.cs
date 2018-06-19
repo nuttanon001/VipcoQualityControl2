@@ -135,17 +135,33 @@ namespace VipcoQualityControl.Controllers
                     return BadRequest();
                 // +7 Hour
                 record = this.helper.AddHourMethod(record);
+                var updateList = new List<WorkGroupHasWorkShop>();
 
                 if (record.GetType().GetProperty("CreateDate") != null)
                     record.GetType().GetProperty("CreateDate").SetValue(record, DateTime.Now);
 
                 if (record.WorkGroupHasWorkShops != null)
                 {
-                    foreach(var item in record.WorkGroupHasWorkShops)
+                    var removeList = new List<WorkGroupHasWorkShop>();
+                    foreach (var item in record.WorkGroupHasWorkShops)
                     {
                         if (item == null) continue;
-                        item.CreateDate = record.CreateDate;
-                        item.Creator = record.Creator;
+
+                        Expression<Func<WorkGroupHasWorkShop, bool>> expression = w => w.GroupMis == item.GroupMis;
+                        if (await this.repositoryWorkShop.AnyDataAsync(expression))
+                            removeList.Add(item);
+                        else
+                        {
+                            item.CreateDate = record.CreateDate;
+                            item.Creator = record.Creator;
+                        }
+                    }
+
+                    if (removeList.Any())
+                    {
+                        // DeepCopy
+                        updateList = removeList.ToList();
+                        removeList.ForEach(item => record.WorkGroupHasWorkShops.Remove(item));
                     }
                 }
 
@@ -154,6 +170,24 @@ namespace VipcoQualityControl.Controllers
 
                 if (record.WorkGroupHasWorkShops != null)
                     record.WorkGroupHasWorkShops = null;
+
+                if (updateList.Any())
+                {
+                    foreach(var item in updateList)
+                    {
+                        Expression<Func<WorkGroupHasWorkShop, bool>> expression = w => w.GroupMis == item.GroupMis;
+                        var updateData = await this.repositoryWorkShop.FindAsync(expression);
+
+                        if (updateData != null)
+                        {
+                            updateData.LocationQualityControlId = record.LocationQualityControlId;
+                            updateData.ModifyDate = record.CreateDate;
+                            updateData.Modifyer = record.Creator;
+
+                            await this.repositoryWorkShop.UpdateAsync(updateData, updateData.WorkGroupHasWorkShopId);
+                        }
+                    }
+                }
 
                 return new JsonResult(record, this.DefaultJsonSettings);
             }
@@ -215,16 +249,30 @@ namespace VipcoQualityControl.Controllers
                         await this.repositoryWorkShop.DeleteAsync(item.WorkGroupHasWorkShopId);
                 }
                 //Update RequisitionStockSps or New RequisitionStockSps
-                foreach (var item in record.WorkGroupHasWorkShops)
+                foreach (var item1 in record.WorkGroupHasWorkShops)
                 {
-                    if (item == null)
+                    if (item1 == null)
                         continue;
-                    item.LocationQualityControlId = record.LocationQualityControlId;
+                    item1.LocationQualityControlId = record.LocationQualityControlId;
 
-                    if (item.WorkGroupHasWorkShopId > 0)
-                        await this.repositoryWorkShop.UpdateAsync(item, item.WorkGroupHasWorkShopId);
+                    if (item1.WorkGroupHasWorkShopId > 0)
+                        await this.repositoryWorkShop.UpdateAsync(item1, item1.WorkGroupHasWorkShopId);
                     else
-                        await this.repositoryWorkShop.AddAsync(item);
+                    {
+                        Expression<Func<WorkGroupHasWorkShop, bool>> expression = w => w.GroupMis == item1.GroupMis;
+                        var updateData = await this.repositoryWorkShop.FindAsync(expression);
+                        if (updateData != null)
+                        {
+                            updateData.LocationQualityControlId = record.LocationQualityControlId;
+                            updateData.ModifyDate = record.ModifyDate;
+                            updateData.Modifyer = record.Modifyer;
+
+                            await this.repositoryWorkShop.UpdateAsync(updateData, updateData.WorkGroupHasWorkShopId);
+                        }
+                        else
+                            await this.repositoryWorkShop.AddAsync(item1);
+
+                    }
                 }
             }
 

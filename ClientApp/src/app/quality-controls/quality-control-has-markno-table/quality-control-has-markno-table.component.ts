@@ -22,7 +22,8 @@ export class QualityControlHasMarknoTableComponent extends BaseTableFontData<Req
     private service:QcReasonsService
   ) {
     super();
-    this.displayedColumns = ["MarkNoString", "Quantity", "PassQuantity","QualityControlReasonId","edit"];
+    this.displayedColumns = ["DrawingNo","MarkNoString", "UnitNo","Box",
+      "Quantity", "PassQuantity", "QualityControlReasonId", "edit"];
   }
   // Parameter
   qcReasons: Array<QcReasons>;

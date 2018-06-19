@@ -1,0 +1,15 @@
+@import "../../shared/styles/table.style.scss";
+
+.fail-item {
+  /deep/ .mat-input-underline {
+    background-color: maroon; /* replace this color with your accent color hex code */
+    border-bottom: 2px;
+  }
+  /*border-bottom: 1px solid gold !important;*/
+}
+
+.pass-item {
+  /deep/ .mat-input-underline {
+    background-color: forestgreen; /* replace this color with your accent color hex code */
+  }
+}

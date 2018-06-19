@@ -15,7 +15,7 @@ namespace VipcoQualityControl.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.0-rc1-32029")
+                .HasAnnotation("ProductVersion", "2.1.0-rtm-30799")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -120,6 +120,8 @@ namespace VipcoQualityControl.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int?>("Box");
+
                     b.Property<DateTime?>("CreateDate");
 
                     b.Property<string>("Creator")
@@ -154,6 +156,8 @@ namespace VipcoQualityControl.Migrations
                         .HasMaxLength(200);
 
                     b.Property<int?>("Revised");
+
+                    b.Property<int?>("UnitNo");
 
                     b.Property<double?>("Weigth");
 
@@ -258,6 +262,70 @@ namespace VipcoQualityControl.Migrations
                     b.ToTable("QualityControlResult");
                 });
 
+            modelBuilder.Entity("VipcoQualityControl.Models.QualityControls.QualityControlWelding", b =>
+                {
+                    b.Property<int>("QualityControlWeldingId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("CreateDate");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(50);
+
+                    b.Property<double?>("FailLength");
+
+                    b.Property<int?>("JointNo");
+
+                    b.Property<string>("MarkNo")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("MarkNoPreview")
+                        .HasMaxLength(100);
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<string>("Modifyer")
+                        .HasMaxLength(50);
+
+                    b.Property<int?>("ParentQcWeldingId");
+
+                    b.Property<string>("ProcessWeld")
+                        .HasMaxLength(100);
+
+                    b.Property<int?>("ProjectCodeMasterId");
+
+                    b.Property<int?>("QualityControlReasonId");
+
+                    b.Property<double?>("Reject");
+
+                    b.Property<string>("Remark")
+                        .HasMaxLength(250);
+
+                    b.Property<int?>("RequireQualityControlId");
+
+                    b.Property<string>("ResponseBy");
+
+                    b.Property<double?>("TestLength");
+
+                    b.Property<double?>("Thickness");
+
+                    b.Property<string>("WelderNo")
+                        .HasMaxLength(100);
+
+                    b.Property<DateTime>("WeldingDate");
+
+                    b.HasKey("QualityControlWeldingId");
+
+                    b.HasIndex("ParentQcWeldingId");
+
+                    b.HasIndex("QualityControlReasonId");
+
+                    b.HasIndex("RequireQualityControlId");
+
+                    b.ToTable("QualityControlWelding");
+                });
+
             modelBuilder.Entity("VipcoQualityControl.Models.QualityControls.RequireHasAttach", b =>
                 {
                     b.Property<int>("RequireHasAttachId")
@@ -320,6 +388,35 @@ namespace VipcoQualityControl.Migrations
                     b.HasIndex("RequireQualityControlId");
 
                     b.ToTable("RequireHasMasterProject");
+                });
+
+            modelBuilder.Entity("VipcoQualityControl.Models.QualityControls.RequireQcMoreWorkActvity", b =>
+                {
+                    b.Property<int>("RequireQcMoreWorkActvityId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime?>("CreateDate");
+
+                    b.Property<string>("Creator")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("ModifyDate");
+
+                    b.Property<string>("Modifyer")
+                        .HasMaxLength(50);
+
+                    b.Property<int?>("RequireQualityControlId");
+
+                    b.Property<int?>("WorkActivityId");
+
+                    b.HasKey("RequireQcMoreWorkActvityId");
+
+                    b.HasIndex("RequireQualityControlId");
+
+                    b.HasIndex("WorkActivityId");
+
+                    b.ToTable("RequireQcMoreWorkActvity");
                 });
 
             modelBuilder.Entity("VipcoQualityControl.Models.QualityControls.RequireQualityControl", b =>
@@ -412,6 +509,8 @@ namespace VipcoQualityControl.Migrations
                     b.Property<string>("Remark")
                         .HasMaxLength(200);
 
+                    b.Property<int>("TypeWorkActivity");
+
                     b.HasKey("WorkActivityId");
 
                     b.HasIndex("Name")
@@ -461,6 +560,9 @@ namespace VipcoQualityControl.Migrations
 
                     b.Property<string>("Description")
                         .HasMaxLength(200);
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(250);
 
                     b.Property<DateTime?>("ModifyDate");
 
@@ -528,6 +630,21 @@ namespace VipcoQualityControl.Migrations
                         .HasForeignKey("VipcoQualityControl.Models.QualityControls.QualityControlResult", "RequireQualityControlId");
                 });
 
+            modelBuilder.Entity("VipcoQualityControl.Models.QualityControls.QualityControlWelding", b =>
+                {
+                    b.HasOne("VipcoQualityControl.Models.QualityControls.QualityControlWelding", "ParentQcWelding")
+                        .WithMany()
+                        .HasForeignKey("ParentQcWeldingId");
+
+                    b.HasOne("VipcoQualityControl.Models.QualityControls.QualityControlReason", "QualityControlReason")
+                        .WithMany()
+                        .HasForeignKey("QualityControlReasonId");
+
+                    b.HasOne("VipcoQualityControl.Models.QualityControls.RequireQualityControl", "RequireQualityControl")
+                        .WithMany()
+                        .HasForeignKey("RequireQualityControlId");
+                });
+
             modelBuilder.Entity("VipcoQualityControl.Models.QualityControls.RequireHasAttach", b =>
                 {
                     b.HasOne("VipcoQualityControl.Models.QualityControls.RequireQualityControl", "RequireQualityControl")
@@ -548,6 +665,17 @@ namespace VipcoQualityControl.Migrations
                     b.HasOne("VipcoQualityControl.Models.QualityControls.RequireQualityControl", "RequireQualityControl")
                         .WithMany("RequireHasMasterProjects")
                         .HasForeignKey("RequireQualityControlId");
+                });
+
+            modelBuilder.Entity("VipcoQualityControl.Models.QualityControls.RequireQcMoreWorkActvity", b =>
+                {
+                    b.HasOne("VipcoQualityControl.Models.QualityControls.RequireQualityControl", "RequireQualityControl")
+                        .WithMany("RequireQcMoreWorkActvities")
+                        .HasForeignKey("RequireQualityControlId");
+
+                    b.HasOne("VipcoQualityControl.Models.QualityControls.WorkActivity", "WorkActivity")
+                        .WithMany()
+                        .HasForeignKey("WorkActivityId");
                 });
 
             modelBuilder.Entity("VipcoQualityControl.Models.QualityControls.RequireQualityControl", b =>

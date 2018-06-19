@@ -21,6 +21,9 @@ import { RequireHasMasterService } from '../require-qulitycontrols/shared/requir
 import { MasterListService } from '../master-lists/shared/master-list.service';
 import { QualityControlReportComponent } from './quality-control-report/quality-control-report.component';
 import { QcReasonsService } from '../quality-control-reasons/shared/qc-reasons.service';
+import { RequireMoreWorkactivityService } from '../require-qulitycontrols/shared/require-more-workactivity.service';
+import { QualityControlHasWeldeTableComponent } from './quality-control-has-welde-table/quality-control-has-welde-table.component';
+import { QcWelderService } from '../quality-control-welders/shared/qc-welder.service';
 
 @NgModule({
   imports: [
@@ -39,7 +42,8 @@ import { QcReasonsService } from '../quality-control-reasons/shared/qc-reasons.s
     QualityControlEditComponent,
     //QualityControlHasRequireComponent,
     //QualityControlHasMarknoTableComponent,
-    QualityControlReportComponent
+    QualityControlReportComponent,
+    QualityControlHasWeldeTableComponent
   ],
   providers: [
     RequireQualityControlService,
@@ -48,6 +52,8 @@ import { QcReasonsService } from '../quality-control-reasons/shared/qc-reasons.s
     QualityControlService,
     QualityControlCommunicateService,
     QcReasonsService,
+    RequireMoreWorkactivityService,
+    QcWelderService,
   ]
 })
 export class QualityControlModule { }

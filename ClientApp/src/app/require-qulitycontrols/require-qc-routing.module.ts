@@ -12,6 +12,11 @@ const routes: Routes = [
     component: RequireQcCenterComponent,
     children: [
       {
+        path: "require-waiting/:condition",
+        component: RequireQcWaitingComponent,
+        canActivate: [AuthGuard],
+      },
+      {
         path: "require-waiting",
         component: RequireQcWaitingComponent,
         canActivate: [AuthGuard],

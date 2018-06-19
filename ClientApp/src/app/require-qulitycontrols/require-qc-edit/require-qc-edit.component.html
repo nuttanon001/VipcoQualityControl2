@@ -106,11 +106,19 @@
                 <div class="right-content">
                   <mat-form-field>
                     <mat-select placeholder="WorkActivity"
-                                required [disabled]="forFail"
-                                id="WorkActivityId" formControlName="WorkActivityId">
-                      <mat-option *ngFor="let workActivitie of workActivities" [value]="workActivitie.WorkActivityId">
-                        {{ workActivitie.Name }}
-                      </mat-option>
+                                required [disabled]="forFail" multiple
+                                id="MoreWorkActvities" formControlName="MoreWorkActvities">
+                      <mat-select-trigger>
+                        {{editValueForm.controls.MoreWorkActvities.value ? editValueForm.controls.MoreWorkActvities.value[0].Name : ''}}
+                        <span *ngIf="editValueForm?.controls?.MoreWorkActvities?.value?.length > 1">
+                          (+{{editValueForm.controls.MoreWorkActvities.value.length - 1}} others)
+                        </span>
+                      </mat-select-trigger>
+                      <mat-optgroup *ngFor="let object of workActivities | groupby:'TypeWorkActivity'" [label]="object.key === '1' ? 'QC' : (object.key === '2' ? 'NDE' : '-')">
+                        <mat-option *ngFor="let workActivitie of object.value" [value]="workActivitie">
+                          {{ workActivitie.Name }} | {{ workActivitie.TypeWorkActivity === 1 ? 'QC' : ( workActivitie.TypeWorkActivity === 2 ? 'NDE' : '-') }}
+                        </mat-option>
+                      </mat-optgroup>
                     </mat-select>
                   </mat-form-field>
                 </div>

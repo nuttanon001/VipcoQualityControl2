@@ -26,6 +26,7 @@ import { QualityControlService } from '../quality-controls/shared/quality-contro
 import { WorkGroupQcService } from '../workgroup-qulitycontrols/shared/workgroup-qc.service';
 import { InspectionPointService } from '../inspection-points/shared/inspection-point.service';
 import { RequireQualityControlService, RequireQualityControlCommunicateService } from './shared/require-qc.service';
+import { RequireMoreWorkactivityService } from './shared/require-more-workactivity.service';
 
 @NgModule({
   imports: [
@@ -58,6 +59,7 @@ import { RequireQualityControlService, RequireQualityControlCommunicateService }
     RequireHasMasterService,
     RequireQualityControlService,
     RequireQualityControlCommunicateService,
+    RequireMoreWorkactivityService,
   ]
 })
 export class RequireQcModule { }

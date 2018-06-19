@@ -1,6 +1,6 @@
 <div class="master-container" *ngIf="!loadReport;else LoadReportBlock">
   <div class="child-col-container">
-    <h4>Require Quality Control schedule </h4>
+    <h4> {{status === 1 ? 'Require Quality Control schedule' : 'Require Welding schedule'}} </h4>
     <form [formGroup]="reportForm" class="form-content">
       <div>
         <i class="fa fa-search" aria-hidden="true"></i>

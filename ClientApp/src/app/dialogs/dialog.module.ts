@@ -29,6 +29,7 @@ import { RequireQcViewExtendComponent } from './require-qc-dialog/require-qc-vie
 import { RequireQcChangeDialogComponent } from './require-qc-dialog/require-qc-change-dialog.component';
 import { QualitycontrolDialogComponent } from './qualitycontrol-dialog/qualitycontrol-dialog.component';
 import { QualitycontrolViewExtendComponent } from "./qualitycontrol-dialog/qualitycontrol-view-extend.component";
+import { QualityControlWeldersDialogComponent } from './quality-control-welders-dialog/quality-control-welders-dialog.component';
 
 @NgModule({
   imports: [
@@ -61,6 +62,7 @@ import { QualitycontrolViewExtendComponent } from "./qualitycontrol-dialog/quali
     RequireQcChangeDialogComponent,
     QualitycontrolDialogComponent,
     QualitycontrolViewExtendComponent,
+    QualityControlWeldersDialogComponent,
   ],
   providers: [
     DialogsService,
@@ -85,6 +87,7 @@ import { QualitycontrolViewExtendComponent } from "./qualitycontrol-dialog/quali
     RequireQcChangeDialogComponent,
     QualitycontrolDialogComponent,
     QualitycontrolViewExtendComponent,
+    QualityControlWeldersDialogComponent,
   ],
 })
 export class DialogsModule { }

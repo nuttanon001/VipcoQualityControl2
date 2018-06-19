@@ -8,37 +8,17 @@ namespace VipcoQualityControl.Services
 {
     public interface IRepositoryMachine<TEntity> where TEntity : class
     {
-        TEntity Get(string TEntityId);
-        TEntity Get(int id);
+        TEntity Get(string id, bool option = false);
+        TEntity Get(int id, bool option = false);
         Task<TEntity> GetAsync(int id, bool option = false);
-        Task<TEntity> GetAsync(string TEntityId);
-        Task<TEntity> GetAsynvWithIncludes(int id, string PkName, List<string> Includes = null);
+        Task<TEntity> GetAsync(string id, bool option = false);
         IQueryable<TEntity> GetAllAsQueryable();
-        Task<ICollection<TEntity>> GetAllAsync();
-        Task<ICollection<TEntity>> GetAllWithRelateAsync(Expression<Func<TEntity, bool>> match = null);
-        Task<ICollection<TEntity>> GetAllWithConditionAndIncludeAsync(
-            Expression<Func<TEntity, bool>> Condition = null, List<string> Includes = null);
-        Task<ICollection<TEntity>> GetAllWithIncludeAsync
-            (List<Expression<Func<TEntity, object>>> relates);
-        Task<ICollection<TEntity>> GetAllWithInclude2Async(List<string> includes);
-        Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> match);
-        TEntity Find(Expression<Func<TEntity, bool>> match);
-        Task<ICollection<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> match);
-        ICollection<TEntity> FindAll(Expression<Func<TEntity, bool>> match);
-        Task<ICollection<TEntity>> FindAllWithIncludeAsync
-            (Expression<Func<TEntity, bool>> match, List<Expression<Func<TEntity, object>>> relates);
-        ICollection<TEntity> FindAllWithLazyLoad
-            (Expression<Func<TEntity, bool>> match,
-            List<Expression<Func<TEntity, object>>> relates,
-            int Skip, int Row,
-            Expression<Func<TEntity, string>> order = null,
-            Expression<Func<TEntity, string>> orderDesc = null);
-        Task<ICollection<TEntity>> FindAllWithLazyLoadAsync
-            (Expression<Func<TEntity, bool>> match,
-            List<Expression<Func<TEntity, object>>> relates,
-            int Skip, int Row,
-            Expression<Func<TEntity, string>> order = null,
-            Expression<Func<TEntity, string>> orderDesc = null);
+        Task<ICollection<TEntity>> GetAllAsync(bool option = false);
+        Task<ICollection<TEntity>> GetAllWithConditionAsync(Expression<Func<TEntity, bool>> match = null, bool option = false);
+        TEntity Find(Expression<Func<TEntity, bool>> match, bool option = false);
+        Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> match, bool option = false);
+        ICollection<TEntity> FindAll(Expression<Func<TEntity, bool>> match, bool option = false);
+        Task<ICollection<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> match, bool option = false);
         TEntity Add(TEntity nTEntity);
         Task<TEntity> AddAsync(TEntity nTEntity);
         Task<IEnumerable<TEntity>> AddAllAsync(IEnumerable<TEntity> nTEntityList);
@@ -47,8 +27,9 @@ namespace VipcoQualityControl.Services
         TEntity Update(TEntity updated, string key);
         TEntity Update(TEntity updated, int key);
         void Delete(int key);
-        Task<int> DeleteAsync(string TEntityId);
+        void Delete(string key);
         Task<int> DeleteAsync(int key);
+        Task<int> DeleteAsync(string key);
         Task<int> CountAsync();
         int CountWithMatch(Expression<Func<TEntity, bool>> match);
         Task<int> CountWithMatchAsync(Expression<Func<TEntity, bool>> match);
