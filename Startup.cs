@@ -45,7 +45,8 @@ namespace VipcoQualityControl
                 option.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("MachineConnection")));
             // Add Repositoy
             services.AddTransient(typeof(IRepositoryQualityControl<>), typeof(RepositoryQualityControl<>))
-                    .AddTransient(typeof(IRepositoryMachine<>), typeof(RepositoryMachine<>));
+                    .AddTransient(typeof(IRepositoryMachine<>), typeof(RepositoryMachine<>))
+                    .AddTransient<IViewRenderService, ViewRenderService>();
             // ServerCache and Session
             //services.AddDistributedSqlServerCache(options => {
             //    options.ConnectionString = Configuration.GetConnectionString("QualityControlConnection");

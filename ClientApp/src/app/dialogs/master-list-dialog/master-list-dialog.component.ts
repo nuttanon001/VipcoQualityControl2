@@ -53,7 +53,11 @@ export class MasterListDialogComponent implements OnInit {
           Validators.maxLength(200)
         ]
       ],
-      Remark: [this.masterList.Remark],
+      Remark: [this.masterList.Remark,
+        [
+          Validators.maxLength(200)
+        ]
+      ],
       DrawingNo: [this.masterList.DrawingNo,
         [
           Validators.required,
@@ -63,7 +67,7 @@ export class MasterListDialogComponent implements OnInit {
       MarkNo: [this.masterList.MarkNo,
         [
           Validators.required,
-          Validators.maxLength(150),
+          Validators.maxLength(200),
         ]
       ],
       Length: [this.masterList.Length],

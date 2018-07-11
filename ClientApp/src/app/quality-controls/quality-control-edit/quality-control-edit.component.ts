@@ -51,6 +51,12 @@ export class QualityControlEditComponent extends BaseEditComponent<QualityContro
       this.service.getOneKeyNumber(value)
         .subscribe(dbData => {
           this.editValue = dbData;
+          if (this.editValue.QualityControlResultDate) {
+            this.editValue.QualityControlResultDate = new Date(this.editValue.QualityControlResultDate);
+            // TimeString
+            this.editValue.QualityControlResultTimeString = (new Date(this.editValue.QualityControlResultDate.getTime())).toLocaleTimeString("th-TH", { hour12: false });
+            this.editValue.QualityControlResultTime = this.editValue.QualityControlResultTimeString;
+          }
         }, error => console.error(error), () => {
           this.buildForm();
           if (this.editValue.RequireQualityControlId) {

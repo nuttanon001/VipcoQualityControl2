@@ -60,7 +60,8 @@
                 'is-wait': row.RequireStatus === 2 || row.RequireStatus === 3 || row.RequireStatus === 4,
                 'is-complate' : row.RequireStatus === 5,
                 'is-cancel' : row.RequireStatus === 6 || row.RequireStatus === 7,
-                'is-revise' : row.RequireStatus === 8}"
+                'is-revise' : row.RequireStatus === 8,
+                'is-req-welded' : row.RequireStatus === 9 || row.RequireStatus === 10}"
              (click)="selection.toggle(row)"></mat-row>
   </mat-table>
 

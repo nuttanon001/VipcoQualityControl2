@@ -72,8 +72,10 @@ export class QualityControlMasterComponent extends BaseMasterComponent<QualityCo
   onDetailEdit(editValue?: QualityControl): void {
     if (editValue) {
       if (editValue.QualityControlStatus !== QualityControlStatus.Processing) {
-        this.dialogsService.error("Access Deny", "การตรวจสอบคุณภาพ ได้รับการดำเนินการไม่สามารถแก้ไขได้ !!!", this.viewContainerRef);
-        return;
+        if (this.authService.getAuth.LevelUser < 3) {
+          this.dialogsService.error("Access Deny", "การตรวจสอบคุณภาพ ได้รับการดำเนินการไม่สามารถแก้ไขได้ !!!", this.viewContainerRef);
+          return;
+        }
       }
     }
     super.onDetailEdit(editValue);
@@ -107,12 +109,13 @@ export class QualityControlMasterComponent extends BaseMasterComponent<QualityCo
 
   // on back from report
   onBack(): void {
-    this.loadReport = !this.loadReport;
+    // this.loadReport = !this.loadReport;
     if (this.backToSchedule) {
       this.location.back();
     }
   }
 
+  // on save complete
   onSaveComplete(): void {
     this.dialogsService.context("System message", "Save completed.", this.viewContainerRef)
       .subscribe(result => {
@@ -122,6 +125,24 @@ export class QualityControlMasterComponent extends BaseMasterComponent<QualityCo
         this.editValue = undefined;
         this.onDetailView(undefined);
         this.onReloadData();
+      });
+  }
+
+  //////////////
+  // override //
+  //////////////
+  // on submit
+  onSubmit(): void {
+    this.dialogsService.confirm("Question Message", "Do you want to save result.",
+      this.viewContainerRef).subscribe(resutl => {
+        if (resutl) {
+          this.canSave = false;
+          if (this.editValue.Creator) {
+            this.onUpdateToDataBase(this.editValue);
+          } else {
+            this.onInsertToDataBase(this.editValue);
+          }
+        }
       });
   }
 }

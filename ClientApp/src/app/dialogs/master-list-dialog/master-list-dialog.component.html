@@ -13,9 +13,9 @@
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field hintLabel="*Required and max 150 characters">
+      <mat-form-field hintLabel="*Required and max 200 characters">
         <input matInput placeholder="Enter mark-no" [matAutocomplete]="markNoauto"
-               required maxlength="150"
+               required maxlength="200"
                formControlName="MarkNo">
 
         <mat-autocomplete #markNoauto="matAutocomplete">
@@ -24,7 +24,7 @@
           </mat-option>
         </mat-autocomplete>
 
-        <mat-hint [align]="end">{{editValueForm.controls.MarkNo.value?.length || 0}}/150</mat-hint>
+        <mat-hint [align]="end">{{editValueForm.controls.MarkNo.value?.length || 0}}/200</mat-hint>
         <mat-error *ngIf="editValueForm.controls.MarkNo.hasError('required')">
           MarkNo is <strong>required</strong>
         </mat-error>

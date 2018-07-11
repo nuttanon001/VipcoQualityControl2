@@ -43,6 +43,14 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
     }).pipe(catchError(
       this.handleError(this.serviceName + "/get require quality control schedule", new Array<any>())));
   }
+
+  // ===================== Cancel Require Quality Control ===\\
+  cancelRequireQualityControl(RequireQcId: number): Observable<RequireQc> {
+    return this.http.get<RequireQc>(`${this.baseUrl}CancelRequireQualityControl/`, {
+      params: new HttpParams().set("key", RequireQcId.toString())
+    }).pipe(catchError(this.handleError(this.serviceName + "/genarate from fail require quality contol", <RequireQc>{})));
+  }
+
   // ===================== GenarateFromFailRequireQualityControl ===\\
   getGenarateFromFailRequireQualityControl(parentRequireQcId: number): Observable<RequireQc> {
     return this.http.get<RequireQc>(`${this.baseUrl}GenarateFromFailRequireQualityControl/`, {

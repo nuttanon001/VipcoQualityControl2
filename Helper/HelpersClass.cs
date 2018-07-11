@@ -50,10 +50,10 @@ namespace VipcoQualityControl.Helper
             try
             {
                 using (SmtpClient client = new SmtpClient("mail.vipco-thai.com", 25)
-                {
-                    UseDefaultCredentials = false,
-                    EnableSsl = false,
-                })
+                    {
+                        UseDefaultCredentials = false,
+                        EnableSsl = false,
+                    })
                 {
                     MailMessage mailMessage = new MailMessage
                     {

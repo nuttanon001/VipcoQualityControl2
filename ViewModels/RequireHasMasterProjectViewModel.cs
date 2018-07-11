@@ -12,5 +12,7 @@ namespace VipcoQualityControl.ViewModels
         public string DrawingNo { get; set; }
         public int? UnitNo { get; set; }
         public int? Box { get; set; }
+        public string Name { get; set; }
+        public string QualityControlReasonString { get; set; }
     }
 }

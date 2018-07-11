@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Razor;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 
 using VipcoQualityControl.Services;
@@ -33,6 +35,7 @@ namespace VipcoQualityControl.Controllers
         private readonly IRepositoryMachine<Employee> repositoryEmployee;
         private readonly IRepositoryQualityControl<WorkGroupHasWorkShop> repositoryWorkShop;
         private readonly IRepositoryMachine<EmployeeGroupMis> repositoryGroupMis;
+        private readonly IViewRenderService viewRenderService;
         private readonly EmailClass EmailClass;
         public QualityControlResultController(IRepositoryQualityControl<QualityControlResult> repo,
             IRepositoryQualityControl<RequireHasMasterProject> repoRequireHasMaster,
@@ -43,6 +46,7 @@ namespace VipcoQualityControl.Controllers
             IRepositoryMachine<ProjectCodeDetail> repoProject,
             IRepositoryQualityControl<WorkGroupHasWorkShop> repoWorkShop,
             IRepositoryMachine<EmployeeGroupMis> repoGroupMis,
+            IViewRenderService viewRender,
             IMapper mapper) : base(repo, mapper) {
             //Repository Machine
             this.repositoryEmployee = repoEmployee;
@@ -56,6 +60,8 @@ namespace VipcoQualityControl.Controllers
             this.repositoryWorkShop = repoWorkShop;
             //Helper
             this.EmailClass = new EmailClass();
+            //Razor to string
+            this.viewRenderService = viewRender;
         }
 
         #region Private
@@ -77,7 +83,7 @@ namespace VipcoQualityControl.Controllers
                     HasData.ModifyDate = DateTime.Now;
 
                     await this.repositoryRequireQualityControl.UpdateAsync(HasData, HasData.RequireQualityControlId);
-                    await this.SendMail(QualityControl, Status);
+                    await this.SendMail2(QualityControl, Status);
                     return true;
                 }
             }
@@ -124,6 +130,64 @@ namespace VipcoQualityControl.Controllers
                         await this.EmailClass.SendMailMessage(HasRequire.MailReply, EmpName,
                                                    new List<string> { HasRequire.MailReply },
                                                    BodyMessage, "Notification mail from VIPCO Quality Control system.");
+
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        // Send Mail
+        private async Task<bool> SendMail2(QualityControlResult HasData, bool ShellYouCanPass)
+        {
+            if (HasData.RequireQualityControlId.HasValue)
+            {
+                var HasRequire = await this.repositoryRequireQualityControl.GetAsync(HasData.RequireQualityControlId.Value);
+                if (HasRequire != null)
+                {
+                    if (string.IsNullOrEmpty(HasRequire.MailReply))
+                        return false;
+
+                    var ListMail = new List<string>();
+                    if (HasRequire.MailReply.IndexOf(',') != -1)
+                        ListMail = HasRequire.MailReply.Split(',').ToList();
+                    else if (HasRequire.MailReply.IndexOf(';') != -1)
+                        ListMail = HasRequire.MailReply.Split(';').ToList();
+                    else
+                        ListMail.Add(HasRequire.MailReply);
+
+                    if (ListMail.Any())
+                    {
+                        var EmpName = (await this.repositoryEmployee.GetAsync(HasRequire.RequireEmp)).NameThai ?? "ไม่ระบุ";
+                        var ItemLists = await this.repositoryRequireHasMaster.GetAllAsQueryable()
+                                                .Where(x => x.RequireQualityControlId == HasData.RequireQualityControlId)
+                                                .Select(x => new RequireHasMasterProjectViewModel()
+                                                {
+                                                    DrawingNo = x.MasterProjectList.DrawingNo,
+                                                    MarkNoString = x.MasterProjectList.MarkNo,
+                                                    Box = x.MasterProjectList.Box,
+                                                    UnitNo = x.MasterProjectList.UnitNo,
+                                                    Quantity = x.Quantity,
+                                                    PassQuantity = x.PassQuantity,
+                                                    QualityControlReasonString = x.QualityControlReason != null ? x.QualityControlReason.Name : "-"
+                                                }).ToListAsync();
+
+                        var EmailTemplate = new EmailTemplateViewModel()
+                        {
+                            ToEmployeeName = $"คุณ{EmpName}",
+                            ItemLists = ItemLists,
+                            LinkToApp = $"http://{Request.Host}/qualitycontrol/require-qc/link-email/{HasData.RequireQualityControlId}",
+                            RequireNo = HasRequire.RequireQualityNo,
+                            ResultDate = HasData.QualityControlResultDate.Value.ToString("dd MMM yy"),
+                            Status = ShellYouCanPass
+                        };
+
+                        var result = await viewRenderService.RenderToStringAsync("Email/Result", EmailTemplate);
+
+                        await this.EmailClass.SendMailMessage(ListMail[0], EmpName,
+                                                   ListMail,
+                                                   result, "Notification mail from VIPCO Quality Control system.");
 
                         return true;
                     }
@@ -340,6 +404,10 @@ namespace VipcoQualityControl.Controllers
                         if (record.RequireQualityControl != null)
                             record.RequireQualityControl = null;
                     }
+
+                    // Status
+                    record.QualityControlStatus = HasFail ? QualityControlStatus.Failed : QualityControlStatus.Approved;
+                    await this.repository.UpdateAsync(record, key);
                 }
                 return new JsonResult(record, this.DefaultJsonSettings);
             }

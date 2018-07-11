@@ -64,7 +64,7 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
     }
 
     this.requireQc = new Array;
-    //this.buildForm();
+    this.buildForm();
 
     this.route.paramMap.subscribe((param: ParamMap) => {
       let key: number = Number(param.get("condition") || 0);
@@ -256,6 +256,16 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
               } else if (conditionNumber === 3) {
                 this.RequireQualityControlId = master.RequireQualityControlId;
                 this.loadReport = !this.loadReport;
+              } else if (conditionNumber === -2) {
+                this.serviceDialogs.confirm("Question Message", "Do you want to cancel requrie quality control?",
+                  this.viewContainerRef).subscribe(result => {
+                    if (result) {
+                      this.service.cancelRequireQualityControl(master.RequireQualityControlId)
+                        .subscribe(dbData => {
+                          setTimeout(() => { this.onGetData(this.reportForm.value); }, 750);
+                        });
+                    }
+                  });
               }
             }
           });

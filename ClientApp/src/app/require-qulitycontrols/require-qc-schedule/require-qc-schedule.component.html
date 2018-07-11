@@ -1,7 +1,10 @@
 <div class="master-container">
-  <div class="child-col-container" *ngIf="!isLinkMail">
-    <h4 class="text-primary">Quality Control Schedule </h4>
+  <div *ngIf="onLoading" class="loading-shade">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div class="child-col-container" *ngIf="!isLinkMail" style="min-height:80px;">
     <div class="child-row-container my-1">
+      <h5 class="text-primary">Quality Control Schedule </h5>
       <div style="margin-right:5px;color:forestgreen;">
         <i class="fa fa-square" aria-hidden="true"></i>
       </div> Request
@@ -12,55 +15,56 @@
         <i class="fa fa-circle text-danger" aria-hidden="true"></i>
       </div> Response
     </div>
-    <hr class="w-100 bg-info m-0" />
-    <form [formGroup]="reportForm" class="form-content m-0">
-      <div>
-        <i class="fa fa-search" aria-hidden="true"></i>
-        <mat-form-field>
-          <input matInput placeholder="Filter By Text" 
-                 id="Filter" formControlName="Filter">
-        </mat-form-field>
-      </div>
-      <div>
-        <i class="fa fa-product-hunt" aria-hidden="true"></i>
-        <mat-form-field>
-          <input matInput placeholder="Filter By Job" class="click-input"
-                 (click)="onShowDialog('Project')" readonly
-                 id="ProjectMasterString" formControlName="ProjectMasterString">
-        </mat-form-field>
-      </div>
-      <div>
-        <i class="fa fa-user-circle" aria-hidden="true"></i>
-        <mat-form-field>
-          <input matInput placeholder="Request By" class="click-input"
-                 (click)="onShowDialog('Employee')" readonly
-                 id="CreatorName" formControlName="CreatorName">
-        </mat-form-field>
-      </div>
-      <div>
-        <i aria-hidden="true"><mat-icon>group</mat-icon></i>
-        <mat-form-field>
-          <mat-select placeholder="Selected work of quailty control"
-                      id="WorkGroupQuailtyControlId" formControlName="WorkGroupQuailtyControlId">
-            <mat-option *ngFor="let workGroupQc of workGroupQcs" [value]="workGroupQc.WorkGroupQualityControlId">
-              {{ workGroupQc.Name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-      </div>
-      <div style="margin:0 0 10px 0;">
-        <button type="button" mat-mini-fab color="warn" (click)="resetFilter()"
-                matTooltip="Reset all filter" style="margin:4px;">
-          <i class="fa fa-2x fa-minus" aria-hidden="true" style="margin:0px;"></i>
-        </button>
-      </div>
-    </form>
+    <div class="my-1">
+      <form [formGroup]="reportForm" class="form-content m-0">
+        <div>
+          <i class="fa fa-search" aria-hidden="true"></i>
+          <mat-form-field>
+            <input matInput placeholder="Filter By Text"
+                   id="Filter" formControlName="Filter">
+          </mat-form-field>
+        </div>
+        <div>
+          <i class="fa fa-product-hunt" aria-hidden="true"></i>
+          <mat-form-field>
+            <input matInput placeholder="Filter By Job" class="click-input"
+                   (click)="onShowDialog('Project')" readonly
+                   id="ProjectMasterString" formControlName="ProjectMasterString">
+          </mat-form-field>
+        </div>
+        <div>
+          <i class="fa fa-user-circle" aria-hidden="true"></i>
+          <mat-form-field>
+            <input matInput placeholder="Request By" class="click-input"
+                   (click)="onShowDialog('Employee')" readonly
+                   id="CreatorName" formControlName="CreatorName">
+          </mat-form-field>
+        </div>
+        <div>
+          <i aria-hidden="true"><mat-icon>group</mat-icon></i>
+          <mat-form-field>
+            <mat-select placeholder="Selected work of quailty control"
+                        id="WorkGroupQuailtyControlId" formControlName="WorkGroupQuailtyControlId">
+              <mat-option *ngFor="let workGroupQc of workGroupQcs" [value]="workGroupQc.WorkGroupQualityControlId">
+                {{ workGroupQc.Name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <div style="margin:0 0 10px 0;">
+          <button type="button" mat-mini-fab color="warn" (click)="resetFilter()"
+                  matTooltip="Reset all filter" style="margin:4px;">
+            <i class="fa fa-2x fa-minus" aria-hidden="true" style="margin:0px;"></i>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
   <div class="bottom-container m-1">
     <p-dataTable [value]="requireQualityControls" rowGroupMode="rowspan"
                  [lazy]="true" [rows]="10" [paginator]="true" [rowsPerPageOptions]="[10,20,30]"
                  [totalRecords]="totalRecords" (onLazyLoad)="loadDataLazy($event)"
-                 scrollable="true" scrollWidth="94vw" scrollHeight="70vh">
+                 scrollable="true">
       <p-headerColumnGroup>
         <p-row>
           <p-column *ngFor="let colup of columnsUpper" [header]="colup.header"
@@ -118,7 +122,7 @@
         </ng-template>
         <ng-template *ngIf="column.isLink" let-col let-data1="rowData" pTemplate="body">
           <div *ngIf="data1[col.field]">
-            <i (click)="onSelectRequireQualityControl(data1['QualityControlResultId'])" style="cursor:pointer;color:steelblue;">
+            <i (click)="onSelectRequireQualityControl(data1)" style="cursor:pointer;color:steelblue;">
               {{data1[col.field]}}
             </i>
           </div>
@@ -128,7 +132,8 @@
                 'is-wait': data1['QualityControlStatus'] === 2 || data1['QualityControlStatus'] === 3 || data1['QualityControlStatus'] === 4,
                 'is-complate' : data1['QualityControlStatus'] === 5,
                 'is-cancel' : data1['QualityControlStatus'] === 6 || data1['QualityControlStatus'] === 7,
-                'is-revise' : data1['QualityControlStatus'] === 8}"style="text-align:center;">
+                'is-revise' : data1['QualityControlStatus'] === 8,
+                'is-req-welded' : data1['QualityControlStatus'] === 9 || data1['QualityControlStatus'] === 10}" style="text-align:center;">
             {{data1[col.field]}}
           </div>
         </ng-template>

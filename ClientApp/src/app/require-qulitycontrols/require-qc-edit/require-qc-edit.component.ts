@@ -157,12 +157,12 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
       ResponseDate: [this.editValue.ResponseDate],
       Description: [this.editValue.Description,
         [
-          Validators.maxLength(250)
+          Validators.maxLength(200)
         ]
       ],
       Remark: [this.editValue.Remark,
         [
-          Validators.maxLength(250)
+          Validators.maxLength(200)
         ]
       ],
       MailReply: [this.editValue.MailReply],

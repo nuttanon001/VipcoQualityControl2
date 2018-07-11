@@ -55,6 +55,7 @@ export class RequireQcScheduleComponent implements OnInit, OnDestroy {
   // report
   isLinkMail: boolean = false;
   loadReport: boolean;
+  onLoading: boolean = false;
   ReportType?: string;
   // array data
   workGroupQcs: Array<WorkGroupQc>;
@@ -146,6 +147,9 @@ export class RequireQcScheduleComponent implements OnInit, OnDestroy {
       schedule.RequireQuailtyControlId = this.requireQualityControlId;
     }
 
+    this.onLoading = !this.onLoading;
+    this.requireQualityControls = new Array;
+
     this.service.getRequireQualityControlSchedule2(schedule)
       .subscribe(dbDataSchedule => {
         this.onSetupDataTable(dbDataSchedule);
@@ -162,6 +166,7 @@ export class RequireQcScheduleComponent implements OnInit, OnDestroy {
     if (!dbDataSchedule || dbDataSchedule.length < 1) {
       this.columns = new Array;
       this.requireQualityControls = new Array;
+      this.onLoading = !this.onLoading;
       this.reloadData();
       return;
     }
@@ -243,6 +248,7 @@ export class RequireQcScheduleComponent implements OnInit, OnDestroy {
     }
 
     this.requireQualityControls = dbDataSchedule.DataTable.slice();
+    this.onLoading = !this.onLoading;
     this.reloadData();
   }
 
@@ -330,10 +336,12 @@ export class RequireQcScheduleComponent implements OnInit, OnDestroy {
   }
 
   // on update progress
-  onSelectRequireQualityControl(QualityControlId?: number): void {
-    if (QualityControlId) {
+  onSelectRequireQualityControl(row?: any): void {
+    if (row.QualityControlResultId) {
       // On Schedule readonly show dialog
-      this.serviceDialogs.dialogSelectQualityControl(QualityControlId, this.viewContainerRef);
+      this.serviceDialogs.dialogSelectQualityControl(row.QualityControlResultId, this.viewContainerRef);
+    } else if (row.RequireQualityControlId) {
+      this.serviceDialogs.dialogSelectRequireQualityControl(row.RequireQualityControlId, this.viewContainerRef, false);
     } else {
       this.serviceDialogs.error("Warning Message", "This request quality control not plan yet.", this.viewContainerRef);
     }

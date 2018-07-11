@@ -166,18 +166,19 @@
               <!--Row7-->
               <div class="row-form">
                 <div class="left-content">
-                  <mat-form-field hintLabel="Max 250 characters">
+                  <mat-form-field hintLabel="Max 200 characters">
                     <textarea matInput placeholder="Description" rows="3"
-                              id="Description" formControlName="Description"></textarea>
-                    <mat-hint [align]="end">{{editValueForm.controls.Description.value?.length || 0}}/250</mat-hint>
+                              id="Description" formControlName="Description" maxlength="200"></textarea>
+                    <mat-hint [align]="end">{{editValueForm.controls.Description.value?.length || 0}}/200</mat-hint>
                   </mat-form-field>
                 </div>
 
                 <div class="right-content">
                   <mat-form-field>
                     <textarea matInput placeholder="Remark"
-                              maxlength="250" rows="3"
+                              maxlength="200" rows="3"
                               id="Remark" formControlName="Remark"></textarea>
+                    <mat-hint [align]="end">{{editValueForm.controls.Remark.value?.length || 0}}/200</mat-hint>
                   </mat-form-field>
                 </div>
               </div>

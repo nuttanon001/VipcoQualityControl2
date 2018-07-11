@@ -111,10 +111,12 @@
                   Total List(s) {{editValue?.QualityHasMasterLists?.length || 0}}
                 </mat-panel-description>
               </mat-expansion-panel-header>
-              <!--Table MasterList-->
-              <app-quality-control-has-markno-table [dataRows]="editValue.QualityHasMasterLists"
-                                                    (returnSelected)="onItemMarkNoChange($event)">
-              </app-quality-control-has-markno-table>
+              <div *ngIf="editValue.QualityHasMasterLists">
+                <!--Table MasterList-->
+                <app-quality-control-has-markno-table [dataRows]="editValue.QualityHasMasterLists"
+                                                      (returnSelected)="onItemMarkNoChange($event)">
+                </app-quality-control-has-markno-table>
+              </div>
             </mat-expansion-panel>
 
             <mat-expansion-panel class="my-1" *ngIf="editValue?.QualityControlWeldings?.length > 0">
