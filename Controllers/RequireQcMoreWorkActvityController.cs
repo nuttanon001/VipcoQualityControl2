@@ -31,10 +31,11 @@ namespace VipcoQualityControl.Controllers
         {
             if (key > 0)
             {
-                Expression<Func<RequireQcMoreWorkActvity, bool>>
-                    expression = e => e.RequireQualityControlId == key;
+                var RequireHasMaster = await this.repository.GetToListAsync(
+                    selector:x => x,
+                    predicate:z => z.RequireQualityControlId == key,
+                    include: c => c.Include(a => a.WorkActivity));
 
-                var RequireHasMaster = (await this.repository.FindAllAsync(expression, true));
                 if (RequireHasMaster != null)
                 {
                     var DataMapper = new List<RequireQcMoreWorkActvityViewModel>();

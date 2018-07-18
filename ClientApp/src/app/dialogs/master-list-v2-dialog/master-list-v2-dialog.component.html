@@ -1,0 +1,21 @@
+<div class="master-dialog-vh">
+  <H5 style="color:cadetblue">Specfiy information for Inspection part.</H5>
+  <div class="child-container">
+    <div class="center-content" *ngIf="InfoValue.MasterProjectListId !== -99">
+      <app-master-list-info-v2-dialog [NeedWelder]="NeedWelder" [InfoValue]="InfoValue" (SubmitOrCancel)="onComplateOrCancelEntity($event)">
+      </app-master-list-info-v2-dialog>
+    </div>
+    <div class="right-content ml-1">
+      <button mat-mini-fab color="primary" (click)="onSelectedClick()"
+              [disabled]="!getValue"
+              matTooltip="add new data">
+        <mat-icon>add</mat-icon>
+      </button>
+      <hr />
+      <button mat-mini-fab color="warn" (click)="onCancelClick()"
+              matTooltip="close dialog">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

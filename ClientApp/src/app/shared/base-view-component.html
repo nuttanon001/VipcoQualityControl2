@@ -22,6 +22,15 @@
           </div>
         </div>
 
+        <div class="row my-1" *ngIf="haveEmail">
+          <div class="my-label">
+            SubEmail :
+          </div>
+          <div class="my-value">
+            {{displayValue.SubEmail || "-"}}
+          </div>
+        </div>
+
         <div class="row my-1">
           <div class="my-label">
             Description :

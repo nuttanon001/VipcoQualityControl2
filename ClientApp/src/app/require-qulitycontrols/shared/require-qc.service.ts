@@ -41,21 +41,21 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
         "Content-Type": "application/json",
       })
     }).pipe(catchError(
-      this.handleError(this.serviceName + "/get require quality control schedule", new Array<any>())));
+      this.handleError("Get require qc schedule", new Array<any>())));
   }
 
   // ===================== Cancel Require Quality Control ===\\
   cancelRequireQualityControl(RequireQcId: number): Observable<RequireQc> {
     return this.http.get<RequireQc>(`${this.baseUrl}CancelRequireQualityControl/`, {
       params: new HttpParams().set("key", RequireQcId.toString())
-    }).pipe(catchError(this.handleError(this.serviceName + "/genarate from fail require quality contol", <RequireQc>{})));
+    }).pipe(catchError(this.handleError("Cancel require qc", <RequireQc>{})));
   }
 
   // ===================== GenarateFromFailRequireQualityControl ===\\
   getGenarateFromFailRequireQualityControl(parentRequireQcId: number): Observable<RequireQc> {
     return this.http.get<RequireQc>(`${this.baseUrl}GenarateFromFailRequireQualityControl/`, {
       params: new HttpParams().set("key", parentRequireQcId.toString())
-    }).pipe(catchError(this.handleError(this.serviceName + "/genarate from fail require quality contol", <RequireQc>{})));
+    }).pipe(catchError(this.handleError("Genarate require qc from fail require", <RequireQc>{})));
   }
 
   // ===================== RequireQualityControl Change ============\\
@@ -64,7 +64,7 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
       })
-    }).pipe(catchError(this.handleError(this.serviceName + "/require quality control change", <any>{})));
+    }).pipe(catchError(this.handleError("require quality control change", <any>{})));
   }
   // ===================== RequireQualityControl Schedule ==========\\
   // get Require QualityControl Schedule
@@ -73,7 +73,7 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
       })
-    }).pipe(catchError(this.handleError(this.serviceName + "/require quality control waiting", <any>{})));
+    }).pipe(catchError(this.handleError("require quality control waiting", <any>{})));
   }
 
   // ===================== Over Ride ===============================\\
@@ -84,7 +84,7 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
         headers: new HttpHeaders({
           "Content-Type": "application/json",
         })
-      }).pipe(catchError(this.handleError(this.serviceName + "/post model", nObject)));
+      }).pipe(catchError(this.handleError("Insert entity to api", nObject)));
   }
 
   /** update with key number */
@@ -94,7 +94,7 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
         "Content-Type": "application/json",
       }),
       params: new HttpParams().set("key", uObject[this.keyName].toString())
-    }).pipe(catchError(this.handleError(this.serviceName + "/put update model", uObject)));
+    }).pipe(catchError(this.handleError("Update entity to api", uObject)));
   }
 
   // ===================== Action Require Quailty Control ==========\\
@@ -104,7 +104,7 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
       params: new HttpParams().set("key", RequireQualityControlId.toString()).set("byEmp", ByEmployee)
     };
     return this.http.get<RequireQc>(this.baseUrl + "ActionRequireQualityControl/", options)
-      .pipe(catchError(this.handleError(this.serviceName + "/action require quality control model", <RequireQc>{})));
+      .pipe(catchError(this.handleError("Action require qc entity to api", <RequireQc>{})));
   }
 
   // ===================== Upload File ===============================\\
@@ -112,7 +112,7 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
   getAttachFile(RequireQualityControlId: number): Observable<Array<AttachFile>> {
     return this.http.get<Array<AttachFile>>(this.baseUrl + "GetAttach/",
       { params: new HttpParams().set("key", RequireQualityControlId.toString()) })
-      .pipe(catchError(this.handleError(this.serviceName + "/get attach file.", Array<AttachFile>())));
+      .pipe(catchError(this.handleError("Get attach file from api.", Array<AttachFile>())));
   }
 
   // upload file
@@ -125,14 +125,14 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
     }
     return this.http.post<any>(`${this.baseUrl}PostAttach/`, input,
       { params: new HttpParams().set("key", RequireQualityControlId.toString()).set("CreateBy", CreateBy) })
-      .pipe(catchError(this.handleError(this.serviceName + "/upload attach file", <any>{})));
+      .pipe(catchError(this.handleError("Upload attach file to api", <any>{})));
   }
 
   // delete file
   deleteAttactFile(AttachId: number): Observable<any> {
     return this.http.delete<any>(this.baseUrl + "DeleteAttach/",
       { params: new HttpParams().set("AttachFileId", AttachId.toString()) })
-      .pipe(catchError(this.handleError(this.serviceName + "/delete attach file", <any>{})));
+      .pipe(catchError(this.handleError("Delete attach file from api", <any>{})));
   }
 
   // ===================== End Upload File ===========================\\

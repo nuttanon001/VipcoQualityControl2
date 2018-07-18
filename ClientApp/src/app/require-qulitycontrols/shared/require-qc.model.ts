@@ -2,12 +2,15 @@ import { BaseModel } from "../../shared/base-model.model";
 import { RequireStatusQc } from "./require-status-qc.enum";
 import { MasterList } from "../../master-lists/shared/master-list.model";
 import { WorkActivity } from "../../work-activities/shared/work-activity.model";
+import { RequireQcWelder } from "../../require-qc-welders/shared/require-qc-welder.model";
+import { RequireQcHasMasterList } from "./require-qc-has-master-list.model";
 
 export interface RequireQc extends BaseModel {
   RequireQualityControlId: number;
   RequireQualityNo? : string;
   RequireDate?: Date;
   ResponseDate?: Date;
+  WelderDate?: Date;
   Description?: string;
   Remark?: string;
   MailReply?: string;
@@ -29,6 +32,7 @@ export interface RequireQc extends BaseModel {
   WorkActivityId? :number;
   //Branch
   BranchId?: number;
+  RequireHasMasterProjects?: Array<RequireQcHasMasterList>;
   //ViewModel
   GroupMISString? :string;
   RequireEmpString? :string;
@@ -39,8 +43,11 @@ export interface RequireQc extends BaseModel {
   BranchString? :string;
   RequireStatusString?: string;
   MasterLists?: Array<MasterList>;
+  RequireQcWelder?: Array<RequireQcWelder>;
   RequireQcTime?: Date;
   RequireQcTimeString?: any;
+  WelderTime?: Date;
+  WelderTimeString?: any;
   // Attach Model
   AttachFile?: FileList;
   RemoveAttach?: Array<number>;

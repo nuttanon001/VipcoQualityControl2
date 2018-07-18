@@ -19,7 +19,5 @@ namespace VipcoQualityControl.Models.QualityControls
         [StringLength(250)]
         public string Address { get; set; }
         //FK
-        //RequireQualityControl
-        public virtual ICollection<RequireQualityControl> RequireQualityControls { get; set; }
     }
 }

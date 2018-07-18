@@ -1,54 +1,83 @@
-<div class="example-container mat-elevation-z8">
-  <div class="example-loading-shade"
-       *ngIf="isLoadingResults || isRateLimitReached">
+<div class="mat-elevation-z8">
+  <div class="loading-shade"
+       *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-    <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
-      It will be reset in one minute.
-    </div>
   </div>
-  <mat-table #table [dataSource]="dataSource" class="intab-table"
-             matSort matSortActive="MarkNo" matSortDisableClear matSortDirection="asc">
+  <mat-table #table [dataSource]="dataSource" matSort matSortDisableClear
+             matSortActive="MarkNo" matSortDirection="asc">
     <!-- Note that these columns can be defined in any order.
   The actual rendered columns are set as a property on the row definition" -->
-    <!-- Checkbox Column -->
-    <ng-container matColumnDef="select">
-      <mat-header-cell *matHeaderCellDef>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <mat-checkbox (click)="$event.stopPropagation()"
-                      (change)="$event ? selection.toggle(row) : null"
-                      [checked]="selection.isSelected(row)">
-        </mat-checkbox>
-      </mat-cell>
-    </ng-container>
     <!-- DrawingNo Column -->
     <ng-container matColumnDef="DrawingNo">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         DrawingNo
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.DrawingNo }}</mat-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.DrawingNo) || '-' }}</mat-cell>
     </ng-container>
     <!-- MarkNo Column -->
     <ng-container matColumnDef="MarkNo">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         MarkNo
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.MarkNo }}</mat-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.MarkNo) || '-' }}</mat-cell>
+    </ng-container>
+    <!-- Name Column -->
+    <ng-container matColumnDef="Name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        Name
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.Name) || '-' }}</mat-cell>
     </ng-container>
     <!--UnitNo Column-->
     <ng-container matColumnDef="UnitNo">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         UnitNo
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ (row.UnitNo | number) || '-' }}</mat-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.UnitNo | number) || '-' }}</mat-cell>
     </ng-container>
     <!-- Quantity Column -->
     <ng-container matColumnDef="Quantity">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         Quantity
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.Quantity | number }}</mat-cell>
+      <mat-cell *matCellDef="let row">{{ row?.Quantity | number }}</mat-cell>
     </ng-container>
+    <!--Update Welder-->
+    <!--JointNumber Column-->
+    <ng-container matColumnDef="JointNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        JointNumber
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.JointNumber | number) || '-' }}</mat-cell>
+    </ng-container>
+    <!-- Thickness Column -->
+    <ng-container matColumnDef="Thickness">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        Thickness
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.Thickness | number) || '-' }}</mat-cell>
+    </ng-container>
+    <!-- Thickness Column -->
+    <ng-container matColumnDef="TypeMaterial1">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        TypeMaterial#1/#2
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ (row?.TypeMaterial1) || '-' }}
+        {{ row.TypeMaterial2 ? (' / ' + row.TypeMaterial2) : '' }}
+      </mat-cell>
+    </ng-container>
+    <!-- Thickness Column -->
+    <ng-container matColumnDef="GradeMaterial1">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        GradeMaterial#1/#2
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ (row?.GradeMaterial1) || '-' }}
+        {{ row.GradeMaterial2 ? (' / ' + row.GradeMaterial2) : '' }}
+      </mat-cell>
+    </ng-container>
+
     <!--FailQuantity Column-->
     <ng-container matColumnDef="FailQuantity">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -63,16 +92,24 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let row">{{ row.RemarkExter }}</mat-cell>
     </ng-container>
+
+
     <!-- edit Column -->
     <ng-container matColumnDef="edit">
       <mat-header-cell *matHeaderCellDef>
+        <button mat-icon-button color="accent" (click)="onActionClick(undefined,1)"
+                [disabled]="readOnly" matTooltip="Create">
+          <mat-icon>add</mat-icon>
+        </button>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <button mat-button color="primary" (click)="onActionClick(row,1)" [disabled]="readOnly">
-          <strong>Edit</strong>
+        <button mat-icon-button color="primary" (click)="onActionClick(row,1)"
+                [disabled]="readOnly" matTooltip="Update">
+          <mat-icon>create</mat-icon>
         </button>
-        <button mat-button color="primary" (click)="onActionClick(row,0)" [disabled]="readOnly">
-          <strong>Remove</strong>
+        <button mat-icon-button color="warn" (click)="onActionClick(row,0)"
+                [disabled]="readOnly" matTooltip="Remove">
+          <mat-icon>clear</mat-icon>
         </button>
       </mat-cell>
     </ng-container>

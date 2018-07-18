@@ -13,14 +13,16 @@ namespace VipcoQualityControl.Models.QualityControls
         public double? Quantity { get; set; }
         public double? PassQuantity { get; set; }
         //FK
+        // RequireHasWelder
+        public RequireHasWelder RequireHasWelder { get; set; }
         // MasterProjectList
         public int? MasterProjectListId { get; set; }
-        public virtual MasterProjectList MasterProjectList { get; set; }
+        public MasterProjectList MasterProjectList { get; set; }
         // RequireQualityControl
         public int? RequireQualityControlId { get; set; }
-        public virtual RequireQualityControl RequireQualityControl { get; set; }
+        public RequireQualityControl RequireQualityControl { get; set; }
         // QualityControlReason
         public int? QualityControlReasonId { get; set; }
-        public virtual QualityControlReason QualityControlReason { get; set; }
+        public QualityControlReason QualityControlReason { get; set; }
     }
 }

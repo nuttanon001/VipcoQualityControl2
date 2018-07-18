@@ -1,4 +1,5 @@
 import { NgModule } from "@angular/core";
+import { LayoutModule } from '@angular/cdk/layout';
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -22,6 +23,7 @@ import {
   MatSliderModule,
   MatSidenavModule,
   MatSelectModule,
+  MatGridListModule,
 } from "@angular/material";
 
 import { MatMomentDateModule } from "@angular/material-moment-adapter";
@@ -94,6 +96,8 @@ import { AttachFileViewComponent } from '../attach-file-view/attach-file-view.co
     MatStepperModule,
     MatSliderModule,
     MatSelectModule,
+    MatGridListModule,
+    LayoutModule,
     // angularSplit
     AngularSplitModule,
     // ngxDataTable
@@ -141,6 +145,8 @@ import { AttachFileViewComponent } from '../attach-file-view/attach-file-view.co
     MatStepperModule,
     MatSliderModule,
     MatSelectModule,
+    MatGridListModule,
+    LayoutModule,
     // angularSplit
     AngularSplitModule,
     // ngxDataTable

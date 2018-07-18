@@ -29,25 +29,38 @@ namespace VipcoQualityControl.Controllers
             this.repositoryRequireHasMl = repoRequireHasMl;
         }
 
-        // GET: api/MasterProjectList/Autocomplate
-        [HttpGet("Autocomplate")]
-        public async Task<IActionResult> GetAutocomplate(string Filter)
+        // POST: api/QualityControlWelding/Autocomplate
+        [HttpPost("Autocomplate")]
+        public async Task<IActionResult> GetAutocomplate([FromBody] AutoComplateViewModel autoComplate)
         {
-            // Expression<Func<MasterProjectList, bool>> condition = m => m.MarkNo.ToLower().Contains(Filter.ToLower());
-            // return new JsonResult(await this.repository.FindAllAsync(condition), this.DefaultJsonSettings);
+            IQueryable<ResultAutoComplateViewModel> QueryData;
 
-            var QueryData = await this.repository.GetAllAsQueryable()
-                                                 .Where(x => x.MarkNo.ToLower().Contains(Filter.ToLower()))
-                                                 .Select(x => new
-                                                     {
-                                                         x.MarkNo,
-                                                         x.Name
-                                                     })
-                                                 .Distinct()
-                                                 .Take(10)
-                                                 .ToListAsync();
-            if (QueryData != null)
-                return new JsonResult(QueryData, this.DefaultJsonSettings);
+            if (autoComplate.ByColumn.IndexOf("MarkNo") != -1)
+                QueryData = this.repository.GetAllAsQueryable().Where(x => x.MarkNo.ToLower().Contains(autoComplate.Filter.ToLower()))
+                                .Select(x => new ResultAutoComplateViewModel { AutoComplate = x.MarkNo }).AsQueryable();
+            else if (autoComplate.ByColumn.IndexOf("DrawingNo") != -1)
+                QueryData = this.repository.GetAllAsQueryable().Where(x => x.DrawingNo.ToLower().Contains(autoComplate.Filter.ToLower()))
+                                .Select(x => new ResultAutoComplateViewModel { AutoComplate = x.DrawingNo }).AsQueryable();
+            else if (autoComplate.ByColumn.IndexOf("GradeMaterial1") != -1)
+                QueryData = this.repository.GetAllAsQueryable().Where(x => x.GradeMaterial1.ToLower().Contains(autoComplate.Filter.ToLower()))
+                                .Select(x => new ResultAutoComplateViewModel { AutoComplate = x.GradeMaterial1 }).AsQueryable();
+            else if (autoComplate.ByColumn.IndexOf("GradeMaterial2") != -1)
+                QueryData = this.repository.GetAllAsQueryable().Where(x => x.GradeMaterial2.ToLower().Contains(autoComplate.Filter.ToLower()) || x.GradeMaterial1.ToLower().Contains(autoComplate.Filter.ToLower()))
+                                .Select(x => new ResultAutoComplateViewModel { AutoComplate = x.GradeMaterial2 }).AsQueryable();
+            else if (autoComplate.ByColumn.IndexOf("TypeMaterial1") != -1)
+                QueryData = this.repository.GetAllAsQueryable().Where(x => x.TypeMaterial1.ToLower().Contains(autoComplate.Filter.ToLower()))
+                                .Select(x => new ResultAutoComplateViewModel { AutoComplate = x.TypeMaterial1 }).AsQueryable();
+            else if (autoComplate.ByColumn.IndexOf("TypeMaterial2") != -1)
+                QueryData = this.repository.GetAllAsQueryable().Where(x => x.TypeMaterial2.ToLower().Contains(autoComplate.Filter.ToLower()) || x.TypeMaterial1.ToLower().Contains(autoComplate.Filter.ToLower()))
+                                .Select(x => new ResultAutoComplateViewModel { AutoComplate = x.TypeMaterial2 }).AsQueryable();
+            else
+                return NoContent();
+
+            var HasAutoComplate = await QueryData.Distinct()
+                                                .Take(10)
+                                                .ToListAsync();
+            if (HasAutoComplate.Any())
+                return new JsonResult(HasAutoComplate, DefaultJsonSettings);
 
             return NoContent();
         }
@@ -129,9 +142,11 @@ namespace VipcoQualityControl.Controllers
         {
             if (key > 0)
             {
-                var HasData = await this.repositoryRequireHasMl.GetAllAsQueryable()
-                                        .Where(x => x.RequireQualityControlId == key)
-                                        .ToListAsync();
+                var HasData = await this.repositoryRequireHasMl.GetToListAsync(
+                        selector: x => x,
+                        predicate: z => z.RequireQualityControlId == key,
+                        include: c => c.Include(z => z.MasterProjectList));
+                                        
                 if (HasData != null)
                 {
                     var ListData = new List<MasterProjectListViewModel>();
@@ -156,10 +171,11 @@ namespace VipcoQualityControl.Controllers
         {
             if (key > 0)
             {
-                var HasData = await this.repositoryRequireHasMl.GetAllAsQueryable()
-                                        .Where(x => x.RequireQualityControlId == key && 
-                                                    x.RequireQualityControl.RequireStatus == RequireStatus.QcFail)
-                                        .ToListAsync();
+                var HasData = await this.repositoryRequireHasMl.GetToListAsync(
+                       selector: x => x,
+                       predicate: z => z.RequireQualityControlId == key && 
+                                       z.RequireQualityControl.RequireStatus == RequireStatus.QcFail,
+                       include: c => c.Include(z => z.MasterProjectList));
                 if (HasData != null)
                 {
                     var ListData = new List<MasterProjectListViewModel>();

@@ -102,14 +102,13 @@
                     </mat-select>
                   </mat-form-field>
                 </div>
-
                 <div class="right-content">
                   <mat-form-field>
                     <mat-select placeholder="WorkActivity"
                                 required [disabled]="forFail" multiple
                                 id="MoreWorkActvities" formControlName="MoreWorkActvities">
                       <mat-select-trigger>
-                        {{editValueForm.controls.MoreWorkActvities.value ? editValueForm.controls.MoreWorkActvities.value[0].Name : ''}}
+                        {{editValueForm.controls.MoreWorkActvities.value ? editValueForm.controls.MoreWorkActvities?.value[0]?.Name : ''}}
                         <span *ngIf="editValueForm?.controls?.MoreWorkActvities?.value?.length > 1">
                           (+{{editValueForm.controls.MoreWorkActvities.value.length - 1}} others)
                         </span>
@@ -237,17 +236,11 @@
     </mat-step>
     <mat-step>
       <ng-template matStepLabel>
-        <strong><b>Request Item && Mark No</b></strong>
+        <strong><b>Inspection part</b></strong>
       </ng-template>
       <div class="form-container-column">
-        <div class="my-0" *ngIf="!forFail">
-          <button mat-mini-fab color="primary" (click)="actionMarkNo()"
-                  matTooltip="Add Mark No">
-            <mat-icon>add_circle_outline</mat-icon>
-          </button>
-        </div>
         <div *ngIf="editValue.MasterLists">
-          <app-require-qc-masterlist-table [dataRows]="editValue.MasterLists" (returnSelected)="actionMarkNo($event)"
+          <app-require-qc-masterlist-table [dataRows]="editValue.MasterLists" (returnSelected)="OnDetailSelect($event)"
                                            [readOnly]="forFail">
           </app-require-qc-masterlist-table>
         </div>

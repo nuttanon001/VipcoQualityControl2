@@ -28,11 +28,20 @@ namespace VipcoQualityControl.Models.QualityControls
         public double? Weigth { get; set; }
         public double? Quantity { get; set; }
         public int? Revised { get; set; }
+        // Update 11/07/18 add welder information
+        public double? Thickness { get; set; }
+        public double? JointNumber { get; set; }
+        [StringLength(200)]
+        public string TypeMaterial1 { get; set; }
+        [StringLength(200)]
+        public string GradeMaterial1 { get; set; }
+        [StringLength(200)]
+        public string TypeMaterial2 { get; set; }
+        [StringLength(200)]
+        public string GradeMaterial2 { get; set; }
         //FK
         //ProjectCodeDetail
         public int? ProjectCodeDetailId { get; set; }
-        //RequireHasMasterProject
-        public virtual ICollection<RequireHasMasterProject> RequireHasMasterProjects { get; set; }
 
     }
 }

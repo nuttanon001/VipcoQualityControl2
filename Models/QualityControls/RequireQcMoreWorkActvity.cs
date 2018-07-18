@@ -14,9 +14,9 @@ namespace VipcoQualityControl.Models.QualityControls
         //Relation
         //RequireQualityControl
         public int? RequireQualityControlId { get; set; }
-        public virtual RequireQualityControl RequireQualityControl { get; set; }
+        public RequireQualityControl RequireQualityControl { get; set; }
         //WorkActivity
         public int? WorkActivityId { get; set; }
-        public virtual WorkActivity WorkActivity { get; set; }
+        public WorkActivity WorkActivity { get; set; }
     }
 }

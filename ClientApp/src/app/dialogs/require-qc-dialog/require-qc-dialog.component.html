@@ -3,25 +3,34 @@
   <div class="child-container" *ngIf="requireQc;else ElseDialog">
     <div class="center-content">
       <div class="child-container" style="min-height:35px;" *ngIf="data.ShowCommand && !requireQcChange">
-        <button type="button" mat-raised-button color="primary" matTooltip="Comfirm date request quality control"
-                (click)="onCancelClick(-1)" [disabled]="requireQc.ResponseDate">
-          Confirm Date
-        </button>
-        <span>&nbsp;&nbsp;</span>
-        <button type="button" mat-raised-button color="warn" matTooltip="Change date request quality control"
-                (click)="onChangeDateClick()" [disabled]="requireQc.ResponseDate">
-          Change Date
-        </button>
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <button type="button" mat-raised-button color="primary" matTooltip="Go to quality control result"
-                (click)="onSelectedValue(1)">
-          QualityControl Result
-        </button>
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <button type="button" mat-raised-button color="accent" matTooltip="Print paper quality control result"
-                (click)="onSelectedValue(3)">
-          Paper Doc.
-        </button>
+        <div *ngIf="!isWelder;else isWelderBlock">
+          <button type="button" mat-raised-button color="primary" matTooltip="Comfirm date request quality control"
+                  (click)="onCancelClick(-1)" [disabled]="requireQc.ResponseDate">
+            Confirm Date
+          </button>
+          <span>&nbsp;&nbsp;</span>
+          <button type="button" mat-raised-button color="warn" matTooltip="Change date request quality control"
+                  (click)="onChangeDateClick()" [disabled]="requireQc.ResponseDate">
+            Change Date
+          </button>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <button type="button" mat-raised-button color="primary" matTooltip="Go to quality control result"
+                  (click)="onSelectedValue(1)">
+            QualityControl Result
+          </button>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <button type="button" mat-raised-button color="accent" matTooltip="Print paper quality control result"
+                  (click)="onSelectedValue(3)">
+            Paper Doc.
+          </button>
+        </div>
+        <ng-template #isWelderBlock>
+          <button type="button" mat-raised-button color="primary" matTooltip="Go to welder process"
+                  (click)="onSelectedValue(4)">
+            Welder Process
+          </button>
+          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        </ng-template>
         <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <button type="button" mat-raised-button color="warn" matTooltip="Cancel request quality control"
                 (click)="onSelectedValue(-2)">

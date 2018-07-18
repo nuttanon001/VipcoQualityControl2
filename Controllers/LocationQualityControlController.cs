@@ -13,7 +13,8 @@ using VipcoQualityControl.ViewModels;
 using VipcoQualityControl.Models.Machines;
 using VipcoQualityControl.Models.QualityControls;
 using AutoMapper;
-
+using Microsoft.EntityFrameworkCore.Query;
+using VipcoQualityControl.Helper;
 
 namespace VipcoQualityControl.Controllers
 {
@@ -21,21 +22,29 @@ namespace VipcoQualityControl.Controllers
     [Route("api/[controller]")]
     public class LocationQualityControlController : GenericController<LocationQualityControl>
     {
-        readonly IRepositoryMachine<EmployeeGroupMis> repositoryGroupMis;
-        readonly IRepositoryQualityControl<WorkGroupHasWorkShop> repositoryWorkShop;
+        private readonly IRepositoryMachine<EmployeeGroupMis> repositoryGroupMis;
+        private readonly IRepositoryQualityControl<WorkGroupHasWorkShop> repositoryWorkShop;
+        private readonly Func<IQueryable<LocationQualityControl>, IIncludableQueryable<LocationQualityControl, object>> includes;
+
         public LocationQualityControlController(IRepositoryQualityControl<LocationQualityControl> repo,
             IRepositoryMachine<EmployeeGroupMis> repoGroupMis,
             IRepositoryQualityControl<WorkGroupHasWorkShop> repoWorkShop,
             IMapper mapper) : base(repo, mapper) {
             this.repositoryGroupMis = repoGroupMis;
             this.repositoryWorkShop = repoWorkShop;
+            // includes
+            includes = e => e.Include(x => x.WorkGroupHasWorkShops);
         }
 
         // GET: api/LocationQualityControl/5
         [HttpGet("GetKeyNumber")]
         public override async Task<IActionResult> Get(int key)
         {
-            var HasData = await this.repository.GetAllAsQueryable().FirstOrDefaultAsync(x => x.LocationQualityControlId == key);
+            var HasData = await this.repository.GetFirstOrDefaultAsync(
+                selector:x => x,
+                predicate: x => x.LocationQualityControlId == key,
+                include:this.includes);
+
             if (HasData != null)
             {
                 var MapData = this.mapper.Map<LocationQualityControl, LocationQualityControlViewModel>(HasData);
@@ -61,8 +70,7 @@ namespace VipcoQualityControl.Controllers
         {
             if (!string.IsNullOrEmpty(groupMis))
             {
-                Expression<Func<WorkGroupHasWorkShop, bool>> match = e => e.GroupMis == groupMis;
-                var HasValue = await this.repositoryWorkShop.AnyDataAsync(match);
+                var HasValue = await this.repositoryWorkShop.AnyDataAsync(e => e.GroupMis == groupMis);
                 return new JsonResult(new { Has = HasValue }, this.DefaultJsonSettings);
             }
             return BadRequest();
@@ -74,52 +82,62 @@ namespace VipcoQualityControl.Controllers
         {
             if (Scroll == null)
                 return BadRequest();
-
-            var QueryData = this.repository.GetAllAsQueryable()
-                                //.AsNoTracking() Error EF-Core 2.1 Preview2
-                                .AsQueryable();
             // Filter
             var filters = string.IsNullOrEmpty(Scroll.Filter) ? new string[] { "" }
-                                : Scroll.Filter.ToLower().Split(null);
-            foreach (var keyword in filters)
+                                : Scroll.Filter.Split(null);
+
+            var predicate = PredicateBuilder.False<LocationQualityControl>();
+            foreach (string keyword in filters)
             {
-                QueryData = QueryData.Where(x => x.Name.ToLower().Contains(keyword) ||
-                                                 x.Description.ToLower().Contains(keyword));
+                string temp = keyword;
+                predicate = predicate.Or(x => x.Name.ToLower().Contains(temp) ||
+                                              x.Description.ToLower().Contains(temp));
             }
+            if (!string.IsNullOrEmpty(Scroll.Where))
+                predicate = predicate.And(p => p.Creator == Scroll.Where);
+            // Where
+            //Order by
+            Func<IQueryable<LocationQualityControl>, IOrderedQueryable<LocationQualityControl>> order;
             // Order
             switch (Scroll.SortField)
             {
                 case "Name":
                     if (Scroll.SortOrder == -1)
-                        QueryData = QueryData.OrderByDescending(e => e.Name);
+                        order = o => o.OrderByDescending(x => x.Name);
                     else
-                        QueryData = QueryData.OrderBy(e => e.Name);
+                        order = o => o.OrderBy(x => x.Name);
                     break;
-                case "Description":
+                case "InspeDescriptionctionPointString":
                     if (Scroll.SortOrder == -1)
-                        QueryData = QueryData.OrderByDescending(e => e.Description);
+                        order = o => o.OrderByDescending(x => x.Description);
                     else
-                        QueryData = QueryData.OrderBy(e => e.Description);
+                        order = o => o.OrderBy(x => x.Description);
                     break;
                 default:
-                    QueryData = QueryData.OrderBy(e => e.Name);
+                    order = o => o.OrderByDescending(x => x.Name);
                     break;
             }
+
+            var QueryData = await this.repository.GetToListAsync(
+                                    selector: selected => selected,  // Selected
+                                    predicate: predicate, // Where
+                                    orderBy: order, // Order
+                                    include: this.includes, // Include
+                                    skip: Scroll.Skip ?? 0, // Skip
+                                    take: Scroll.Take ?? 10); // Take
+
             // Get TotalRow
-            Scroll.TotalRow = await QueryData.CountAsync();
-            // Skip Take
-            QueryData = QueryData.Skip(Scroll.Skip ?? 0).Take(Scroll.Take ?? 50);
-            // Mapper
-            var HasMapper = new List<LocationQualityControlViewModel>();
-            foreach (var item in await QueryData.ToListAsync())
+            Scroll.TotalRow = await this.repository.GetLengthWithAsync(predicate: predicate);
+
+            var mapDatas = new List<LocationQualityControlViewModel>();
+            foreach (var item in QueryData)
             {
-                var MapData = this.mapper.Map<LocationQualityControl, LocationQualityControlViewModel>(item);
-                MapData.TotalGroup = item.WorkGroupHasWorkShops != null ? item.WorkGroupHasWorkShops.Count : 0;
-                HasMapper.Add(MapData);
+                var mapItem = this.mapper.Map<LocationQualityControl, LocationQualityControlViewModel>(item);
+                mapItem.TotalGroup = item.WorkGroupHasWorkShops != null ? item.WorkGroupHasWorkShops.Count : 0;
+                mapDatas.Add(mapItem);
             }
-            //JsonResult
-            return new JsonResult(new ScrollDataViewModel<LocationQualityControlViewModel>(Scroll,
-                HasMapper), this.DefaultJsonSettings);
+
+            return new JsonResult(new ScrollDataViewModel<LocationQualityControlViewModel>(Scroll, mapDatas), this.DefaultJsonSettings);
         }
 
         // POST: api/LocationQualityControl
@@ -147,8 +165,7 @@ namespace VipcoQualityControl.Controllers
                     {
                         if (item == null) continue;
 
-                        Expression<Func<WorkGroupHasWorkShop, bool>> expression = w => w.GroupMis == item.GroupMis;
-                        if (await this.repositoryWorkShop.AnyDataAsync(expression))
+                        if (await this.repositoryWorkShop.AnyDataAsync(w => w.GroupMis == item.GroupMis))
                             removeList.Add(item);
                         else
                         {
@@ -175,8 +192,7 @@ namespace VipcoQualityControl.Controllers
                 {
                     foreach(var item in updateList)
                     {
-                        Expression<Func<WorkGroupHasWorkShop, bool>> expression = w => w.GroupMis == item.GroupMis;
-                        var updateData = await this.repositoryWorkShop.FindAsync(expression);
+                        var updateData = await this.repositoryWorkShop.FindAsync(w => w.GroupMis == item.GroupMis);
 
                         if (updateData != null)
                         {
@@ -239,8 +255,7 @@ namespace VipcoQualityControl.Controllers
             else
             {
                 // Find requisition of item maintenance
-                Expression<Func<WorkGroupHasWorkShop, bool>> condition = r => r.LocationQualityControlId == key;
-                var dbChilds = await this.repositoryWorkShop.FindAllAsync(condition);
+                var dbChilds = await this.repositoryWorkShop.FindAllAsync(r => r.LocationQualityControlId == key);
 
                 //Remove requisition if edit remove it
                 foreach (var item in dbChilds)
@@ -259,8 +274,7 @@ namespace VipcoQualityControl.Controllers
                         await this.repositoryWorkShop.UpdateAsync(item1, item1.WorkGroupHasWorkShopId);
                     else
                     {
-                        Expression<Func<WorkGroupHasWorkShop, bool>> expression = w => w.GroupMis == item1.GroupMis;
-                        var updateData = await this.repositoryWorkShop.FindAsync(expression);
+                        var updateData = await this.repositoryWorkShop.FindAsync(w => w.GroupMis == item1.GroupMis);
                         if (updateData != null)
                         {
                             updateData.LocationQualityControlId = record.LocationQualityControlId;
@@ -282,5 +296,60 @@ namespace VipcoQualityControl.Controllers
             return new JsonResult(record, this.DefaultJsonSettings);
         }
 
+        #region NoUse
+
+        public async Task<IActionResult> GetScroll2([FromBody] ScrollViewModel Scroll)
+        {
+            if (Scroll == null)
+                return BadRequest();
+
+            var QueryData = this.repository.GetAllAsQueryable()
+                                //.AsNoTracking() Error EF-Core 2.1 Preview2
+                                .AsQueryable();
+            // Filter
+            var filters = string.IsNullOrEmpty(Scroll.Filter) ? new string[] { "" }
+                                : Scroll.Filter.ToLower().Split(null);
+            foreach (var keyword in filters)
+            {
+                QueryData = QueryData.Where(x => x.Name.ToLower().Contains(keyword) ||
+                                                 x.Description.ToLower().Contains(keyword));
+            }
+            // Order
+            switch (Scroll.SortField)
+            {
+                case "Name":
+                    if (Scroll.SortOrder == -1)
+                        QueryData = QueryData.OrderByDescending(e => e.Name);
+                    else
+                        QueryData = QueryData.OrderBy(e => e.Name);
+                    break;
+                case "Description":
+                    if (Scroll.SortOrder == -1)
+                        QueryData = QueryData.OrderByDescending(e => e.Description);
+                    else
+                        QueryData = QueryData.OrderBy(e => e.Description);
+                    break;
+                default:
+                    QueryData = QueryData.OrderBy(e => e.Name);
+                    break;
+            }
+            // Get TotalRow
+            Scroll.TotalRow = await QueryData.CountAsync();
+            // Skip Take
+            QueryData = QueryData.Skip(Scroll.Skip ?? 0).Take(Scroll.Take ?? 50);
+            // Mapper
+            var HasMapper = new List<LocationQualityControlViewModel>();
+            foreach (var item in await QueryData.ToListAsync())
+            {
+                var MapData = this.mapper.Map<LocationQualityControl, LocationQualityControlViewModel>(item);
+                MapData.TotalGroup = item.WorkGroupHasWorkShops != null ? item.WorkGroupHasWorkShops.Count : 0;
+                HasMapper.Add(MapData);
+            }
+            //JsonResult
+            return new JsonResult(new ScrollDataViewModel<LocationQualityControlViewModel>(Scroll,
+                HasMapper), this.DefaultJsonSettings);
+        }
+
+        #endregion
     }
 }

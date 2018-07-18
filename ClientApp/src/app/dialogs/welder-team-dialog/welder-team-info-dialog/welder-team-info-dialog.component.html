@@ -1,0 +1,43 @@
+<div *ngIf="InfoValue;else elseBlock">
+  <form [formGroup]="InfoValueForm">
+    <div class="form-container-column">
+      <mat-accordion class="headers-align">
+        <!--Expansion1-->
+        <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true">
+          <!--Header-->
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>Welder team name infomation</strong>
+            </mat-panel-title>
+            <mat-panel-description>
+              Specify the name for welder.
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!--Row1-->
+          <!--Drawing-->
+          <mat-form-field hintLabel="*Required and max 50 characters">
+            <input matInput formControlName="TeamWelderNo"
+                   required maxlength="200"
+                   placeholder="Specify the team name for welder employee">
+
+            <mat-hint [align]="end">{{InfoValueForm.controls.TeamWelderNo.value?.length || 0}}/50</mat-hint>
+            <mat-error *ngIf="InfoValueForm.controls.TeamWelderNo.hasError('required')">
+              Team name is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-action-row>
+            <button mat-button color="primary" (click)="endStep()">
+              <strong>End</strong>
+            </button>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </form>
+</div>
+
+<ng-template #elseBlock>
+  <mat-progress-bar mode="indeterminate" style="margin-top:50px;"></mat-progress-bar>
+  Waiting... for loading
+</ng-template>

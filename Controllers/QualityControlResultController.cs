@@ -31,9 +31,11 @@ namespace VipcoQualityControl.Controllers
         private readonly IRepositoryQualityControl<RequireQualityControl> repositoryRequireQualityControl;
         private readonly IRepositoryQualityControl<InspectionPoint> repositoryInspection;
         private readonly IRepositoryQualityControl<WorkActivity> repositoryWorkActivity;
+        private readonly IRepositoryQualityControl<WorkGroupQualityControl> repositoryQcGroup;
+        private readonly IRepositoryQualityControl<WorkGroupHasWorkShop> repositoryWorkShop;
+        private readonly IRepositoryQualityControl<RequireHasWelder> repositoryRequireWelder;
         private readonly IRepositoryMachine<ProjectCodeDetail> repositoryProject;
         private readonly IRepositoryMachine<Employee> repositoryEmployee;
-        private readonly IRepositoryQualityControl<WorkGroupHasWorkShop> repositoryWorkShop;
         private readonly IRepositoryMachine<EmployeeGroupMis> repositoryGroupMis;
         private readonly IViewRenderService viewRenderService;
         private readonly EmailClass EmailClass;
@@ -42,9 +44,11 @@ namespace VipcoQualityControl.Controllers
             IRepositoryQualityControl<RequireQualityControl> repoRequireRequireQualityControl,
             IRepositoryQualityControl<InspectionPoint> repoInspacetion,
             IRepositoryQualityControl<WorkActivity> repoWorkActivity,
+            IRepositoryQualityControl<WorkGroupQualityControl> repoQcGroup,
+            IRepositoryQualityControl<WorkGroupHasWorkShop> repoWorkShop,
+            IRepositoryQualityControl<RequireHasWelder> repoRequireWelder,
             IRepositoryMachine<Employee> repoEmployee,
             IRepositoryMachine<ProjectCodeDetail> repoProject,
-            IRepositoryQualityControl<WorkGroupHasWorkShop> repoWorkShop,
             IRepositoryMachine<EmployeeGroupMis> repoGroupMis,
             IViewRenderService viewRender,
             IMapper mapper) : base(repo, mapper) {
@@ -58,6 +62,8 @@ namespace VipcoQualityControl.Controllers
             this.repositoryInspection = repoInspacetion;
             this.repositoryWorkActivity = repoWorkActivity;
             this.repositoryWorkShop = repoWorkShop;
+            this.repositoryQcGroup = repoQcGroup;
+            this.repositoryRequireWelder = repoRequireWelder;
             //Helper
             this.EmailClass = new EmailClass();
             //Razor to string
@@ -71,19 +77,30 @@ namespace VipcoQualityControl.Controllers
         {
             if (QualityControl.RequireQualityControlId.HasValue)
             {
-                var HasData = await this.repositoryRequireQualityControl.GetAsync(QualityControl.RequireQualityControlId.Value);
+                var HasData = await this.repositoryRequireQualityControl
+                    .GetFirstOrDefaultAsync(x => x,x => x.RequireQualityControlId == QualityControl.RequireQualityControlId.Value);
                 if (HasData != null)
                 {
                     // Comfirm require date
                     if (!HasData.ResponseDate.HasValue)
                         HasData.ResponseDate = HasData.RequireDate.AddHours(2);
+                    var toWelder = false;
+                    if (HasData.RequireStatus == RequireStatus.WeldingReq)
+                    {
+                        toWelder = true;
+                        HasData.RequireStatus = Status ? RequireStatus.Complate : RequireStatus.WeldingFail;
+                    }
+                    else
+                        HasData.RequireStatus = Status ? RequireStatus.Complate : RequireStatus.QcFail;
 
-                    HasData.RequireStatus = Status ? RequireStatus.Complate : RequireStatus.QcFail;
                     HasData.Modifyer = ByUser;
                     HasData.ModifyDate = DateTime.Now;
 
                     await this.repositoryRequireQualityControl.UpdateAsync(HasData, HasData.RequireQualityControlId);
                     await this.SendMail2(QualityControl, Status);
+                    if (toWelder)
+                        await this.SendMailWelder(QualityControl, Status);
+
                     return true;
                 }
             }
@@ -95,7 +112,8 @@ namespace VipcoQualityControl.Controllers
         {
             if (HasData.RequireQualityControlId.HasValue)
             {
-                var HasRequire = await this.repositoryRequireQualityControl.GetAsync(HasData.RequireQualityControlId.Value);
+                var HasRequire = await this.repositoryRequireQualityControl
+                    .GetFirstOrDefaultAsync(x => x,x => x.RequireQualityControlId == HasData.RequireQualityControlId.Value);
                 if (HasRequire != null)
                 {
                     if (this.EmailClass.IsValidEmail(HasRequire.MailReply))
@@ -143,7 +161,8 @@ namespace VipcoQualityControl.Controllers
         {
             if (HasData.RequireQualityControlId.HasValue)
             {
-                var HasRequire = await this.repositoryRequireQualityControl.GetAsync(HasData.RequireQualityControlId.Value);
+                var HasRequire = await this.repositoryRequireQualityControl.
+                    GetFirstOrDefaultAsync(x => x,x => x.RequireQualityControlId == HasData.RequireQualityControlId.Value);
                 if (HasRequire != null)
                 {
                     if (string.IsNullOrEmpty(HasRequire.MailReply))
@@ -159,19 +178,19 @@ namespace VipcoQualityControl.Controllers
 
                     if (ListMail.Any())
                     {
-                        var EmpName = (await this.repositoryEmployee.GetAsync(HasRequire.RequireEmp)).NameThai ?? "ไม่ระบุ";
-                        var ItemLists = await this.repositoryRequireHasMaster.GetAllAsQueryable()
-                                                .Where(x => x.RequireQualityControlId == HasData.RequireQualityControlId)
-                                                .Select(x => new RequireHasMasterProjectViewModel()
-                                                {
-                                                    DrawingNo = x.MasterProjectList.DrawingNo,
-                                                    MarkNoString = x.MasterProjectList.MarkNo,
-                                                    Box = x.MasterProjectList.Box,
-                                                    UnitNo = x.MasterProjectList.UnitNo,
-                                                    Quantity = x.Quantity,
-                                                    PassQuantity = x.PassQuantity,
-                                                    QualityControlReasonString = x.QualityControlReason != null ? x.QualityControlReason.Name : "-"
-                                                }).ToListAsync();
+                        var EmpName = (await this.repositoryEmployee
+                            .GetFirstOrDefaultAsync(x => x,x => x.EmpCode == HasRequire.RequireEmp)).NameThai ?? "ไม่ระบุ";
+                        var ItemLists = await this.repositoryRequireHasMaster.GetToListAsync(x => new RequireHasMasterProjectViewModel()
+                        {
+                            DrawingNo = x.MasterProjectList.DrawingNo,
+                            MarkNoString = x.MasterProjectList.MarkNo,
+                            Box = x.MasterProjectList.Box,
+                            UnitNo = x.MasterProjectList.UnitNo,
+                            Quantity = x.Quantity,
+                            PassQuantity = x.PassQuantity,
+                            QualityControlReasonString = x.QualityControlReason != null ? x.QualityControlReason.Name : "-"
+                        },x => x.RequireQualityControlId == HasData.RequireQualityControlId,null,
+                        x => x.Include(z => z.MasterProjectList));
 
                         var EmailTemplate = new EmailTemplateViewModel()
                         {
@@ -196,20 +215,80 @@ namespace VipcoQualityControl.Controllers
             return false;
         }
 
+        private async Task<bool> SendMailWelder(QualityControlResult HasData, bool ShellYouCanPass)
+        {
+            if (HasData.RequireQualityControlId.HasValue)
+            {
+                var HasRequire = await this.repositoryRequireQualityControl.
+                    GetFirstOrDefaultAsync(x => x, x => x.RequireQualityControlId == HasData.RequireQualityControlId.Value);
+                if (HasRequire != null)
+                {
+                    var QcGroup = await this.repositoryQcGroup.GetAsync(HasRequire.WorkGroupQualityControlId.Value);
+                    if (string.IsNullOrEmpty(QcGroup.SubEmail))
+                        return false;
+
+                    var ListMail = new List<string>();
+                    if (QcGroup.SubEmail.IndexOf(',') != -1)
+                        ListMail = QcGroup.SubEmail.Split(',').ToList();
+                    else if (QcGroup.SubEmail.IndexOf(';') != -1)
+                        ListMail = QcGroup.SubEmail.Split(';').ToList();
+                    else
+                        ListMail.Add(QcGroup.SubEmail);
+
+                    if (ListMail.Any())
+                    {
+                        var ItemLists = await this.repositoryRequireHasMaster.GetToListAsync(x => new RequireHasMasterProjectViewModel()
+                        {
+                            DrawingNo = x.MasterProjectList.DrawingNo,
+                            MarkNoString = x.MasterProjectList.MarkNo,
+                            Box = x.MasterProjectList.Box,
+                            UnitNo = x.MasterProjectList.UnitNo,
+                            Quantity = x.Quantity,
+                            PassQuantity = x.PassQuantity,
+                            QualityControlReasonString = x.QualityControlReason != null ? x.QualityControlReason.Name : "-"
+                        }, x => x.RequireQualityControlId == HasData.RequireQualityControlId, null,
+                        x => x.Include(z => z.MasterProjectList));
+
+                        var EmailTemplate = new EmailTemplateViewModel()
+                        {
+                            ToEmployeeName = $"หน่วยงานเชื่อม",
+                            ItemLists = ItemLists,
+                            LinkToApp = $"http://{Request.Host}/qualitycontrol/require-qc/link-email/{HasData.RequireQualityControlId}",
+                            RequireNo = HasRequire.RequireQualityNo,
+                            ResultDate = HasData.QualityControlResultDate.Value.ToString("dd MMM yy"),
+                            Status = ShellYouCanPass
+                        };
+
+                        var result = await viewRenderService.RenderToStringAsync("Email/Result", EmailTemplate);
+
+                        await this.EmailClass.SendMailMessage(ListMail[0], EmailTemplate.ToEmployeeName,
+                                                   ListMail,
+                                                   result, "Notification mail from VIPCO Quality Control system.");
+
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         #endregion
 
         // GET: api/QualityControlResult/GetKeyNumber/5
         [HttpGet("GetKeyNumber")]
         public override async Task<IActionResult> Get(int key)
         {
-            var HasItem = await this.repository.GetAsync(key, true);
+            var HasItem = await this.repository.GetFirstOrDefaultAsync(
+                selector:x => x,
+                predicate:x => x.QualityControlResultId == key,
+                include:x => x.Include(z => z.RequireQualityControl.WorkGroupQualityControl));
 
             if (HasItem != null)
             {
                 var MapItem = this.mapper.Map<QualityControlResult, QualityControlResultViewModel>(HasItem);
                 // RequireEmpString
                 if (!string.IsNullOrEmpty(MapItem.EmpCode))
-                    MapItem.EmpQualityControlString = (await this.repositoryEmployee.GetAsync(MapItem.EmpCode)).NameThai;
+                    MapItem.EmpQualityControlString = (await this.repositoryEmployee.GetFirstOrDefaultAsync(x => x,x => x.EmpCode == MapItem.EmpCode)).NameThai;
                
                 return new JsonResult(MapItem, this.DefaultJsonSettings);
             }
@@ -309,8 +388,10 @@ namespace VipcoQualityControl.Controllers
                 {
                     record.QualityControlResultDate = new DateTime(record.QualityControlResultDate.Value.Year, record.QualityControlResultDate.Value.Month, record.QualityControlResultDate.Value.Day,
                                                       recordViewModel.QualityControlResultTime.Value.Hour, recordViewModel.QualityControlResultTime.Value.Minute, 0);
-                   
                 }
+
+                var RequireQc = await this.repositoryRequireQualityControl.GetFirstOrDefaultAsync(
+                    x => x, x => x.RequireQualityControlId == record.RequireQualityControlId);
 
                 // Check HasFail or Pass
                 var HasFail = false;
@@ -322,16 +403,32 @@ namespace VipcoQualityControl.Controllers
                         if (item == null)
                             continue;
 
-                        var HasData = await this.repositoryRequireHasMaster.GetAsync(item.RequireHasMasterProjectId);
+                        var HasData = await this.repositoryRequireHasMaster
+                            .GetFirstOrDefaultAsync(
+                            selector: x => x,
+                            predicate: x => x.RequireHasMasterProjectId == item.RequireHasMasterProjectId,
+                            include: x => x.Include(z => z.RequireHasWelder));
+
                         if (HasData != null)
                         {
                             HasData.QualityControlReasonId = item.QualityControlReasonId;
                             HasData.PassQuantity = item.PassQuantity;
                             HasData.ModifyDate = DateTime.Now;
                             HasData.Modifyer = record.Creator;
-                            //Update
+                            // Update
                             HasFail = HasData.PassQuantity != HasData.Quantity;
                             await this.repositoryRequireHasMaster.UpdateAsync(HasData, HasData.RequireHasMasterProjectId);
+                            // If Welder
+                            if (HasData.RequireHasWelder != null)
+                            {
+                                HasData.RequireHasWelder.QcStatus = HasFail ? WelderStatus.Rejected : 
+                                    (RequireQc.ParentRequireQcId == null ? WelderStatus.Accepted : WelderStatus.AcceptedAfterRepaired);
+
+                                HasData.RequireHasWelder.ModifyDate = record.CreateDate;
+                                HasData.RequireHasWelder.Modifyer = record.Creator;
+                                // Update RequireHasWelder
+                                await this.repositoryRequireWelder.UpdateAsync(HasData.RequireHasWelder, HasData.RequireHasWelder.RequireHasWelderId);
+                            }
                         }
                     }
                 }
@@ -387,7 +484,8 @@ namespace VipcoQualityControl.Controllers
                             if (item == null)
                                 continue;
 
-                            var HasData = await this.repositoryRequireHasMaster.GetAsync(item.RequireHasMasterProjectId);
+                            var HasData = await this.repositoryRequireHasMaster
+                                .GetFirstOrDefaultAsync(x => x,x => x.RequireHasMasterProjectId == item.RequireHasMasterProjectId);
                             if (HasData != null)
                             {
                                 HasData.PassQuantity = item.PassQuantity;

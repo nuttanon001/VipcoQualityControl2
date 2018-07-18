@@ -28,6 +28,7 @@ import { RequireMoreWorkactivityService } from "../shared/require-more-workactiv
 import { filter } from "rxjs/operator/filter";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { TypeworkActivity } from "../../work-activities/shared/typework-activity.enum";
+import { arch } from "os";
 
 @Component({
   selector: 'app-require-qc-edit',
@@ -65,7 +66,7 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
   workGroupQcs: Array<WorkGroupQc>;
   attachFiles: Array<AttachFile>;
   forFail: boolean = false;
-  
+  needWelder: boolean = false;
   // on get data by key
   onGetDataByKey(value?: RequireQc): void {
     if (value) {
@@ -74,12 +75,6 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
           .subscribe(dbData => {
             this.editValue = dbData;
             this.editValue.RequireQcTime = dbData.RequireQcTimeString;
-            //this.editValue.RequireQcTime = new Date();
-            // Debug
-            //console.log(dbData.RequireDate.getTime());
-            //this.editValue.RequireQcTime.setTime(dbData.RequireDate.getTime());
-            //console.log("Dbdata", JSON.stringify(this.editValue));
-
             //RequireQualityControl
             this.serviceMarkNo.actionRequireQualityControlHasMarkNo(dbData.RequireQualityControlId)
               .subscribe(RequireQCHasMasterList => {
@@ -93,6 +88,12 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
                       Name: item.Name,
                       UnitNo: item.UnitNo,
                       DrawingNo: item.DrawingNo,
+                      GradeMaterial1: item.GradeMaterial1,
+                      GradeMaterial2: item.GradeMaterial2,
+                      JointNumber: item.JointNumber,
+                      Thickness: item.Thickness,
+                      TypeMaterial1: item.TypeMaterial1,
+                      TypeMaterial2: item.TypeMaterial2,
                       Box: item.Box,
                       Quantity: item.Quantity,
                       MasterProjectListId: item.MasterProjectListId
@@ -102,25 +103,31 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
                   this.editValueForm.patchValue({
                     MasterLists: this.editValue.MasterLists
                   });
+                } else {
+                  this.editValue.MasterLists = new Array;
                 }
               });
           }, error => console.error(error), () => this.buildForm());
       } else { // Form fail require quality control
         this.forFail = true;
 
-        this.editValue = value;
+        this.editValue = Object.assign({}, value);
+
+        if (!this.editValue.MasterLists) {
+          this.editValue.MasterLists = new Array;
+        }
         this.editValue.RequireDate = new Date;
         // this.editValue.RequireQcTimeString = (new Date).toLocaleTimeString("th-TH", { hour12: false });
         this.editValue.RequireQcTimeString = (new Date(this.editValue.RequireDate.getTime() + 60 * 60000)).toLocaleTimeString("th-TH", { hour12: false });
         this.editValue.RequireQcTime = this.editValue.RequireQcTimeString;
         this.buildForm();
-
       }
     } else {
       this.editValue = {
         RequireQualityControlId: 0,
         RequireDate: new Date,
         RequireStatus: RequireStatusQc.Waiting,
+        MasterLists: new Array
       };
       // TimeString
       this.editValue.RequireQcTimeString = (new Date(this.editValue.RequireDate.getTime() + 60 * 60000)).toLocaleTimeString("th-TH", { hour12: false });
@@ -242,6 +249,8 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
                       MoreWorkActvities: undefined
                     });
                   });
+              } else if (isNde) {
+                this.needWelder = true;
               }
             }
           });
@@ -431,53 +440,55 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
     }
   }
 
-  // action markno
-  actionMarkNo(markNo?: { data: MasterList, option: number }): void {
-    if (!this.editValue.MasterLists) {
-      this.editValue.MasterLists = new Array;
-    }
+  // On BoMLowLevelSelect
+  OnDetailSelect(Item: { data?: MasterList, option: number }) {
+    if (Item) {
 
-    let dataMarkNo: MasterList = {
-      MasterProjectListId : 0
-    };
-
-    if (!markNo) {
-      this.indexItem = -1;
-    } else {
-      this.indexItem = this.editValue.MasterLists.indexOf(markNo.data);
-
-      if (markNo.option === 1) {
-        dataMarkNo = Object.assign({}, markNo.data);
+      if (!Item.data) {
+        this.indexItem = -1;
       } else {
+        this.indexItem = this.editValue.MasterLists.indexOf(Item.data);
+      }
+
+      if (Item.option === 1) {
+        let detailInfoValue: MasterList;
+        // IF Edit data
+        if (Item.data) {
+          detailInfoValue = Object.assign({}, Item.data);
+        } else { // Else New data
+          detailInfoValue = {
+            MasterProjectListId: 0,
+          };
+        }
+        // Send to dialog BomLowLevel
+        this.serviceDialogs.dialogInfoMasterList(this.viewContainerRef, { InfoValue: detailInfoValue, NeedWelder: this.needWelder})
+          .subscribe(complateData => {
+            if (complateData) {
+              if (this.indexItem > -1) {
+                // remove item
+                this.editValue.MasterLists.splice(this.indexItem, 1);
+              }
+
+              // cloning an object
+              this.editValue.MasterLists.push(Object.assign({}, complateData));
+              this.editValue.MasterLists = this.editValue.MasterLists.slice();
+              // Update to form
+              this.editValueForm.patchValue({
+                MasterLists: this.editValue.MasterLists
+              });
+            }
+          })
+      }
+      else if (Item.option === 0) // Remove
+      {
         this.editValue.MasterLists.splice(this.indexItem, 1);
         this.editValue.MasterLists = this.editValue.MasterLists.slice();
         // Update to form
         this.editValueForm.patchValue({
           MasterLists: this.editValue.MasterLists
         });
-        return;
       }
     }
-
-    this.serviceDialogs.dialogCreateMarkNo(this.viewContainerRef, dataMarkNo)
-      .subscribe(dialogMarkNo => {
-        if (dialogMarkNo) {
-          if (this.indexItem > -1) {
-            // remove item
-            this.editValue.MasterLists.splice(this.indexItem, 1);
-          }
-          // cloning an object
-          this.editValue.MasterLists.push(Object.assign({}, dialogMarkNo));
-          this.editValue.MasterLists = this.editValue.MasterLists.slice();
-          // Update to form
-          this.editValueForm.patchValue({
-            MasterLists: this.editValue.MasterLists
-          });
-          this.onValueChanged();
-        } else {
-          this.onValueChanged();
-        }
-      });
   }
 
   //////////////

@@ -1,0 +1,65 @@
+<div *ngIf="InfoValue;else elseBlock">
+  <form [formGroup]="InfoValueForm">
+    <div class="form-container-column">
+      <mat-accordion class="headers-align">
+        <!--Expansion1-->
+        <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true">
+          <!--Header-->
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>Welder project infomation</strong>
+            </mat-panel-title>
+            <mat-panel-description>
+              Specify the project number for welder project
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!--Row1-->
+          <mat-form-field hintLabel="*Required">
+            <input matInput formControlName="ProjectCodeMasterString"
+                   (click)="openDialog('ProjectMaster')" readonly required
+                   class="click-input" placeholder="Project number for welder project">
+            <mat-error *ngIf="InfoValueForm.controls.ProjectCodeMasterString.hasError('required')">
+              Project number is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-action-row>
+            <button mat-button color="primary" (click)="nextStep()">
+              <strong>Next</strong>
+            </button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <!--Expansion2-->
+        <mat-expansion-panel class="my-1" [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true">
+          <!--Header-->
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>Welder Employee</strong>
+            </mat-panel-title>
+            <mat-panel-description>
+              Specify employee welder for project number
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div *ngIf="InfoValue.WelderProjects">
+            <app-welder-project-table-sub [dataRows]="InfoValue.WelderProjects" (returnSelected)="OnDetailSelect($event)">
+            </app-welder-project-table-sub>
+          </div>
+
+          <mat-action-row>
+            <button mat-button color="warn" (click)="prevStep()">
+              <strong>Previous</strong>
+            </button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+      </mat-accordion>
+    </div>
+  </form>
+</div>
+
+<ng-template #elseBlock>
+  <mat-progress-bar mode="indeterminate" style="margin-top:50px;"></mat-progress-bar>
+  Waiting... for loading
+</ng-template>

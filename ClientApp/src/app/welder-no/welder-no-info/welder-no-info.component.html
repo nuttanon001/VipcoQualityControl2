@@ -1,0 +1,141 @@
+<div *ngIf="InfoValue;else elseBlock">
+  <form [formGroup]="InfoValueForm">
+    <div class="form-container-column">
+      <mat-accordion class="headers-align">
+        <!--Expansion1-->
+        <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true">
+          <!--Header-->
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>Welder employee infomation</strong>
+            </mat-panel-title>
+            <mat-panel-description>
+              Specify the welder-no, employee, team, description and remark for welder employee.
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!--WelderNoCode-->
+          <mat-form-field hintLabel="Specify the welder number code.">
+            <input matInput formControlName="WelderNoCode"
+                   required maxlength="50"
+                   placeholder="Welder no code for welder employee">
+            <mat-hint [align]="end">{{InfoValueForm.controls.WelderNoCode.value?.length || 0}}/50</mat-hint>
+            <mat-error *ngIf="InfoValueForm.controls.WelderNoCode.hasError('required')">
+              Welder no code is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <!--NameThai-->
+          <mat-form-field hintLabel="Specify the welder number code.">
+            <input matInput formControlName="NameThai"
+                   required maxlength="250"
+                   placeholder="Welder no code for welder employee">
+            <mat-hint [align]="end">{{InfoValueForm.controls.WelderNoCode.value?.length || 0}}/250</mat-hint>
+            <mat-error *ngIf="InfoValueForm.controls.WelderNoCode.hasError('required')">
+              Welder no code is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <!--NameEnglish-->
+          <mat-form-field hintLabel="Specify the welder number code.">
+            <input matInput formControlName="NameEnglish"
+                   required maxlength="250"
+                   placeholder="Welder no code for welder employee">
+            <mat-hint [align]="end">{{InfoValueForm.controls.WelderNoCode.value?.length || 0}}/250</mat-hint>
+            <mat-error *ngIf="InfoValueForm.controls.WelderNoCode.hasError('required')">
+              Welder no code is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <!--EmployeeString-->
+          <mat-form-field hintLabel="Specify the employee name">
+            <input matInput formControlName="EmployeeString"
+                   (click)="openDialog('Employee')" readonly
+                   class="click-input" placeholder="Employee name for welder employee">
+            <mat-error *ngIf="InfoValueForm.controls.EmployeeString.hasError('required')">
+              Employee name is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          <!--Description-->
+          <mat-form-field hintLabel="Specify the description">
+            <textarea matInput placeholder="Description for welder employee" rows="4"
+                      maxlength="200"
+                      formControlName="Description">
+            </textarea>
+            <mat-hint [align]="end">{{InfoValueForm.controls.Description.value?.length || 0}}/200</mat-hint>
+          </mat-form-field>
+          <!--Remark-->
+          <mat-form-field hintLabel="Specify the remark">
+            <textarea matInput placeholder="Remark for welder employee" rows="4"
+                      maxlength="200"
+                      formControlName="Remark">
+            </textarea>
+            <mat-hint [align]="end">{{InfoValueForm.controls.Remark.value?.length || 0}}/200</mat-hint>
+          </mat-form-field>
+          <!--TeamWelderNo-->
+          <mat-form-field hintLabel="Specify the welder team">
+            <mat-select formControlName="TeamWelderNo"
+                        required
+                        placeholder="Selected welder team">
+              <mat-option (click)="openDialog('WelderTeam')">-- Add new --</mat-option>
+              <mat-option *ngFor="let welderTeam of welderTeams" [value]="welderTeam">
+                {{ welderTeam }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="InfoValueForm.controls.TeamWelderNo.hasError('required')">
+              Welder team is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-action-row>
+            <button mat-button color="primary" (click)="nextStep()">
+              <strong>Next</strong>
+            </button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <!--Expansion2-->
+        <mat-expansion-panel class="my-1" [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true">
+          <!--Header-->
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>Other information</strong>
+            </mat-panel-title>
+            <mat-panel-description>
+              Specify the register date and exprire date for welder employee
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-form-field hintLabel="Specify the register date">
+            <input matInput formControlName="RegisterDate" [matDatepicker]="RegisterDate"
+                   required 
+                   placeholder="Choose a date">
+            <mat-datepicker-toggle matSuffix [for]="RegisterDate"></mat-datepicker-toggle>
+            <mat-datepicker #RegisterDate></mat-datepicker>
+            <mat-error *ngIf="InfoValueForm.controls.RegisterDate.hasError('required')">
+              Register date is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field hintLabel="Specify the exprire date">
+            <input matInput formControlName="ExprireDate" [matDatepicker]="ExprireDate"
+                   placeholder="Choose a date">
+            <mat-datepicker-toggle matSuffix [for]="ExprireDate"></mat-datepicker-toggle>
+            <mat-datepicker #ExprireDate></mat-datepicker>
+            <mat-error *ngIf="InfoValueForm.controls.ExprireDate.hasError('required')">
+              Exprire date is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-action-row>
+            <button mat-button color="warn" (click)="prevStep()">
+              <strong>Previous</strong>
+            </button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+      </mat-accordion>
+    </div>
+  </form>
+</div>
+
+<ng-template #elseBlock>
+  <mat-progress-bar mode="indeterminate" style="margin-top:50px;"></mat-progress-bar>
+  Waiting... for loading
+</ng-template>

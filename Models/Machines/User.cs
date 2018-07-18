@@ -16,6 +16,6 @@ namespace VipcoQualityControl.Models.Machines
         public string UserName { get; set; }
         public int LevelUser { get; set; }
 
-        public virtual Employee EmpCodeNavigation { get; set; }
+        public Employee EmpCodeNavigation { get; set; }
     }
 }

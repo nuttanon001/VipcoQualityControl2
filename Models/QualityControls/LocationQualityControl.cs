@@ -16,6 +16,6 @@ namespace VipcoQualityControl.Models.QualityControls
         public string Description { get; set; }
         //FK
         // WorkGroupHasWorkShop
-        public virtual ICollection<WorkGroupHasWorkShop> WorkGroupHasWorkShops { get; set; }
+        public ICollection<WorkGroupHasWorkShop> WorkGroupHasWorkShops { get; set; } = new List<WorkGroupHasWorkShop>();
     }
 }

@@ -1,0 +1,11 @@
+@import "../../shared/mk2/styles/table.style.scss";
+
+.mat-table {
+  overflow: auto;
+  height: calc(#{$master-vh} - 250px);
+  width: calc(#{$master-vw} - 150px);
+}
+
+.mat-row, .mat-header-row {
+  width: 150vw; 
+}

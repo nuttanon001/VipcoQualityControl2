@@ -29,15 +29,18 @@ namespace VipcoQualityControl.Controllers
         {
             if (key > 0)
             {
-                Expression<Func<RequireHasMasterProject, bool>> 
-                    expression = e => e.RequireQualityControlId == key;
-
-                var RequireHasMaster = (await this.repository.FindAllAsync(expression,true));
+                var RequireHasMaster = (await this.repository.GetToListAsync(
+                    selector:x => x,
+                    predicate:x => x.RequireQualityControlId == key,
+                    include:x => x.Include(z => z.MasterProjectList).Include(z => z.RequireQualityControl).Include(z => z.RequireHasWelder)));
                 if (RequireHasMaster != null)
                 {
                     var DataMapper = new List<RequireHasMasterProjectViewModel>();
                     foreach (var item in RequireHasMaster)
                     {
+                        if (item.RequireHasWelder != null)
+                            item.RequireHasWelder.RequireHasMasterProject = null;
+
                         if (!item.PassQuantity.HasValue)
                             item.PassQuantity = 0;
 

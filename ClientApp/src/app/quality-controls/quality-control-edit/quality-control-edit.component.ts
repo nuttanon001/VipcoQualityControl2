@@ -17,6 +17,8 @@ import { RequireQcHasMasterList } from "../../require-qulitycontrols/shared/requ
 import { QualityControlStatus } from "../shared/quality-control-status.enum";
 import { QcWelderService } from "../../quality-control-welders/shared/qc-welder.service";
 import { QcWelder } from "../../quality-control-welders/shared/qc-welder.model";
+import { WelderStatus } from "../../require-qc-welders/shared/welder-status.enum";
+import { WelderProcess } from "../../require-qc-welders/shared/welder-process.enum";
 
 @Component({
   selector: 'app-quality-control-edit',
@@ -65,7 +67,7 @@ export class QualityControlEditComponent extends BaseEditComponent<QualityContro
                 if (dbDataReq) {
                   this.requireQc = dbDataReq;
                   this.getRequireHasMasterList();
-                  this.getQcWeled();
+                  // this.getQcWeled();
                 }
               });
           }
@@ -93,7 +95,7 @@ export class QualityControlEditComponent extends BaseEditComponent<QualityContro
               if (dbData) {
                 this.requireQc = dbData;
                 this.getRequireHasMasterList();
-                this.getQcWeled();
+                // this.getQcWeled();
               }
             });
         }
@@ -149,6 +151,10 @@ export class QualityControlEditComponent extends BaseEditComponent<QualityContro
           .subscribe(dbMasterLists => {
             dbMasterLists.forEach((item, index) => {
               item.HasFail = !(item.Quantity.toString() === item.PassQuantity.toString());
+              if (item.RequireHasWelder) {
+                item.RequireHasWelder.VTStausString = WelderStatus[item.RequireHasWelder.VTStaus];
+                item.RequireHasWelder.WelderProcessString = WelderProcess[item.RequireHasWelder.WelderProcess];
+              }
             });
 
             this.editValue.QualityHasMasterLists = dbMasterLists.slice();

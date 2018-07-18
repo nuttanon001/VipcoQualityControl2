@@ -6,4 +6,5 @@ export interface WorkGroupQc extends BaseModel {
   Description?: string;
   Remark?: string;
   Email?: string;
+  SubEmail?: string;
 }

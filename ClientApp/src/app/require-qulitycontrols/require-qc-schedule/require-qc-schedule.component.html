@@ -133,7 +133,8 @@
                 'is-complate' : data1['QualityControlStatus'] === 5,
                 'is-cancel' : data1['QualityControlStatus'] === 6 || data1['QualityControlStatus'] === 7,
                 'is-revise' : data1['QualityControlStatus'] === 8,
-                'is-req-welded' : data1['QualityControlStatus'] === 9 || data1['QualityControlStatus'] === 10}" style="text-align:center;">
+                'is-req-welded' : data1['QualityControlStatus'] === 9 || data1['QualityControlStatus'] === 10,
+                'is-cancel' : data1['QualityControlStatus'] === 11  }" style="text-align:center;">
             {{data1[col.field]}}
           </div>
         </ng-template>

@@ -18,7 +18,5 @@ namespace VipcoQualityControl.Models.QualityControls
         [StringLength(200)]
         public string Remark { get; set; }
         //FK
-        //RequireQualityControl
-        public virtual ICollection<RequireQualityControl> RequireQualityControls { get; set; }
     }
 }

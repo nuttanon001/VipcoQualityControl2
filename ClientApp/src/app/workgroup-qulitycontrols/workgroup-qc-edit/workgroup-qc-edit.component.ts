@@ -64,6 +64,7 @@ export class WorkgroupQcEditComponent extends BaseEditComponent<WorkGroupQc, Wor
           Validators.maxLength(250) 
         ]
       ],
+      SubEmail: [this.editValue.Email,[Validators.maxLength(500)]],
       Description: [this.editValue.Description,
         [
           Validators.maxLength(200),

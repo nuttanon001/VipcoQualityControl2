@@ -19,6 +19,6 @@ namespace VipcoQualityControl.Models.QualityControls
         public string Remark { get; set; }
         //FK
         //RequireHasMasterProject
-        public virtual ICollection<RequireHasMasterProject> RequireHasMasterProjects { get; set; }
+        public ICollection<RequireHasMasterProject> RequireHasMasterProjects { get; set; } = new List<RequireHasMasterProject>();
     }
 }

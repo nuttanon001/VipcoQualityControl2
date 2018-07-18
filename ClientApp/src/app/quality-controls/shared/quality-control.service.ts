@@ -36,7 +36,7 @@ export class QualityControlService extends BaseRestService<QualityControl> {
         headers: new HttpHeaders({
           "Content-Type": "application/json",
         })
-      }).pipe(catchError(this.handleError(this.serviceName + "/post model", nObject)));
+      }).pipe(catchError(this.handleError("Insert entity to api", nObject)));
   }
 
   /** update with key number */
@@ -46,14 +46,14 @@ export class QualityControlService extends BaseRestService<QualityControl> {
         "Content-Type": "application/json",
       }),
       params: new HttpParams().set("key", uObject[this.keyName].toString())
-    }).pipe(catchError(this.handleError(this.serviceName + "/put update model", uObject)));
+    }).pipe(catchError(this.handleError("Update entity to api", uObject)));
   }
 
   // ===================== Quality Control Report ==================== \\
   getQualityControlReport(QualityControlId: number): Observable<any> {
     return this.http.get<any>(this.baseUrl + "QuailtyControlReport/", {
       params: new HttpParams().set("key", QualityControlId.toString())
-    }).pipe(catchError(this.handleError(this.serviceName + "/get quality control report", <any>{})));
+    }).pipe(catchError(this.handleError("Get qc entity report from api", <any>{})));
   }
 }
 

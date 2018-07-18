@@ -8,6 +8,7 @@ import { AuthService } from "../../core/auth/auth.service";
 import { MasterListService } from "../../master-lists/shared/master-list.service";
 import { RequireQualityControlService } from "../../require-qulitycontrols/shared/require-qc.service";
 import { RequireMoreWorkactivityService } from "../../require-qulitycontrols/shared/require-more-workactivity.service";
+import { RequireStatusQc } from "../../require-qulitycontrols/shared/require-status-qc.enum";
 
 @Component({
   selector: 'app-require-qc-dialog',
@@ -30,6 +31,7 @@ export class RequireQcDialogComponent implements OnInit {
   // Parameter
   requireQc: RequireQc;
   requireQcChange: RequireQcChange;
+  isWelder: boolean = false;
   canClose: boolean;
 
   /** Called by Angular after cutting-plan-dialog component initialized */
@@ -39,6 +41,7 @@ export class RequireQcDialogComponent implements OnInit {
       this.service.getOneKeyNumber({ RequireQualityControlId: this.data.RequireQualityControlId })
         .subscribe(dbData => {
           this.requireQc = dbData;
+          this.isWelder = this.requireQc.RequireStatus == RequireStatusQc.Welding;
         }, error => this.onCancelClick());
     } else {
       this.onCancelClick();

@@ -79,7 +79,7 @@ export class RequireQcMasterComponent
   // on detail edit override
   onDetailEdit(editValue?: RequireQc): void {
     if (editValue) {
-      if (editValue.RequireStatus !== RequireStatusQc.Waiting) {
+      if (editValue.RequireStatus != RequireStatusQc.Waiting && editValue.RequireStatus != RequireStatusQc.Welding) {
         this.dialogsService.error("Access Deny", "คำขอตรวจสอบคุณภาพ ได้รับการดำเนินการไม่สามารถแก้ไขได้ !!!", this.viewContainerRef);
         return;
       }
@@ -134,7 +134,7 @@ export class RequireQcMasterComponent
     value = this.changeTimezone(value);
     // insert data
     // debug here
-    console.log("Data is", JSON.stringify(value));
+    // console.log("Data is", JSON.stringify(value));
 
     this.service.addModel(value).subscribe(
       (complete: any) => {

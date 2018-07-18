@@ -30,7 +30,7 @@ namespace VipcoQualityControl.Controllers
             if (Scroll == null)
                 return BadRequest();
 
-            var QueryData = this.repository.GetAllAsQueryable().AsQueryable();
+            var QueryData = this.repository.GetAllAsQueryable();
 
             // Filter
             var filters = string.IsNullOrEmpty(Scroll.Filter) ? new string[] { "" }

@@ -160,8 +160,6 @@ export abstract class BaseMasterComponent<Model extends BaseModel, Service exten
         } else {
           this.editValue.Creator = undefined;
           this.canSave = true;
-          this.dialogsService.error("Failed !",
-            "Save failed with the following error: Invalid Identifier code !!!", this.viewContainerRef);
         }
       },
       (error: any) => {
@@ -192,8 +190,6 @@ export abstract class BaseMasterComponent<Model extends BaseModel, Service exten
           this.onSaveComplete();
         } else {
           this.canSave = true;
-          this.dialogsService.error("Failed !",
-            "Save failed with the following error: Invalid Identifier code !!!", this.viewContainerRef);
         }
       },
       (error: any) => {

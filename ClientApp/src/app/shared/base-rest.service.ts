@@ -66,14 +66,14 @@ export abstract class BaseRestService<Model>{
   /** GET Models from the server */
   getAll(): Observable<Array<Model>> {
     return this.http.get<Array<Model>>(this.baseUrl)
-      .pipe(catchError(this.handleError(this.serviceName + "/get all model.", new Array<Model>())));
+      .pipe(catchError(this.handleError("Get all entities from api.", new Array<Model>())));
   }
   /** get one with key number */
   getOneKeyNumber(value: Model): Observable<Model> {
     // Add safe, URL encoded search parameter if there is a search term
     const options = value ? { params: new HttpParams().set("key", value[this.keyName].toString()) } : {};
     return this.http.get<Model>(this.baseUrl + "GetKeyNumber/", options)
-      .pipe(catchError(this.handleError(this.serviceName + "/get one model", <Model>{})));
+      .pipe(catchError(this.handleError("Get entity from api", <Model>{})));
   }
   /** get one with key string */
   getOneKeyString(value: Model): Observable<Model> {
@@ -81,14 +81,14 @@ export abstract class BaseRestService<Model>{
     const options = value ? { params: new HttpParams().set("key", value[this.keyName]) } : {};
 
     return this.http.get<Model>(this.baseUrl + "GetKeyString/", options)
-      .pipe(catchError(this.handleError(this.serviceName + "/get one model", <Model>{})));
+      .pipe(catchError(this.handleError("Get entity from api", <Model>{})));
   }
 
   /** get auto complate */
   getAutoComplate(): Observable<Array<string>> {
     let url: string = `${this.baseUrl}GetAutoComplate/`;
     return this.http.get<Array<string>>(url)
-      .pipe(catchError(this.handleError(this.serviceName + "/get auto complate", new Array<string>())));
+      .pipe(catchError(this.handleError("Get string auto complate from api", new Array<string>())));
   }
 
   /** get by master id */
@@ -98,7 +98,7 @@ export abstract class BaseRestService<Model>{
 
     let url: string = this.baseUrl + subAction;
     return this.http.get<Array<Model>>(url, options)
-      .pipe(catchError(this.handleError(this.serviceName + "/get by master", new Array<Model>())));
+      .pipe(catchError(this.handleError("Get entities with master key from api", new Array<Model>())));
   }
 
   /** get by master id */
@@ -108,7 +108,7 @@ export abstract class BaseRestService<Model>{
 
     let url: string = this.baseUrl + subAction;
     return this.http.get<Array<Model>>(url, options)
-      .pipe(catchError(this.handleError(this.serviceName + "/get by master", new Array<Model>())));
+      .pipe(catchError(this.handleError("Get entities with master key from api", new Array<Model>())));
   }
 
   /** get all with scroll data */
@@ -116,7 +116,7 @@ export abstract class BaseRestService<Model>{
     // console.log(this.baseUrl + subAction);
 
     return this.http.post<ScrollData<Model>>(this.baseUrl + subAction, JSON.stringify(scroll), httpOptions)
-      .pipe(catchError(this.handleError(this.serviceName + "/get scroll", <ScrollData<Model>>{})));
+      .pipe(catchError(this.handleError("Get entities with scroll model from api", <ScrollData<Model>>{})));
     // catchError(this.handleError(this.serviceName + "/get scroll", <ScrollData<Model>>{}))
   }
 
@@ -133,7 +133,7 @@ export abstract class BaseRestService<Model>{
     // console.log("Data is:", JSON.stringify(nObject));
 
     return this.http.post<Model>(this.baseUrl, JSON.stringify(nObject), httpOptions)
-      .pipe(catchError(this.handleError(this.serviceName + "/post model", nObject)));
+      .pipe(catchError(this.handleError("Insert entity to api", nObject)));
   }
 
   /** update with key number */
@@ -146,7 +146,7 @@ export abstract class BaseRestService<Model>{
     return this.http.put<Model>(this.baseUrl, JSON.stringify(uObject), {
       headers: httpOptions.headers,
       params: new HttpParams().set("key", uObject[this.keyName].toString())
-    }).pipe(catchError(this.handleError(this.serviceName + "/put update model", uObject)));
+    }).pipe(catchError(this.handleError("Update entity to api", uObject)));
   }
 
   /** update with key string */
@@ -154,20 +154,20 @@ export abstract class BaseRestService<Model>{
     return this.http.put<Model>(this.baseUrl, JSON.stringify(uObject), {
       headers: httpOptions.headers,
       params: new HttpParams().set("key", uObject[this.keyName])
-    }).pipe(catchError(this.handleError(this.serviceName + "/put update model", uObject)));
+    }).pipe(catchError(this.handleError("Update entity to api", uObject)));
   }
 
   /** put update model */
   updateModel(uObject: Model): Observable<Model> {
     return this.http.put<Model>(this.baseUrl, JSON.stringify(uObject), httpOptions)
-      .pipe(catchError(this.handleError(this.serviceName + "/put update model", uObject)));
+      .pipe(catchError(this.handleError("Update entity to api", uObject)));
   }
 
   /** delete with key number*/
   deleteKeyNumber(key: number): Observable<any> {
     const url = `${this.baseUrl}/${key}`; // DELETE api/heroes/42
     return this.http.delete(url, httpOptions)
-      .pipe(catchError(this.handleError(this.serviceName + "/delete model")));
+      .pipe(catchError(this.handleError("Delete entity from api")));
   }
 
   getTextFile(filename: string) {

@@ -14,6 +14,7 @@ export class RequireQcMasterlistTableComponent extends BaseTableFontData<MasterL
   /** custom-mat-table ctor */
   constructor() {
     super();
-    this.displayedColumns = ["select", "DrawingNo", "MarkNo", "UnitNo" ,"Quantity", "FailQuantity","RemarkExter", "edit"];
+    this.displayedColumns = ["edit" , "DrawingNo", "MarkNo", "Name", "UnitNo", "Quantity",
+      "JointNumber", "Thickness", "TypeMaterial1", "GradeMaterial1", "FailQuantity", "RemarkExter"];
   }
 }

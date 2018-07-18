@@ -36,7 +36,8 @@ export class HttpErrorHandler {
         `server returned code ${error.status} with body "${error.error}"`;
 
       // TODO: better job of transforming error for user consumption
-      this.messageService.add(`${serviceName}: ${operation} failed: ${message}`);
+      // this.messageService.add(`${serviceName}: ${operation} failed: ${message}`);
+      this.messageService.add(`${serviceName}: ${operation} failed`);
 
       // Let the app keep running by returning a safe result.
       return of(result);

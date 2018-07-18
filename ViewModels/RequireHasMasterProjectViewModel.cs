@@ -14,5 +14,6 @@ namespace VipcoQualityControl.ViewModels
         public int? Box { get; set; }
         public string Name { get; set; }
         public string QualityControlReasonString { get; set; }
+        public RequireHasWelderViewModel RequireHasWelderViewModel { get; set; }
     }
 }

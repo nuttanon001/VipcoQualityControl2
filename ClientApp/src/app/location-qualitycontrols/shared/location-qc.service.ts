@@ -32,7 +32,7 @@ export class LocationQcService extends BaseRestService<LocationQc> {
     // Add safe, URL encoded search parameter if there is a search term
     const options = value ? { params: new HttpParams().set("key", value) } : {};
     return this.http.get<{ Has: boolean }>(this.baseUrl + "CheckGroupMis/", options)
-      .pipe(catchError(this.handleError(this.serviceName + "/check group mis model", <{ Has: boolean }>{})));
+      .pipe(catchError(this.handleError("Check work group entity from api", <{ Has: boolean }>{})));
   }
 }
 

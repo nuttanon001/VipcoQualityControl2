@@ -1,10 +1,7 @@
 <div class="example-container mat-elevation-z8">
   <div class="example-loading-shade"
-       *ngIf="isLoadingResults || isRateLimitReached">
+       *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-    <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
-      It will be reset in one minute.
-    </div>
   </div>
   <div class="mx-2">
     <search-box [isDisabled]="isDisabled" [isOnlyCreate]="isOnlyCreate"></search-box>
@@ -61,7 +58,8 @@
                 'is-complate' : row.RequireStatus === 5,
                 'is-cancel' : row.RequireStatus === 6 || row.RequireStatus === 7,
                 'is-revise' : row.RequireStatus === 8,
-                'is-req-welded' : row.RequireStatus === 9 || row.RequireStatus === 10}"
+                'is-req-welded' : row.RequireStatus === 9 || row.RequireStatus === 10,
+                'is-cancel' : row.RequireStatus === 11 }"
              (click)="selection.toggle(row)"></mat-row>
   </mat-table>
 
@@ -69,8 +67,8 @@
   </mat-paginator>-->
 
   <mat-paginator #paginator
-                 [pageSize]="50"
-                 [pageSizeOptions]="[10, 50, 100]"
+                 [pageSize]="10"
+                 [pageSizeOptions]="[10, 25, 50]"
                  [length]="resultsLength"
                  [showFirstLastButtons]="true">
   </mat-paginator>

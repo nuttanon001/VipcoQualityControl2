@@ -22,7 +22,7 @@ namespace VipcoQualityControl.Models.QualityControls
         public string QualityControlEmp { get; set; }
         //RequireQualityControl
         public int? RequireQualityControlId { get; set; }
-        public virtual RequireQualityControl RequireQualityControl { get; set; }
+        public RequireQualityControl RequireQualityControl { get; set; }
     }
 
     public enum WorkQualityControlStatus

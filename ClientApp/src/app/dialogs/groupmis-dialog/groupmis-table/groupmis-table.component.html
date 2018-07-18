@@ -1,10 +1,7 @@
 <div class="example-container mat-elevation-z8">
   <div class="example-loading-shade"
-       *ngIf="isLoadingResults || isRateLimitReached">
+       *ngIf="isLoadingResults ">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-    <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
-      It will be reset in one minute.
-    </div>
   </div>
   <div class="mx-2">
     <search-box [isDisabled]="isDisabled"></search-box>

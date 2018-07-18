@@ -1,0 +1,21 @@
+<div class="master-dialog-vh">
+  <H5 style="color:cadetblue">Specfiy information for welder require nde.</H5>
+  <div class="child-container">
+    <div class="center-content" *ngIf="InfoValue.RequireHasWelderId !== -99">
+      <app-require-qc-welder-info-dialog [InfoValue]="InfoValue" (SubmitOrCancel)="onComplateOrCancelEntity($event)">
+      </app-require-qc-welder-info-dialog>
+    </div>
+    <div class="right-content ml-1">
+      <button mat-mini-fab color="primary" (click)="onSelectedClick()"
+              [disabled]="!getValue"
+              matTooltip="add new data">
+        <mat-icon>add</mat-icon>
+      </button>
+      <hr />
+      <button mat-mini-fab color="warn" (click)="onCancelClick()"
+              matTooltip="close dialog">
+        <mat-icon>clear</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>

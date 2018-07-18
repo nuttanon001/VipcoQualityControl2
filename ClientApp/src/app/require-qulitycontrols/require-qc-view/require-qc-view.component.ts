@@ -61,6 +61,12 @@ export class RequireQcViewComponent extends BaseViewComponent<RequireQc> {
                 Name: item.Name,
                 UnitNo: item.UnitNo,
                 DrawingNo: item.DrawingNo,
+                GradeMaterial1: item.GradeMaterial1,
+                GradeMaterial2: item.GradeMaterial2,
+                JointNumber: item.JointNumber,
+                Thickness: item.Thickness,
+                TypeMaterial1: item.TypeMaterial1,
+                TypeMaterial2: item.TypeMaterial2,
                 Box: item.Box,
                 Quantity: item.Quantity,
                 MasterProjectListId: item.MasterProjectListId

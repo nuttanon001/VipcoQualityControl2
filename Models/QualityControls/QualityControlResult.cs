@@ -19,7 +19,7 @@ namespace VipcoQualityControl.Models.QualityControls
         //FK
         // RequireQualityControl
         public int? RequireQualityControlId { get; set; }
-        public virtual RequireQualityControl RequireQualityControl { get; set; }
+        public RequireQualityControl RequireQualityControl { get; set; }
         // QualityControl Employee
         public string EmpCode { get; set; }
     }

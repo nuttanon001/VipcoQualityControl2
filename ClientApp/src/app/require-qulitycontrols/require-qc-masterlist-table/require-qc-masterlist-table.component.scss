@@ -1,1 +1,19 @@
-@import "../../shared/styles/table.style.scss";
+@import "../../shared/styles/table2.style.scss";
+
+.mat-table {
+  overflow: auto;
+  height:  calc(#{$master-vh} - 175px);
+  width: calc(#{$master-vw} - 150px);
+}
+
+/*.mat-row, .mat-header-row {
+  width: 150vw;
+}*/
+
+.mat-column-UnitNo, .mat-column-Quantity,
+.mat-column-JointNumber, .mat-column-Thickness,
+.mat-column-edit {
+  display: flex;
+  flex: 0 0 85px;
+  justify-content: center;
+}

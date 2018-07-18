@@ -1,1 +1,8 @@
 @import "../../shared/styles/view.style.scss";
+
+.table-scroll {
+  display: flex; 
+  max-width: 55vw;
+  max-height: 85vh;
+  overflow-x: auto;
+}

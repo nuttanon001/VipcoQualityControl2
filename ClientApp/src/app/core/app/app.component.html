@@ -2,6 +2,10 @@
   <div class="navigation">
     <app-nav-menu></app-nav-menu>
   </div>
+  <div class="error-message" *ngIf="error" [@shrinkOut]="'in'" (click)="clearError()">
+    <h6 *ngFor="let e of error">{{e}}</h6>
+      <mat-icon class="mt-auto">clear</mat-icon>
+  </div>
   <div class="main-content">
     <router-outlet></router-outlet>
   </div>

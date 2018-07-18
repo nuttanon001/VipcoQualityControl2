@@ -1,43 +1,12 @@
-<div class="example-container mat-elevation-z8">
-  <div class="example-loading-shade"
-       *ngIf="isLoadingResults || isRateLimitReached">
+<div class="mat-elevation-z8">
+  <div class="loading-shade"
+       *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
-    <div class="example-rate-limit-reached" *ngIf="isRateLimitReached">
-      It will be reset in one minute.
-    </div>
   </div>
-  <mat-table #table [dataSource]="dataSource" class="intab-table"
-             matSort matSortActive="MarkNo" matSortDisableClear matSortDirection="asc">
+  <mat-table #table [dataSource]="dataSource" matSortDisableClear
+             matSort matSortActive="MarkNo" matSortDirection="asc">
     <!-- Note that these columns can be defined in any order.
   The actual rendered columns are set as a property on the row definition" -->
-    <!-- MarkNo Column -->
-    <ng-container matColumnDef="DrawingNo">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        DrawingNo
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.DrawingNo }}</mat-cell>
-    </ng-container>
-    <!-- MarkNo Column -->
-    <ng-container matColumnDef="MarkNoString">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        MarkNo
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ row.MarkNoString }}</mat-cell>
-    </ng-container>
-    <!-- MarkNo Column -->
-    <ng-container matColumnDef="UnitNo">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        UnitNo
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ (row.UnitNo | number) || '-' }}</mat-cell>
-    </ng-container>
-    <!-- Box Column -->
-    <ng-container matColumnDef="Box">
-      <mat-header-cell *matHeaderCellDef mat-sort-header>
-        Box
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ (row.Box | number) || '-' }}</mat-cell>
-    </ng-container>
     <!-- Quantity Column -->
     <ng-container matColumnDef="Quantity">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -45,7 +14,6 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let row">{{ row.Quantity | number }}</mat-cell>
     </ng-container>
-
     <!-- PassQuantity Column -->
     <ng-container matColumnDef="PassQuantity">
       <mat-header-cell *matHeaderCellDef>
@@ -61,7 +29,6 @@
         </mat-form-field>
       </mat-cell>
     </ng-container>
-
     <!-- PassQuantity Column -->
     <ng-container matColumnDef="QualityControlReasonId">
       <mat-header-cell *matHeaderCellDef>
@@ -79,7 +46,6 @@
         </div>
       </mat-cell>
     </ng-container>
-
     <!--Command-->
     <!-- edit Column -->
     <ng-container matColumnDef="edit">
@@ -96,6 +62,109 @@
         </button>
       </mat-cell>
     </ng-container>
+    <!--Masterist Column-->
+    <!--MasterList-->
+    <!-- DrawingNo Column -->
+    <ng-container matColumnDef="DrawingNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        DrawingNo
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.MasterProjectList?.DrawingNo) || '-' }}</mat-cell>
+    </ng-container>
+    <!-- MarkNo Column -->
+    <ng-container matColumnDef="MarkNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        MarkNo
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.MasterProjectList?.MarkNo) || '-' }}</mat-cell>
+    </ng-container>
+    <!-- Name Column -->
+    <ng-container matColumnDef="Name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        Name
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.MasterProjectList?.Name) || '-' }}</mat-cell>
+    </ng-container>
+    <!--UnitNo Column-->
+    <ng-container matColumnDef="UnitNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        UnitNo
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.MasterProjectList?.UnitNo | number) || '-' }}</mat-cell>
+    </ng-container>
+
+    <!--Update Welder-->
+    <!--JointNumber Column-->
+    <ng-container matColumnDef="JointNumber">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        JointNumber (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.MasterProjectList?.JointNumber | number) || '-' }}</mat-cell>
+    </ng-container>
+    <!-- Thickness Column -->
+    <ng-container matColumnDef="Thickness">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        Thickness (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.MasterProjectList?.Thickness | number) || '-' }}</mat-cell>
+    </ng-container>
+    <!-- Thickness Column -->
+    <ng-container matColumnDef="TypeMaterial1">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        TypeMaterial#1/#2 (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ (row?.MasterProjectList?.TypeMaterial1) || '-' }}
+        {{ row?.MasterProjectList?.TypeMaterial2 ? (' / ' + row?.MasterProjectList?.TypeMaterial2) : '' }}
+      </mat-cell>
+    </ng-container>
+    <!-- Thickness Column -->
+    <ng-container matColumnDef="GradeMaterial1">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        GradeMaterial#1/#2 (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ (row?.MasterProjectList?.GradeMaterial1) || '-' }}
+        {{ row?.MasterProjectList?.GradeMaterial2 ? (' / ' + row?.MasterProjectList?.GradeMaterial2) : '' }}
+      </mat-cell>
+    </ng-container>
+    <!--Welder Column-->
+    <!-- VTStaus Column -->
+    <ng-container matColumnDef="VTStaus">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        VTStaus (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasWelder?.VTStausString || '-') }}</mat-cell>
+    </ng-container>
+    <!-- WelderProcess Column -->
+    <ng-container matColumnDef="WelderProcess">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        WelderProcess (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasWelder?.WelderProcessString || '-') }}</mat-cell>
+    </ng-container>
+    <!-- WelderDate Column -->
+    <ng-container matColumnDef="WelderDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        WelderDate (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasWelder?.WelderDate | date: 'dd/MM/yy') || '-' }}</mat-cell>
+    </ng-container>
+    <!-- PercentNDE Column -->
+    <ng-container matColumnDef="PercentNDE">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        PercentNDE (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasWelder?.PercentNDE | number) || '-' }} %</mat-cell>
+    </ng-container>
+    <!-- WelderDate Column -->
+    <ng-container matColumnDef="WelderNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        WelderNo (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasWelder?.WelderNo1Name ) || '-' }} {{ (row.RequireHasWelder?.WelderNo2Name ? ' | ' + row.RequireHasWelder?.WelderNo2Name : '') }}</mat-cell>
+    </ng-container>
+
 
     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
     <mat-row *matRowDef="let row; columns: displayedColumns;"

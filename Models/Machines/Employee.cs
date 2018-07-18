@@ -19,7 +19,7 @@ namespace VipcoQualityControl.Models.Machines
         public string GroupName { get; set; }
         public string GroupMis { get; set; }
 
-        public virtual EmployeeGroupMis GroupMisNavigation { get; set; }
-        public virtual ICollection<User> User { get; set; }
+        public EmployeeGroupMis GroupMisNavigation { get; set; }
+        public ICollection<User> User { get; set; } = new List<User>();
     }
 }

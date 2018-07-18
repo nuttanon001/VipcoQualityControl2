@@ -16,8 +16,7 @@ namespace VipcoQualityControl.Helper
             #endregion
 
             #region WorkActivity
-            CreateMap<WorkActivity, WorkActivityViewModel>()
-                .ForMember(x => x.RequireQualityControls, o => o.Ignore());
+            CreateMap<WorkActivity, WorkActivityViewModel>();
             #endregion
 
             #region WorkGroupHasWorkShop
@@ -33,13 +32,11 @@ namespace VipcoQualityControl.Helper
             #endregion
 
             #region InspectionPoint
-            CreateMap<InspectionPoint, InspectionPointViewModel>()
-                .ForMember(x => x.RequireQualityControls, o => o.Ignore());
+            CreateMap<InspectionPoint, InspectionPointViewModel>();
             #endregion
 
             #region MasterProjectList
-            CreateMap<MasterProjectList, MasterProjectListViewModel>()
-                .ForMember(x => x.RequireHasMasterProjects, o => o.Ignore());
+            CreateMap<MasterProjectList, MasterProjectListViewModel>();
             #endregion
 
             #region RequireQuality
@@ -69,15 +66,6 @@ namespace VipcoQualityControl.Helper
             #region RequireHasMasterProject
 
             CreateMap<RequireHasMasterProject, RequireHasMasterProjectViewModel>()
-                .ForMember(x => x.MarkNoString,
-                            o => o.MapFrom(s => s.MasterProjectList == null ? "No Data" : s.MasterProjectList.MarkNo))
-                .ForMember(x => x.DrawingNo,
-                            o => o.MapFrom(s => s.MasterProjectList == null ? "No Data" : s.MasterProjectList.DrawingNo))
-                .ForMember(x => x.UnitNo,
-                            o => o.MapFrom(s => s.MasterProjectList == null ? 0 : s.MasterProjectList.UnitNo))
-                .ForMember(x => x.Box,
-                            o => o.MapFrom(s => s.MasterProjectList == null ? 0 : s.MasterProjectList.Box))
-                .ForMember(x => x.MasterProjectList, o => o.Ignore())
                 .ForMember(x => x.RequireQualityControl,o => o.Ignore());
 
             #endregion
@@ -159,6 +147,21 @@ namespace VipcoQualityControl.Helper
                 .ForMember(x => x.WorkActivityName, o => o.MapFrom(s => s.WorkActivity.Name))
                 .ForMember(x => x.RequireQualityControl, o => o.Ignore())
                 .ForMember(x => x.WorkActivity, o => o.Ignore());
+
+            #endregion
+
+            #region WelderNo
+            CreateMap<WelderNo, WelderNoViewModel>();
+            #endregion
+
+            #region WelderHasProject
+            CreateMap<WelderHasProject, WelderHasProjectViewModel>();
+            #endregion
+
+            #region RequireHasWelder
+
+            CreateMap<RequireHasWelder, RequireHasWelderViewModel>()
+                .ForMember(x => x.RequireHasMasterProject, o => o.Ignore());
 
             #endregion
         }

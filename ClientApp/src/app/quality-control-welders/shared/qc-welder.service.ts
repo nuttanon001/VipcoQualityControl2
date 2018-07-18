@@ -38,6 +38,6 @@ export class QcWelderService extends BaseRestService<QcWelder> {
         headers: new HttpHeaders({
           "Content-Type": "application/json",
         })
-      }).pipe(catchError(this.handleError(this.serviceName + "/Quality Control Welder autocomplate", Array<ResultAutoComplate>())));
+      }).pipe(catchError(this.handleError("Get autocomplate from api", Array<ResultAutoComplate>())));
   }
 }

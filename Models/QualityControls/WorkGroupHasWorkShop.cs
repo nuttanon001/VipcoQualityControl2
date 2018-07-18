@@ -14,6 +14,6 @@ namespace VipcoQualityControl.Models.QualityControls
         public string GroupMis { get; set; }
         // LocationQualityControl
         public int? LocationQualityControlId { get; set; }
-        public virtual LocationQualityControl LocationQualityControl { get; set; }
+        public LocationQualityControl LocationQualityControl { get; set; }
     }
 }

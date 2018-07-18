@@ -1,0 +1,201 @@
+<div *ngIf="InfoValue; else elseBlock">
+  <mat-horizontal-stepper [linear]="true" #stepper="matHorizontalStepper">
+    <mat-step>
+      <ng-template matStepLabel>
+        <strong><b>Inspection part</b></strong>
+      </ng-template>
+      <div class="form-container-column">
+        <div *ngIf="InfoValue.RequireQcWelder">
+          <app-require-qc-welder-sub-table [dataRows]="InfoValue.RequireQcWelder" (returnSelected)="OnDetailSelect($event)"
+                                           [readOnly]="forFail">
+          </app-require-qc-welder-sub-table>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="InfoValueForm">
+      <ng-template matStepLabel>
+        <strong><b>Request quality control information</b></strong>
+      </ng-template>
+      <form [formGroup]="InfoValueForm">
+        <div class="form-container-column">
+          <mat-accordion class="headers-align">
+            <mat-expansion-panel class="my-1" [expanded]="true">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Request information panel
+                </mat-panel-title>
+                <mat-panel-description>
+                  Type your information request quality control
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <mat-form-field>
+                <input formControlName="WelderDate" matInput [matDatepicker]="WelderDate"
+                       required
+                       placeholder="Choose a date">
+                <mat-datepicker-toggle matSuffix [for]="WelderDate"></mat-datepicker-toggle>
+                <mat-datepicker #WelderDate></mat-datepicker>
+                <mat-error *ngIf="InfoValueForm.controls.WelderDate.hasError('required')">
+                  Date is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field hintLabel="HH:mm:ss">
+                <input formControlName="WelderTime" matInput type="time"
+                       required
+                       placeholder="Time quality control">
+              </mat-form-field>
+              <!--Row1-->
+              <mat-form-field hintLabel="Code will automatically generated.">
+                <input matInput placeholder="Require No" readonly
+                       id="RequireQualityNo" formControlName="RequireQualityNo">
+              </mat-form-field>
+
+              <mat-form-field>
+                <input formControlName="RequireEmpString" matInput
+                       readonly
+                       placeholder="Selected employee require">
+              </mat-form-field>
+
+              <mat-form-field>
+                <input formControlName="GroupMISString" matInput
+                       readonly
+                       placeholder="Selected group">
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-select formControlName="BranchId"
+                            readonly
+                            placeholder="Branch">
+                  <mat-option *ngFor="let branch of branchs" [value]="branch.BranchId">
+                    {{ branch.Name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <input formControlName="ProjectCodeDetailString" matInput
+                       readonly
+                       placeholder="Selected job number">
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-select placeholder="InspectionPoint"
+                            required [disabled]="forFail"
+                            id="InspectionPointId" formControlName="InspectionPointId">
+                  <mat-option *ngFor="let inspection of inspections" [value]="inspection.InspectionPointId">
+                    {{ inspection.Name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-select placeholder="WorkActivity"
+                            required [disabled]="forFail" multiple
+                            id="MoreWorkActvities" formControlName="MoreWorkActvities">
+                  <mat-select-trigger>
+                    {{InfoValueForm.controls.MoreWorkActvities.value ? InfoValueForm.controls.MoreWorkActvities?.value[0]?.Name : ''}}
+                    <span *ngIf="InfoValueForm?.controls?.MoreWorkActvities?.value?.length > 1">
+                      (+{{InfoValueForm.controls.MoreWorkActvities.value.length - 1}} others)
+                    </span>
+                  </mat-select-trigger>
+                  <mat-optgroup *ngFor="let object of workActivities | groupby:'TypeWorkActivity'" [label]="object.key === '1' ? 'QC' : (object.key === '2' ? 'NDE' : '-')">
+                    <mat-option *ngFor="let workActivitie of object.value" [value]="workActivitie">
+                      {{ workActivitie.Name }} | {{ workActivitie.TypeWorkActivity === 1 ? 'QC' : ( workActivitie.TypeWorkActivity === 2 ? 'NDE' : '-') }}
+                    </mat-option>
+                  </mat-optgroup>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-select placeholder="WorkGroup QC"
+                            required [disabled]="forFail"
+                            id="WorkGroupQualityControlId" formControlName="WorkGroupQualityControlId">
+                  <mat-option *ngFor="let workGroupQc of workGroupQcs" [value]="workGroupQc.WorkGroupQualityControlId">
+                    {{ workGroupQc.Name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field>
+                <input matInput placeholder="Email" type="email"
+                       disabled
+                       id="MailReply" formControlName="MailReply">
+                <mat-hint>Reply mail.</mat-hint>
+                <mat-error *ngIf="InfoValueForm.controls.MailReply.hasError('email')">
+                  Please enter a valid email address
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field hintLabel="Max 200 characters">
+                <textarea matInput placeholder="Description" rows="3"
+                          id="Description" formControlName="Description" maxlength="200"></textarea>
+                <mat-hint [align]="end">{{InfoValueForm.controls.Description.value?.length || 0}}/200</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field>
+                <textarea matInput placeholder="Remark"
+                          maxlength="200" rows="3"
+                          id="Remark" formControlName="Remark"></textarea>
+                <mat-hint [align]="end">{{InfoValueForm.controls.Remark.value?.length || 0}}/200</mat-hint>
+              </mat-form-field>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="my-1">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Attach file panel
+                </mat-panel-title>
+                <mat-panel-description>
+                  Total attach files {{attachFiles?.length || 0}}
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+              <!--Row8-->
+              <div class="row-form">
+                <div class="left-content" *ngIf="!forFail">
+                  <app-attach-file id="AttactFile" (results)="onUpdateAttachResults($event)">
+                  </app-attach-file>
+                </div>
+
+                <div class="right-content">
+                  <div *ngIf="attachFiles && attachFiles.length > 0">
+                    <table class="table table-hover table-sm small">
+                      <colgroup>
+                        <col span="1" style="width: 80%;">
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th>File Name</th>
+                          <th>Remove</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let file of attachFiles; let num2 = index">
+                          <td (click)="onOpenNewLink(file.FileAddress)" style="cursor:pointer;">
+                            {{num2 + 1}}. {{file.FileName}}
+                          </td>
+                          <td>
+                            <div *ngIf="!forFail">
+                              <a class="btn btn-sm btn-danger" matTooltip="Remove Attach File" (click)="onDeleteAttachFile(file)">
+                                <em class="fa fa-remove"></em>
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </form>
+    </mat-step>
+  </mat-horizontal-stepper>
+</div>
+
+<ng-template #elseBlock>
+  <mat-progress-bar mode="indeterminate" style="margin-top:50px;"></mat-progress-bar>
+  Waiting... for loading
+</ng-template>

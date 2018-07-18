@@ -32,14 +32,16 @@ export class BaseTableFontData<Model> implements OnInit, OnChanges, AfterViewIni
   // Parameter Component
   resultsLength = 0;
   isLoadingResults = false;
-  isRateLimitReached = false;
   selectedRow: Model;
 
   ngOnChanges() {
     this.dataSource = new MatTableDataSource<Model>(this.dataRows);
+    this.resultsLength = this.dataRows ? this.dataRows.length : 0;
+    // console.log(JSON.stringify(this.dataRows));
+
     // console.log("ngOnChanges", JSON.stringify(this.dataSource.data));
     //this.dataSource.connect().subscribe(data => {
-    //  console.log(JSON.stringify(data));
+    // console.log(JSON.stringify(data));
     //});
   }
 

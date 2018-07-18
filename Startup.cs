@@ -40,9 +40,9 @@ namespace VipcoQualityControl
             // AddDbContextPool
             // Change AddDbContextPool if EF Core 2.1
             services.AddDbContextPool<QualityControlContext>(option =>
-                option.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("QualityControlConnection")))
+                option.UseSqlServer(Configuration.GetConnectionString("QualityControlConnection")))
                     .AddDbContextPool<MachineContext>(option =>
-                option.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("MachineConnection")));
+                option.UseSqlServer(Configuration.GetConnectionString("MachineConnection")));
             // Add Repositoy
             services.AddTransient(typeof(IRepositoryQualityControl<>), typeof(RepositoryQualityControl<>))
                     .AddTransient(typeof(IRepositoryMachine<>), typeof(RepositoryMachine<>))

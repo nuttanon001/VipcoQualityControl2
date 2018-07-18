@@ -4,11 +4,9 @@ import { Component } from "@angular/core";
 import { BaseTableFontData } from "../../shared/base-table-fontdata.component";
 // Module
 import { RequireQcHasMasterList } from "../../require-qulitycontrols/shared/require-qc-has-master-list.model";
-import { Row } from "primeng/primeng";
-import { QcReasonsService } from "../../quality-control-reasons/shared/qc-reasons.service";
 import { QcReasons } from "../../quality-control-reasons/shared/qc-reasons.model";
 // Services
-
+import { QcReasonsService } from "../../quality-control-reasons/shared/qc-reasons.service";
 
 @Component({
   selector: 'app-quality-control-has-markno-table',
@@ -22,8 +20,24 @@ export class QualityControlHasMarknoTableComponent extends BaseTableFontData<Req
     private service:QcReasonsService
   ) {
     super();
-    this.displayedColumns = ["DrawingNo","MarkNoString", "UnitNo","Box",
-      "Quantity", "PassQuantity", "QualityControlReasonId", "edit"];
+    this.displayedColumns = [
+      "edit",
+      "PassQuantity",
+      "QualityControlReasonId",
+      "DrawingNo",
+      "UnitNo", 
+      "Name",
+      "Quantity",
+      "VTStaus",
+      "WelderProcess",
+      "WelderDate",
+      "PercentNDE",
+      "WelderNo",
+      "JointNumber",
+      "Thickness",
+      "TypeMaterial1",
+      "GradeMaterial1",
+    ];
   }
   // Parameter
   qcReasons: Array<QcReasons>;

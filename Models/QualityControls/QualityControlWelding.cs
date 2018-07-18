@@ -31,16 +31,16 @@ namespace VipcoQualityControl.Models.QualityControls
         // QualityControlWelding
         [ForeignKey("ParentQcWelding")]
         public int? ParentQcWeldingId { get; set; }
-        public virtual QualityControlWelding ParentQcWelding { get; set; }
+        public QualityControlWelding ParentQcWelding { get; set; }
         // ResponseBy
         public string ResponseBy { get; set; }
         // RequireQualityControl
         public int? RequireQualityControlId { get; set; }
-        public virtual RequireQualityControl RequireQualityControl { get; set; }
+        public RequireQualityControl RequireQualityControl { get; set; }
         // ProjectCodeMaster
         public int? ProjectCodeMasterId { get; set; }
         // QualityControlReason
         public int? QualityControlReasonId { get; set; }
-        public virtual QualityControlReason QualityControlReason { get; set; }
+        public QualityControlReason QualityControlReason { get; set; }
     }
 }

@@ -16,6 +16,7 @@ namespace VipcoQualityControl.Models.QualityControls
         [Required]
         public DateTime RequireDate { get; set; }
         public DateTime? ResponseDate { get; set; }
+        public DateTime? WelderDate { get; set; }
         [StringLength(200)]
         public string Description { get; set; }
         [StringLength(200)]
@@ -27,7 +28,7 @@ namespace VipcoQualityControl.Models.QualityControls
         // RequireQualityControl
         [ForeignKey("ParentRequireQc")]
         public int? ParentRequireQcId { get; set; }
-        public virtual RequireQualityControl ParentRequireQc { get; set; }
+        public RequireQualityControl ParentRequireQc { get; set; }
         // GroupMis
         public string GroupMIS { get; set; }
         // Employee
@@ -36,26 +37,26 @@ namespace VipcoQualityControl.Models.QualityControls
         public int? ProjectCodeDetailId { get; set; }
         //WorkGroupQualityControl
         public int? WorkGroupQualityControlId { get; set; }
-        public virtual WorkGroupQualityControl WorkGroupQualityControl { get; set; }
+        public WorkGroupQualityControl WorkGroupQualityControl { get; set; }
         //InspectionPoint
         public int? InspectionPointId { get; set; }
-        public virtual InspectionPoint InspectionPoint { get; set; }
+        public InspectionPoint InspectionPoint { get; set; }
         //WorkActivity
         public int? WorkActivityId { get; set; }
-        public virtual WorkActivity WorkActivity { get; set; }
+        public WorkActivity WorkActivity { get; set; }
         //Branch
         public int? BranchId { get; set; }
-        public virtual Branch Branch { get; set; }
+        public Branch Branch { get; set; }
         // RequireHasMasterProject
-        public virtual ICollection<RequireHasMasterProject> RequireHasMasterProjects { get; set; }
+        public ICollection<RequireHasMasterProject> RequireHasMasterProjects { get; set; } = new List<RequireHasMasterProject>();
         // RequireQcMoreWorkActivity
-        public virtual ICollection<RequireQcMoreWorkActvity> RequireQcMoreWorkActvities { get; set; }
+        public ICollection<RequireQcMoreWorkActvity> RequireQcMoreWorkActvities { get; set; } = new List<RequireQcMoreWorkActvity>();
         // RequireHasAttach
-        public virtual ICollection<RequireHasAttach> RequireHasAttaches { get; set; }
+        public ICollection<RequireHasAttach> RequireHasAttaches { get; set; } = new List<RequireHasAttach>();
         // WorkQualityControl
-        public virtual WorkQualityControl WorkQualityControl { get; set; }
+        public WorkQualityControl WorkQualityControl { get; set; }
         // QualityControlResult
-        public virtual QualityControlResult QualityControlResult { get; set; }
+        public QualityControlResult QualityControlResult { get; set; }
     }
 
     public enum RequireStatus
@@ -70,5 +71,6 @@ namespace VipcoQualityControl.Models.QualityControls
         Revise,
         Welding,
         WeldingReq,
+        WeldingFail,
     }
 }

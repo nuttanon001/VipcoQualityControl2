@@ -25,7 +25,7 @@
                 <input matInput placeholder="Email"
                        maxlength="250"
                        formControlName="Email">
-                <mat-hint [align]="end">{{editValueForm.controls.Email.value?.length || 0}}/50</mat-hint>
+                <mat-hint [align]="end">{{editValueForm.controls.Email.value?.length || 0}}/250</mat-hint>
               </mat-form-field>
             </div>
             <ng-template #ElseBlock>
@@ -35,12 +35,27 @@
             </ng-template>
           </div>
 
+          <div class="row-form" *ngIf="haveEmail">
+            <div class="left-content">
+              <mat-form-field hintLabel="Max 500 characters">
+                <input matInput placeholder="Sub-Email"
+                       maxlength="500"
+                       formControlName="SubEmail">
+                <mat-hint [align]="end">{{editValueForm.controls.SubEmail.value?.length || 0}}/500</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <div class="right-content">
+              &nbsp;
+            </div>
+          </div>
+
           <div class="row-form">
             <div class="left-content">
               <mat-form-field hintLabel="*Max 200 characters">
                 <textarea matInput placeholder="Description"
-                       maxlength="200" rows="3"
-                       formControlName="Description"></textarea>
+                          maxlength="200" rows="3"
+                          formControlName="Description"></textarea>
                 <mat-hint [align]="end">{{editValueForm.controls.Description.value?.length || 0}}/200</mat-hint>
               </mat-form-field>
             </div>
@@ -48,8 +63,8 @@
             <div class="right-content">
               <mat-form-field hintLabel="*Max 200 characters">
                 <textarea matInput placeholder="Remark"
-                       maxlength="200" rows="3"
-                       formControlName="Remark"></textarea>
+                          maxlength="200" rows="3"
+                          formControlName="Remark"></textarea>
                 <mat-hint [align]="end">{{editValueForm.controls.Remark.value?.length || 0}}/200</mat-hint>
               </mat-form-field>
             </div>

@@ -20,6 +20,6 @@ namespace VipcoQualityControl.Models.Machines
         public string ProjectName { get; set; }
         public DateTime? StartDate { get; set; }
 
-        public virtual ICollection<ProjectCodeDetail> ProjectCodeDetail { get; set; }
+        public ICollection<ProjectCodeDetail> ProjectCodeDetail { get; set; } = new List<ProjectCodeDetail>();
     }
 }

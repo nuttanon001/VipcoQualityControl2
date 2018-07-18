@@ -69,12 +69,19 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
     this.route.paramMap.subscribe((param: ParamMap) => {
       let key: number = Number(param.get("condition") || 0);
       if (key) {
-        this.status = key;
-        this.buildForm();
-
-        if (this.reportForm) {
-          this.onValueChanged();
+        if (this.status) {
+          this.status = key;
+          this.buildForm();
+          if (this.reportForm) {
+            this.onValueChanged();
+          }
+        } else {
+          this.status = key;
+          this.buildForm();
         }
+        //if (this.reportForm) {
+        //  this.onValueChanged();
+        //}
       }
       
     }, error => console.error(error));
@@ -121,8 +128,16 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
   onGetData(schedule: OptionRequireQc): void {
     this.service.getRequireQualityControlWaiting(schedule)
       .subscribe(dbDataSchedule => {
-        //console.log("Api Send is", dbDataSchedule);
-
+        // console.log("Api Send is", dbDataSchedule);
+        if (!dbDataSchedule) {
+          this.totalRecords = 0;
+          this.columns = new Array;
+          this.columnLower = new Array;
+          this.columnUpper = new Array;
+          this.requireQc = new Array;
+          this.reloadData();
+          return;
+        }
         this.totalRecords = dbDataSchedule.TotalRow;
         // new Column Array
         this.columnUpper = new Array;
@@ -272,7 +287,26 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
       }
       // For Welding Workgroup
       else if (this.status === 2) {
-        this.router.navigate(["qc-welder/", master.RequireQualityControlId]);
+        this.serviceDialogs.dialogSelectRequireQualityControl(master.RequireQualityControlId, this.viewContainerRef)
+          .subscribe(conditionNumber => {
+            if (conditionNumber) {
+              if (conditionNumber === 4) {
+                setTimeout(() => {
+                  this.router.navigate(["require-qc-welder/", master.RequireQualityControlId]);
+                }, 750);
+              } else if (conditionNumber === -2) {
+                this.serviceDialogs.confirm("Question Message", "Do you want to cancel requrie quality control?",
+                  this.viewContainerRef).subscribe(result => {
+                    if (result) {
+                      this.service.cancelRequireQualityControl(master.RequireQualityControlId)
+                        .subscribe(dbData => {
+                          setTimeout(() => { this.onGetData(this.reportForm.value); }, 750);
+                        });
+                    }
+                  });
+              }
+            }
+          });
         // TODO
       }
     }

@@ -31,6 +31,6 @@ export class EmployeeGroupMisService extends BaseRestService<EmployeeGroupMis> {
 
     return this.http.get<EmployeeGroupMis>(this.baseUrl + "GroupMisByEmpCode/", {
       params: new HttpParams().set("EmpCode", EmpCode.toString())
-    }).pipe(catchError(this.handleError(this.serviceName + "/get employee group mis by empcode", <EmployeeGroupMis>{})));
+    }).pipe(catchError(this.handleError("Get employee work group by empcode from api", <EmployeeGroupMis>{})));
   }
 }

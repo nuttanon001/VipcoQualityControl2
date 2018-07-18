@@ -19,7 +19,10 @@ namespace VipcoQualityControl.ViewModels
         public string LocationQualityControlString { get; set; }
         public DateTime? RequireQcTime { get; set; }
         public string RequireQcTimeString { get; set; }
+        public DateTime? WelderTime { get; set; }
+        public string WelderTimeString { get; set; }
         public ICollection<MasterProjectList> MasterLists { get; set; }
         public ICollection<WorkActivity> MoreWorkActvities { get; set; }
+        public ICollection<RequireHasWelder> RequireQcWelder { get; set; }
     }
 }

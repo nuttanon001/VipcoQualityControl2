@@ -14,6 +14,6 @@ namespace VipcoQualityControl.Models.Machines
         public string GroupDesc { get; set; }
         public string Remark { get; set; }
 
-        public virtual ICollection<Employee> Employee { get; set; }
+        public ICollection<Employee> Employee { get; set; } = new List<Employee>();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +14,7 @@ namespace VipcoQualityControl.Services
     {
         #region PrivateMembers
         private readonly DbSet<TEntity> Entities;
+        private readonly DbQuery<TEntity> Queries;
         private readonly QualityControlContext Context;
         private readonly string ErrorMessage = string.Empty;
         #endregion
@@ -26,8 +28,133 @@ namespace VipcoQualityControl.Services
         public RepositoryQualityControl(QualityControlContext context)
         {
             this.Context = context;
-            this.Entities = context.Set<TEntity>();
+            try
+            {
+                this.Entities = context.Set<TEntity>();
+            }
+            catch
+            {
+                this.Queries = context.Query<TEntity>();
+            }
         }
+        #endregion
+
+        #region Get2
+        /// <summary>
+        /// Gets the first or default entity based on a predicate, orderby delegate and include delegate. This method default no-tracking query.
+        /// </summary>
+        /// <param name="selector">The selector for projection.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <param name="orderBy">A function to order elements.</param>
+        /// <param name="include">A function to include navigation properties</param>
+        /// <param name="disableTracking"><c>True</c> to disable changing tracking; otherwise, <c>false</c>. Default to <c>true</c>.</param>
+        /// <returns>An <see cref="IPagedList{TEntity}"/> that contains elements that satisfy the condition specified by <paramref name="predicate"/>.</returns>
+        /// <remarks>This method default no-tracking query.</remarks>
+        public TResult GetFirstOrDefault<TResult>(Expression<Func<TEntity, TResult>> selector,
+                                             Expression<Func<TEntity, bool>> predicate = null,
+                                             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+                                             bool disableTracking = true)
+        {
+            IQueryable<TEntity> query = this.Entities ?? this.Queries.AsQueryable();
+            if (disableTracking)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            if (orderBy != null)
+                return orderBy(query).Select(selector).FirstOrDefault();
+            else
+                return query.Select(selector).FirstOrDefault();
+        }
+        /// <summary>
+        /// Gets the first or default entity based on a predicate, orderby delegate and include delegate. This method default no-tracking query.
+        /// </summary>
+        /// <param name="selector">The selector for projection.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <param name="orderBy">A function to order elements.</param>
+        /// <param name="include">A function to include navigation properties</param>
+        /// <param name="disableTracking"><c>True</c> to disable changing tracking; otherwise, <c>false</c>. Default to <c>true</c>.</param>
+        /// <returns>An <see cref="IPagedList{TEntity}"/> that contains elements that satisfy the condition specified by <paramref name="predicate"/>.</returns>
+        /// <remarks>This method default no-tracking query.</remarks>
+        public async Task<TResult> GetFirstOrDefaultAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
+                                     Expression<Func<TEntity, bool>> predicate = null,
+                                     Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                     Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+                                     bool disableTracking = true)
+        {
+            IQueryable<TEntity> query = this.Entities ?? this.Queries.AsQueryable();
+            if (disableTracking)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            if (orderBy != null)
+                return await orderBy(query).Select(selector).FirstOrDefaultAsync();
+            else
+                return await query.Select(selector).FirstOrDefaultAsync();
+        }
+        /// <summary>
+        /// Gets the first or default entity based on a predicate, orderby delegate and include delegate. This method default no-tracking query.
+        /// </summary>
+        /// <param name="selector">The selector for projection.</param>
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <param name="orderBy">A function to order elements.</param>
+        /// <param name="include">A function to include navigation properties</param>
+        /// <param name="skip">How many skip data from database</param>
+        /// <param name="take">How many take data from database</param>
+        /// <param name="disableTracking"><c>True</c> to disable changing tracking; otherwise, <c>false</c>. Default to <c>true</c>.</param>
+        /// <remarks>This method default no-tracking query.</remarks>
+        public async Task<ICollection<TResult>> GetToListAsync<TResult>(Expression<Func<TEntity, TResult>> selector,
+                                    Expression<Func<TEntity, bool>> predicate = null,
+                                    Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+                                    Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+                                    int? skip = null, int? take = null,
+                                    bool disableTracking = true)
+        {
+            IQueryable<TEntity> query = this.Entities ?? this.Queries.AsQueryable();
+            if (disableTracking)
+                query = query.AsNoTracking();
+
+            if (include != null)
+                query = include(query);
+
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            if (orderBy != null)
+                query = orderBy(query);
+
+            if (skip != null && take != null)
+                query = query.Skip(skip.Value).Take(take.Value);
+
+            return await query.Select(selector).ToListAsync();
+        }
+        /// <summary>
+        /// Get length of list
+        /// </summary>
+        /// <param name="predicate"> A function to test each element for a condition.</param>
+        /// <param name="disableTracking"></param>
+        /// <returns></returns>
+        public async Task<int> GetLengthWithAsync(Expression<Func<TEntity, bool>> predicate = null, bool disableTracking = true)
+        {
+            IQueryable<TEntity> query = this.Entities ?? this.Queries.AsQueryable();
+            if (disableTracking)
+                query = query.AsNoTracking();
+            if (predicate != null)
+                query = query.Where(predicate);
+
+            return await query.CountAsync();
+        }
+
         #endregion
 
         #region Get
@@ -41,14 +168,14 @@ namespace VipcoQualityControl.Services
         public TEntity Get(int id, bool option = false)
         {
             var entity = this.Entities.Find(id);
-            if (!option)
+            if (!option && entity != null)
                 this.Context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
         public TEntity Get(string id, bool option = false)
         {
             var entity = this.Entities.Find(id);
-            if (!option)
+            if (!option && entity != null)
                 this.Context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
@@ -70,7 +197,7 @@ namespace VipcoQualityControl.Services
         public async Task<TEntity> GetAsync(string id, bool option = false)
         {
             var entity = await Entities.FindAsync(id);
-            if (!option)
+            if (!option && entity != null)
                 this.Context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
@@ -80,7 +207,10 @@ namespace VipcoQualityControl.Services
         /// <returns></returns>
         public IQueryable<TEntity> GetAllAsQueryable()
         {
-            return this.Entities.AsQueryable();
+            if (this.Entities != null)
+                return this.Entities.AsQueryable();
+            else
+                return this.Queries.AsQueryable();
         }
         /// <summary>
         /// Get all entities
@@ -92,7 +222,7 @@ namespace VipcoQualityControl.Services
             var ListData = new List<TEntity>();
             (await this.Entities.ToListAsync()).ForEach(item =>
             {
-                if (!option)
+                if (!option && item != null)
                     this.Context.Entry(item).State = EntityState.Detached;
 
                 ListData.Add(item);
@@ -100,6 +230,25 @@ namespace VipcoQualityControl.Services
             return ListData;
         }
 
+        public async Task<ICollection<TEntity>> GetAllAsync(Expression<Func<TEntity, object>>[] includes, bool option = false)
+        {
+            var ListData = new List<TEntity>();
+            IQueryable<TEntity> query = this.Entities;
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            (await query.ToListAsync()).ForEach(item =>
+            {
+                if (!option && item != null)
+                    this.Context.Entry(item).State = EntityState.Detached;
+
+                ListData.Add(item);
+            });
+            return ListData;
+        }
+      
         /// <summary>
         /// Get all entities with condition
         /// </summary>
@@ -117,7 +266,7 @@ namespace VipcoQualityControl.Services
             var ListData = new List<TEntity>();
             (await this.Entities.ToListAsync()).ForEach(item =>
             {
-                if (!option)
+                if (!option && item != null)
                     this.Context.Entry(item).State = EntityState.Detached;
 
                 ListData.Add(item);
@@ -156,6 +305,19 @@ namespace VipcoQualityControl.Services
                 this.Context.Entry(entity).State = EntityState.Detached;
             return entity;
         }
+
+        public async Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> match, Expression<Func<TEntity, object>>[] includes, bool option = false)
+        {
+            IQueryable<TEntity> query = this.Entities;
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            var entity = await query.FirstOrDefaultAsync(match);
+            if (!option && entity != null)
+                this.Context.Entry(entity).State = EntityState.Detached;
+            return entity;
+        }
         /// <summary>
         /// Returns a collection of objects which match the provided expression
         /// </summary>
@@ -167,7 +329,7 @@ namespace VipcoQualityControl.Services
             var ListData = new List<TEntity>();
             this.Entities.Where(match).ToList().ForEach(item =>
             {
-                if (!option)
+                if (!option && item != null)
                     this.Context.Entry(item).State = EntityState.Detached;
                 ListData.Add(item);
             });
@@ -179,7 +341,25 @@ namespace VipcoQualityControl.Services
             var ListData = new List<TEntity>();
             (await this.Entities.Where(match).ToListAsync()).ForEach(item =>
             {
-                if (!option)
+                if (!option && item != null)
+                    this.Context.Entry(item).State = EntityState.Detached;
+                ListData.Add(item);
+            });
+
+            return ListData;
+        }
+
+        public async Task<ICollection<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> match, Expression<Func<TEntity, object>>[] includes, bool option = false)
+        {
+            var ListData = new List<TEntity>();
+            IQueryable<TEntity> query = this.Entities;
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+            (await query.ToListAsync()).ForEach(item =>
+            {
+                if (!option && item != null)
                     this.Context.Entry(item).State = EntityState.Detached;
                 ListData.Add(item);
             });

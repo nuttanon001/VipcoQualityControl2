@@ -14,6 +14,6 @@ namespace VipcoQualityControl.Models.Machines
         public string ProjectCodeDetailCode { get; set; }
         public int? ProjectCodeMasterId { get; set; }
 
-        public virtual ProjectCodeMaster ProjectCodeMaster { get; set; }
+        public ProjectCodeMaster ProjectCodeMaster { get; set; }
     }
 }

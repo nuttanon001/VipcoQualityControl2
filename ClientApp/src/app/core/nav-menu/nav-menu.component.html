@@ -100,9 +100,22 @@
               <mat-icon>date_range</mat-icon>
               <span>&nbsp;Require-NDE-Welding&nbsp;</span>
             </button>
-            <button mat-menu-item [routerLink]="['/qc-welder']" routerLinkActive="active">
+            <button mat-menu-item [routerLink]="['/require-qc-welder']" routerLinkActive="active">
+              <mat-icon>settings_system_daydream</mat-icon>
+              <span>&nbsp;Welder-NDE&nbsp;</span>
+            </button>
+            <button mat-menu-item [routerLink]="['/require-qc-welder/forfail','1']" routerLinkActive="active">
+              <mat-icon>phonelink_off</mat-icon>
+              <span>&nbsp;Welder-NDE/Fail&nbsp;</span>
+            </button>
+            <hr />
+            <button mat-menu-item [routerLink]="['/welder-no']" routerLinkActive="active">
               <mat-icon>timeline</mat-icon>
-              <span>&nbsp;NDE Welder&nbsp;</span>
+              <span>&nbsp;Welder-No&nbsp;</span>
+            </button>
+            <button mat-menu-item [routerLink]="['/welder-no/welder-project']" routerLinkActive="active">
+              <mat-icon>contacts</mat-icon>
+              <span>&nbsp;Welder-Project&nbsp;</span>
             </button>
           </div>
         </mat-menu>

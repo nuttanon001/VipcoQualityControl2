@@ -1,0 +1,277 @@
+<div *ngIf="InfoValue;else elseBlock">
+  <form [formGroup]="InfoValueForm">
+    <div class="form-container-column">
+      <mat-accordion class="headers-align">
+        <!--Expansion1-->
+        <mat-expansion-panel [expanded]="step === 0" (opened)="setStep(0)" hideToggle="true">
+          <!--Header-->
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>Inspection part infomation</strong>
+            </mat-panel-title>
+            <mat-panel-description>
+              Specify the VT status, WelderNo, WelderProcess and Other for Inspection part information.
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <!--VTStaus-->
+          <mat-form-field hintLabel="Specify the status for VT">
+            <mat-select formControlName="VTStaus"
+                        required
+                        placeholder="Select status VT">
+              <mat-option>-</mat-option>
+              <mat-option *ngFor="let status of welderStatus" [value]="status.data">
+                {{ status.lable }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="InfoValueForm.controls.VTStaus.hasError('required')">
+              VT status is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <!--WelderProcess-->
+          <mat-form-field hintLabel="Specify the welder process">
+            <mat-select formControlName="WelderProcess"
+                        required
+                        placeholder="Select welder process">
+              <mat-option>-</mat-option>
+              <mat-option *ngFor="let process of welderProcess" [value]="process.data">
+                {{ process.lable }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="InfoValueForm.controls.WelderProcess.hasError('required')">
+              Welder process is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <!--WelderDate-->
+          <mat-form-field>
+            <input matInput [matDatepicker]="WelderDate" formControlName="WelderDate"
+                   required
+                   placeholder="Welder date for inspection">
+            <mat-datepicker-toggle matSuffix [for]="WelderDate"></mat-datepicker-toggle>
+            <mat-datepicker #WelderDate></mat-datepicker>
+            <mat-error *ngIf="InfoValueForm.controls.WelderDate.hasError('required')">
+              Welder date is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <!--PercentNDE-->
+          <mat-form-field hintLabel="*Percent NDE more then 0">
+            <input matInput type="number" formControlName="PercentNDE"
+                   min="0"
+                   placeholder="Specify the percenter nde for inspection part">
+            <mat-error *ngIf="InfoValueForm.controls.PercentNDE.hasError('min')">
+              Percent minimum number is 0
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field hintLabel="*Require WelderNo1">
+            <input matInput formControlName="WelderNo1String"
+                   required readonly
+                   placeholder="Specify welder employee No1"
+                   class="click-input" (click)="openDialogs('WelderNo1Id')">
+            <mat-error *ngIf="InfoValueForm.controls.WelderNo1String.hasError('required')">
+              Welder no 1 is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field hintLabel="Specify if have 2 welder">
+            <input matInput formControlName="WelderNo2String"
+                   readonly
+                   placeholder="Specify welder employee No2"
+                   class="click-input" (click)="openDialogs('WelderNo2Id')">
+          </mat-form-field>
+
+          <mat-action-row>
+            <button mat-button color="accent" (click)="nextStep()">
+              <strong>Next</strong>
+            </button>
+            <button mat-button color="primary" (click)="endStep()">
+              <strong>End</strong>
+            </button>
+          </mat-action-row>
+        </mat-expansion-panel>
+
+        <!--Expansion2-->
+        <mat-expansion-panel [expanded]="step === 1" (opened)="setStep(1)" hideToggle="true">
+          <!--Header-->
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>NDE Inspection part infomation</strong>
+            </mat-panel-title>
+            <mat-panel-description>
+              Information for NDE inspection part .
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <div formGroupName="RequireHasMasterProject">
+            <!--DrawingNo-->
+            <mat-form-field hintLabel="*Required and max 200 characters">
+              <input matInput formControlName="DrawingNo" [matAutocomplete]="DrawingNo"
+                     required maxlength="200"
+                     placeholder="Specify the drawing no. for inspection part">
+
+              <mat-autocomplete #DrawingNo="matAutocomplete">
+                <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
+                  <span>{{ result.AutoComplate }}</span>
+                </mat-option>
+              </mat-autocomplete>
+
+              <mat-hint [align]="end">{{InfoValueForm.get('RequireHasMasterProject.DrawingNo').value?.length || 0}}/200</mat-hint>
+              <mat-error *ngIf="InfoValueForm.get('RequireHasMasterProject.DrawingNo').hasError('required')">
+                Drawing-no is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <!--MarkNo-->
+            <mat-form-field hintLabel="*Required and max 200 characters">
+              <input matInput formControlName="MarkNo" [matAutocomplete]="MarkNo"
+                     required maxlength="200"
+                     placeholder="Specify the mark-no for inspection part">
+
+              <mat-autocomplete #MarkNo="matAutocomplete">
+                <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
+                  <span>{{ result.AutoComplate }}</span>
+                </mat-option>
+              </mat-autocomplete>
+
+              <mat-hint [align]="end">{{InfoValueForm.get('RequireHasMasterProject.MarkNo').value?.length || 0}}/200</mat-hint>
+              <mat-error *ngIf="InfoValueForm.get('RequireHasMasterProject.MarkNo').hasError('required')">
+                MarkNo is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <!--Name-->
+            <mat-form-field hintLabel="Max 50 characters">
+              <input matInput formControlName="Name"
+                     maxlength="50"
+                     placeholder="Specify the name for inspection part">
+              <mat-hint [align]="end">{{InfoValueForm.get('RequireHasMasterProject.Name').value?.length || 0}}/50</mat-hint>
+            </mat-form-field>
+            <!--UnitNo-->
+            <mat-form-field hintLabel="*UnitNo more then 0">
+              <input matInput type="number" formControlName="UnitNo"
+                     min="0"
+                     placeholder="Specify the unit-no for inspection part">
+              <mat-error *ngIf="InfoValueForm.get('RequireHasMasterProject.UnitNo').hasError('min')">
+                UnitNo minimum number is 0
+              </mat-error>
+            </mat-form-field>
+            <!--Box-->
+            <mat-form-field hintLabel="*Box more then 0">
+              <input type="number" matInput formControlName="Box"
+                     min="0"
+                     placeholder="Specify the box no for inspection part">
+              <mat-error *ngIf="InfoValueForm.get('RequireHasMasterProject.Box').hasError('min')">
+                Box minimum number is 0
+              </mat-error>
+            </mat-form-field>
+            <!--Quantity-->
+            <mat-form-field hintLabel="*Required and min quailty 1">
+              <input type="number" matInput formControlName="Quantity"
+                     required min="1"
+                     placeholder="Specify the quantity for inspection part">
+              <mat-error *ngIf="InfoValueForm.get('RequireHasMasterProject.Quantity').hasError('required')">
+                Quantity is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <!--TypeMaterial1-->
+            <mat-form-field hintLabel="*Required and max 200 characters">
+              <input matInput formControlName="TypeMaterial1" [matAutocomplete]="TypeMaterial1"
+                     required maxlength="200"
+                     placeholder="Specify the type material#1 for inspection part">
+              <mat-hint [align]="end">{{InfoValueForm.get('RequireHasMasterProject.TypeMaterial1').value?.length || 0}}/200</mat-hint>
+
+              <mat-autocomplete #TypeMaterial1="matAutocomplete">
+                <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
+                  <span>{{ result.AutoComplate }}</span>
+                </mat-option>
+              </mat-autocomplete>
+
+              <mat-error *ngIf="InfoValueForm.get('RequireHasMasterProject.TypeMaterial1').hasError('required')">
+                Type material #1 is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <!--TypeMaterial2-->
+            <mat-form-field hintLabel="Max 200 characters">
+              <input matInput formControlName="TypeMaterial2" [matAutocomplete]="TypeMaterial2"
+                     maxlength="200"
+                     placeholder="Specify the type material#2 for inspection part">
+              <mat-hint [align]="end">{{InfoValueForm.get('RequireHasMasterProject.TypeMaterial2').value?.length || 0}}/200</mat-hint>
+
+              <mat-autocomplete #TypeMaterial2="matAutocomplete">
+                <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
+                  <span>{{ result.AutoComplate }}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <!--GradeMaterial1-->
+            <mat-form-field hintLabel="*Required and max 200 characters">
+              <input matInput formControlName="GradeMaterial1" [matAutocomplete]="GradeMaterial1"
+                     required maxlength="200"
+                     placeholder="Specify the grade material#1 for inspection part">
+
+              <mat-autocomplete #GradeMaterial1="matAutocomplete">
+                <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
+                  <span>{{ result.AutoComplate }}</span>
+                </mat-option>
+              </mat-autocomplete>
+
+              <mat-hint [align]="end">{{InfoValueForm.get('RequireHasMasterProject.GradeMaterial1').value?.length || 0}}/200</mat-hint>
+              <mat-error *ngIf="InfoValueForm.get('RequireHasMasterProject.GradeMaterial1').hasError('required')">
+                Grade material #1 is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+            <!--GradeMaterial2-->
+            <mat-form-field hintLabel="Max 200 characters">
+              <input matInput formControlName="GradeMaterial2" [matAutocomplete]="GradeMaterial2"
+                     maxlength="200"
+                     placeholder="Specify the grade material#2 for inspection part">
+
+              <mat-autocomplete #GradeMaterial2="matAutocomplete">
+                <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
+                  <span>{{ result.AutoComplate }}</span>
+                </mat-option>
+              </mat-autocomplete>
+
+              <mat-hint [align]="end">{{InfoValueForm.get('RequireHasMasterProject.GradeMaterial2').value?.length || 0}}/200</mat-hint>
+            </mat-form-field>
+            <!--JointNumber-->
+            <mat-form-field hintLabel="*JointNumber more then 0">
+              <input matInput type="number" formControlName="JointNumber"
+                     min="0"
+                     placeholder="Specify the joint-no for inspection part">
+              <mat-error *ngIf="InfoValueForm.get('RequireHasMasterProject.JointNumber').hasError('min')">
+                JointNumber minimum number is 0
+              </mat-error>
+            </mat-form-field>
+            <!--Thickness-->
+            <mat-form-field hintLabel="*Thickness more then 0">
+              <input matInput type="number" formControlName="Thickness"
+                     min="0" required
+                     placeholder="Specify the thickness for inspection part">
+              <mat-error *ngIf="InfoValueForm.get('RequireHasMasterProject.Thickness').hasError('min')">
+                Thickness minimum number is 0
+              </mat-error>
+              <mat-error *ngIf="InfoValueForm.get('RequireHasMasterProject.Thickness').hasError('required')">
+                Thickness is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-action-row>
+            <button mat-button color="warn" (click)="prevStep()">
+              <strong>Previous</strong>
+            </button>
+            <button mat-button color="primary" (click)="endStep()">
+              <strong>End</strong>
+            </button>
+          </mat-action-row>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+  </form>
+</div>
+
+<ng-template #elseBlock>
+  <mat-progress-bar mode="indeterminate" style="margin-top:50px;"></mat-progress-bar>
+  Waiting... for loading
+</ng-template>

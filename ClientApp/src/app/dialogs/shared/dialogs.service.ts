@@ -26,6 +26,12 @@ import { RequireQcDialogComponent } from "../require-qc-dialog/require-qc-dialog
 import { QualitycontrolDialogComponent } from "../qualitycontrol-dialog/qualitycontrol-dialog.component";
 import { QcWelder } from "../../quality-control-welders/shared/qc-welder.model";
 import { QualityControlWeldersDialogComponent } from "../quality-control-welders-dialog/quality-control-welders-dialog.component";
+import { MasterListV2DialogComponent } from "../master-list-v2-dialog/master-list-v2-dialog.component";
+import { WelderNo } from "../../welder-no/shared/welder-no.model";
+import { WelderTeamDialogComponent } from "../welder-team-dialog/welder-team-dialog.component";
+import { WelderNoDialogComponent } from "../welder-no-dialog/welder-no-dialog.component";
+import { RequireQcWelder } from "../../require-qc-welders/shared/require-qc-welder.model";
+import { RequireQcWelderDialogComponent } from "../require-qc-welder-dialog/require-qc-welder-dialog.component";
 
 @Injectable()
 export class DialogsService {
@@ -138,7 +144,6 @@ export class DialogsService {
     dialogRef = this.dialog.open(GroupmisDialogComponent, config);
     return dialogRef.afterClosed();
   }
-
 
   /**
    * @param viewContainerRef
@@ -281,6 +286,86 @@ export class DialogsService {
 
     // open dialog
     dialogRef = this.dialog.open(QualityControlWeldersDialogComponent, config);
+    return dialogRef.afterClosed();
+  }
+
+  /**
+   * Dialog create quailty control welder data
+   * @param viewContainerRef
+   * @param masterList
+   */
+  public dialogInfoMasterList(viewContainerRef: ViewContainerRef, data: { InfoValue: MasterList, NeedWelder: boolean }): Observable<MasterList> {
+    let dialogRef: MatDialogRef<MasterListV2DialogComponent>;
+    let config: MatDialogConfig = new MatDialogConfig();
+
+    //config
+    config.viewContainerRef = viewContainerRef;
+    config.data = data;
+    config.hasBackdrop = true;
+
+    // open dialog
+    dialogRef = this.dialog.open(MasterListV2DialogComponent, config);
+    return dialogRef.afterClosed();
+  }
+
+  /**
+   * Dialog create quailty control welder data
+   * @param viewContainerRef
+   * @param masterList
+   */
+  public dialogInfoWelderTeamName(viewContainerRef: ViewContainerRef, InfoValue: WelderNo): Observable<WelderNo> {
+    let dialogRef: MatDialogRef<WelderTeamDialogComponent>;
+    let config: MatDialogConfig = new MatDialogConfig();
+
+    //config
+    config.viewContainerRef = viewContainerRef;
+    config.data = InfoValue;
+    config.hasBackdrop = true;
+
+    // open dialog
+    dialogRef = this.dialog.open(WelderTeamDialogComponent, config);
+    return dialogRef.afterClosed();
+  }
+
+  /**
+   * 
+   * @param viewContainerRef
+   * @param type
+   */
+  public dialogSelectWelderNo(viewContainerRef: ViewContainerRef, type: number = 1): Observable<WelderNo|Array<WelderNo>> {
+    let dialogRef: MatDialogRef<WelderNoDialogComponent>;
+    let config: MatDialogConfig = new MatDialogConfig();
+
+    // config
+    config.viewContainerRef = viewContainerRef;
+    config.data = type;
+    // config.height = this.height;
+    // config.width= this.width;
+    config.hasBackdrop = true;
+
+    // open dialog
+    dialogRef = this.dialog.open(WelderNoDialogComponent, config);
+    return dialogRef.afterClosed();
+  }
+
+  /**
+   * 
+   * @param viewContainerRef
+   * @param type
+   */
+  public dialogInfoRequireQcWelder(viewContainerRef: ViewContainerRef, data: { InfoValue: RequireQcWelder, Option: boolean }): Observable<RequireQcWelder> {
+    let dialogRef: MatDialogRef<RequireQcWelderDialogComponent>;
+    let config: MatDialogConfig = new MatDialogConfig();
+
+    // config
+    config.viewContainerRef = viewContainerRef;
+    config.data = data;
+    // config.height = this.height;
+    // config.width= this.width;
+    config.hasBackdrop = true;
+
+    // open dialog
+    dialogRef = this.dialog.open(RequireQcWelderDialogComponent, config);
     return dialogRef.afterClosed();
   }
 

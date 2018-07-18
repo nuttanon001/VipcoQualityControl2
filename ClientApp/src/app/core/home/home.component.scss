@@ -1,0 +1,37 @@
+@import "../../../sass/styles.scss";
+
+my-dashboard {
+  width: $master-vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-container {
+  margin: 20px;
+}
+
+.dashboard-card {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+  bottom: 15px;
+}
+
+.more-button {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+
+.dashboard-card-content {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.dashboard-card-footer {
+  text-align: right;
+  font-size: smaller;
+  color:lightblue;
+}

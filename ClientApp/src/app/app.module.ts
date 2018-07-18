@@ -15,6 +15,7 @@ import { NavMenuComponent } from './core/nav-menu/nav-menu.component';
 import { SharedModule } from "./shared/shared.module";
 import { DialogsModule } from "./dialogs/dialog.module";
 import { CustomMaterialModule } from "./shared/customer-material/customer-material.module";
+import { DashboardModule } from "./dashboards/dashboard.module";
 // Services
 import { ShareService } from "./shared/share.service";
 import { AuthService } from "./core/auth/auth.service";
@@ -43,6 +44,7 @@ import { RegisterComponent } from "./users/register/register.component";
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     // Modules
     DialogsModule,
+    DashboardModule,
     CustomMaterialModule,
     //SharedModule,
     // Router
@@ -92,9 +94,19 @@ import { RegisterComponent } from "./users/register/register.component";
         loadChildren: './require-qulitycontrols/require-qc.module#RequireQcModule',
       },
       {
+        path: "welder-no",
+        loadChildren: './welder-no/welder-no.module#WelderNoModule',
+        canActivate: [AuthGuard],
+      },
+      {
         path: "qc-welder",
         loadChildren: './quality-control-welders/qc-welder.module#QcWelderModule',
         canActivate: [AuthGuard],
+      },
+      {
+        path: "require-qc-welder",
+        loadChildren: './require-qc-welders/require-qc-welder.module#RequireQcWelderModule',
+        canActivate: [AuthGuard]
       },
       { path: "**", redirectTo: "home" },
     ]),
