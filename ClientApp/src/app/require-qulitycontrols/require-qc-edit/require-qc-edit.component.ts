@@ -29,6 +29,8 @@ import { filter } from "rxjs/operator/filter";
 import { debounceTime, distinctUntilChanged, switchMap } from "rxjs/operators";
 import { TypeworkActivity } from "../../work-activities/shared/typework-activity.enum";
 import { arch } from "os";
+import { WelderStatus } from "../../require-qc-welders/shared/welder-status.enum";
+import { WelderProcess } from "../../require-qc-welders/shared/welder-process.enum";
 
 @Component({
   selector: 'app-require-qc-edit',
@@ -67,26 +69,45 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
   attachFiles: Array<AttachFile>;
   forFail: boolean = false;
   needWelder: boolean = false;
+  colMode: string = "";
   // on get data by key
   onGetDataByKey(value?: RequireQc): void {
     if (value) {
-      if (!value.ParentRequireQcId) {
+      // Clone
+      if (value.Option) {
         this.service.getOneKeyNumber(value)
           .subscribe(dbData => {
             this.editValue = dbData;
-            this.editValue.RequireQcTime = dbData.RequireQcTimeString;
+            let tempId: number = this.editValue.RequireQualityControlId;
+            // Clear id
+            this.editValue.RequireQualityControlId = 0;
+            this.editValue.ParentRequireQcId = undefined;
+            this.editValue.RequireQualityNo = "";
+            this.editValue.CreateDate = undefined;
+            this.editValue.ModifyDate = undefined;
+            this.editValue.Creator = "";
+            this.editValue.Modifyer = "";
+            // Set Date
+            this.editValue.RequireDate = new Date;
+            this.editValue.RequireStatus = RequireStatusQc.Waiting;
+            this.editValue.RequireQcTimeString = (new Date(this.editValue.RequireDate.getTime() + 60 * 60000)).toLocaleTimeString("th-TH", { hour12: false });
+            this.editValue.RequireQcTime = this.editValue.RequireQcTimeString;
             //RequireQualityControl
-            this.serviceMarkNo.actionRequireQualityControlHasMarkNo(dbData.RequireQualityControlId)
+            this.serviceMarkNo.actionRequireQualityControlHasMarkNo(tempId)
               .subscribe(RequireQCHasMasterList => {
                 this.editValue.MasterLists = new Array;
                 if (RequireQCHasMasterList) {
                   RequireQCHasMasterList.forEach((item, index) => {
+                    if (item.RequireHasWelder) {
+                      this.colMode = "welder";
+                    }
+
                     this.editValue.MasterLists.push({
                       CreateDate: item.CreateDate,
                       Creator: item.Creator,
                       MarkNo: item.MarkNo,
                       Name: item.Name,
-                      UnitNo: item.UnitNo,
+                      // UnitNo: item.UnitNo, Clone UnitNo is null
                       DrawingNo: item.DrawingNo,
                       GradeMaterial1: item.GradeMaterial1,
                       GradeMaterial2: item.GradeMaterial2,
@@ -96,7 +117,28 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
                       TypeMaterial2: item.TypeMaterial2,
                       Box: item.Box,
                       Quantity: item.Quantity,
-                      MasterProjectListId: item.MasterProjectListId
+                      MasterProjectListId: item.MasterProjectListId,
+                      RequireHasWelder: item.RequireHasWelder ? {
+                        VTStaus: item.RequireHasWelder.VTStaus,
+                        QcStatus: item.RequireHasWelder.QcStatus,
+                        WelderProcess: item.RequireHasWelder.WelderProcess,
+                        WelderDate: item.RequireHasWelder.WelderDate,
+                        PercentNDE: item.RequireHasWelder.PercentNDE,
+                        Remark: item.RequireHasWelder.Remark,
+                        Wps: item.RequireHasWelder.Wps,
+                        //Relationl
+                        //RequireHasMasterProjectId
+                        RequireHasMasterProjectId: item.RequireHasWelder.RequireHasMasterProjectId,
+                        WelderNo1Id: item.RequireHasWelder.WelderNo1Id,
+                        WelderNo1Name: item.RequireHasWelder.WelderNo1Name,
+                        WelderNo2Id: item.RequireHasWelder.WelderNo2Id,
+                        WelderNo2Name: item.RequireHasWelder.WelderNo2Name,
+                        //ViewModel
+                        WelderNo1String: item.RequireHasWelder.WelderNo1Name,
+                        WelderNo2String: item.RequireHasWelder.WelderNo2Name,
+                        VTStausString: WelderStatus[item.RequireHasWelder.VTStaus],
+                        WelderProcessString: WelderProcess[item.RequireHasWelder.WelderProcess],
+                      } : undefined,
                     });
                   });
                   //Patch value to Form
@@ -108,19 +150,84 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
                 }
               });
           }, error => console.error(error), () => this.buildForm());
-      } else { // Form fail require quality control
-        this.forFail = true;
+      } else {
+        if (!value.ParentRequireQcId) {
+          this.service.getOneKeyNumber(value)
+            .subscribe(dbData => {
+              this.editValue = dbData;
+              this.editValue.RequireQcTime = dbData.RequireQcTimeString;
+              //RequireQualityControl
+              this.serviceMarkNo.actionRequireQualityControlHasMarkNo(dbData.RequireQualityControlId)
+                .subscribe(RequireQCHasMasterList => {
+                  this.editValue.MasterLists = new Array;
+                  if (RequireQCHasMasterList) {
+                    RequireQCHasMasterList.forEach((item, index) => {
+                      if (item.RequireHasWelder) {
+                        this.colMode = "welder";
+                      }
 
-        this.editValue = Object.assign({}, value);
+                      this.editValue.MasterLists.push({
+                        CreateDate: item.CreateDate,
+                        Creator: item.Creator,
+                        MarkNo: item.MarkNo,
+                        Name: item.Name,
+                        UnitNo: item.UnitNo,
+                        DrawingNo: item.DrawingNo,
+                        GradeMaterial1: item.GradeMaterial1,
+                        GradeMaterial2: item.GradeMaterial2,
+                        JointNumber: item.JointNumber,
+                        Thickness: item.Thickness,
+                        TypeMaterial1: item.TypeMaterial1,
+                        TypeMaterial2: item.TypeMaterial2,
+                        Box: item.Box,
+                        Quantity: item.Quantity,
+                        MasterProjectListId: item.MasterProjectListId,
+                        RequireHasWelder: item.RequireHasWelder ? {
+                          VTStaus: item.RequireHasWelder.VTStaus,
+                          QcStatus: item.RequireHasWelder.QcStatus,
+                          WelderProcess: item.RequireHasWelder.WelderProcess,
+                          WelderDate: item.RequireHasWelder.WelderDate,
+                          PercentNDE: item.RequireHasWelder.PercentNDE,
+                          Remark: item.RequireHasWelder.Remark,
+                          Wps: item.RequireHasWelder.Wps,
+                          //Relationl
+                          //RequireHasMasterProjectId
+                          RequireHasMasterProjectId: item.RequireHasWelder.RequireHasMasterProjectId,
+                          WelderNo1Id: item.RequireHasWelder.WelderNo1Id,
+                          WelderNo1Name: item.RequireHasWelder.WelderNo1Name,
+                          WelderNo2Id: item.RequireHasWelder.WelderNo2Id,
+                          WelderNo2Name: item.RequireHasWelder.WelderNo2Name,
+                          //ViewModel
+                          WelderNo1String: item.RequireHasWelder.WelderNo1Name,
+                          WelderNo2String: item.RequireHasWelder.WelderNo2Name,
+                          VTStausString: WelderStatus[item.RequireHasWelder.VTStaus],
+                          WelderProcessString: WelderProcess[item.RequireHasWelder.WelderProcess],
+                        } : undefined,
+                      });
+                    });
+                    //Patch value to Form
+                    this.editValueForm.patchValue({
+                      MasterLists: this.editValue.MasterLists
+                    });
+                  } else {
+                    this.editValue.MasterLists = new Array;
+                  }
+                });
+            }, error => console.error(error), () => this.buildForm());
+        } else { // Form fail require quality control
+          this.forFail = true;
 
-        if (!this.editValue.MasterLists) {
-          this.editValue.MasterLists = new Array;
+          this.editValue = Object.assign({}, value);
+
+          if (!this.editValue.MasterLists) {
+            this.editValue.MasterLists = new Array;
+          }
+          this.editValue.RequireDate = new Date;
+          // this.editValue.RequireQcTimeString = (new Date).toLocaleTimeString("th-TH", { hour12: false });
+          this.editValue.RequireQcTimeString = (new Date(this.editValue.RequireDate.getTime() + 60 * 60000)).toLocaleTimeString("th-TH", { hour12: false });
+          this.editValue.RequireQcTime = this.editValue.RequireQcTimeString;
+          this.buildForm();
         }
-        this.editValue.RequireDate = new Date;
-        // this.editValue.RequireQcTimeString = (new Date).toLocaleTimeString("th-TH", { hour12: false });
-        this.editValue.RequireQcTimeString = (new Date(this.editValue.RequireDate.getTime() + 60 * 60000)).toLocaleTimeString("th-TH", { hour12: false });
-        this.editValue.RequireQcTime = this.editValue.RequireQcTimeString;
-        this.buildForm();
       }
     } else {
       this.editValue = {
@@ -141,6 +248,19 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
         // this.getEmployeeGroupMisByEmpCode(this.editValue.RequireEmp);
       }
       this.buildForm();
+    }
+
+    if (this.editValue && this.editValue.RequireQualityControlId) {
+      if (this.forFail) {
+        this.colMode = "forFail";
+      } else if (this.editValue.RequireStatus !== RequireStatusQc.Waiting &&
+        this.editValue.RequireStatus !== RequireStatusQc.InProcess) {
+        this.colMode = "welder";
+      } else {
+        this.colMode = "normal";
+      }
+    } else {
+      this.colMode = "normal";
     }
   }
 
@@ -309,21 +429,6 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
       this.serviceWorkActivity.getAll()
         .subscribe(dbWorkActivity => {
           this.workActivities = [...dbWorkActivity];
-          //dbWorkActivity.forEach((item) => {
-          //  this.workActivities.push({
-          //    CreateDate: item.CreateDate,
-          //    Creator: item.Creator,
-          //    Description: item.Description,
-          //    Name: item.Name,
-          //    Remark: item.Remark,
-          //    TypeWorkActivity: item.TypeWorkActivity,
-          //    WorkActivityId:item.WorkActivityId
-          //  })
-          //});
-
-          //debug here
-          // console.log("Data is", JSON.stringify(this.workActivities));
-
           let id: number = this.editValue.RequireQualityControlId || this.editValue.ParentRequireQcId;
           if (id) {
             this.serviceRequireMoreActivity.getByMasterId(id)
@@ -443,7 +548,6 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
   // On BoMLowLevelSelect
   OnDetailSelect(Item: { data?: MasterList, option: number }) {
     if (Item) {
-
       if (!Item.data) {
         this.indexItem = -1;
       } else {
@@ -461,7 +565,7 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
           };
         }
         // Send to dialog BomLowLevel
-        this.serviceDialogs.dialogInfoMasterList(this.viewContainerRef, { InfoValue: detailInfoValue, NeedWelder: this.needWelder})
+        this.serviceDialogs.dialogInfoMasterList(this.viewContainerRef, { InfoValue: detailInfoValue, NeedWelder: this.needWelder })
           .subscribe(complateData => {
             if (complateData) {
               if (this.indexItem > -1) {
@@ -509,7 +613,9 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
         isValid = false;
       } else if (this.editValue.MasterLists.length < 1) {
         isValid = false;
-      } 
+      } else if (this.editValue.MasterLists.find(item => item.UnitNo === undefined)) {
+        isValid = false;
+      }
     }
 
     if (this.editValue.MoreWorkActvities) {

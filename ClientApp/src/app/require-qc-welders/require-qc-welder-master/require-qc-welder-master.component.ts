@@ -30,7 +30,8 @@ export class RequireQcWelderMasterComponent extends BaseMasterComponent<RequireQ
   ) { super(service, serviceCom, serviceAuth, serviceDia, viewConRef); }
   //Parameter
   backToSchedule: boolean = false;
-  forFail:boolean = false;
+  loadReport: boolean = false;
+  forFail: boolean = false;
   @ViewChild(RequireQcWelderTableComponent)
   private tableComponent: RequireQcWelderTableComponent;
 
@@ -58,11 +59,25 @@ export class RequireQcWelderMasterComponent extends BaseMasterComponent<RequireQ
         // }, 500);
       }
     }, error => console.error(error));
+
+    this.route.paramMap.subscribe((param: ParamMap) => {
+      let key: number = Number(param.get("report") || 0);
+      if (key) {
+        this.displayValue = { RequireQualityControlId: key };
+        this.loadReport = true;
+        this.backToSchedule = true;
+      }
+    }, error => console.error(error));
   }
 
   //on Reload
   onReloadData(): void {
     this.tableComponent.reloadData();
+  }
+
+  // on info view
+  onInfoView(value?: RequireQc): void {
+    this.displayValue = value;
   }
 
   // on detail view
@@ -118,6 +133,7 @@ export class RequireQcWelderMasterComponent extends BaseMasterComponent<RequireQ
 
   // on insert data
   onInsertToDataBase(value: RequireQc): void {
+    this.onLoading = true;
     if (this.authService.getAuth) {
       value["Creator"] = this.authService.getAuth.UserName || "";
     }
@@ -147,6 +163,7 @@ export class RequireQcWelderMasterComponent extends BaseMasterComponent<RequireQ
 
   // on update data
   onUpdateToDataBase(value: RequireQc): void {
+    this.onLoading = true;
     if (this.authService.getAuth) {
       value["Modifyer"] = this.authService.getAuth.UserName || "";
     }
@@ -209,9 +226,18 @@ export class RequireQcWelderMasterComponent extends BaseMasterComponent<RequireQ
 
   // on back from report
   onBack(): void {
-    // this.loadReport = !this.loadReport;
+    if (this.displayValue) {
+      this.loadReport = !this.loadReport;
+    }
     if (this.backToSchedule) {
       this.location.back();
+    }
+  }
+
+  // on show report
+  onReport(Value?: RequireQc): void {
+    if (Value) {
+      this.loadReport = !this.loadReport;
     }
   }
 }

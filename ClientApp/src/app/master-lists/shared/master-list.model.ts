@@ -1,4 +1,5 @@
 import { BaseModel } from "../../shared/base-model.model";
+import { RequireQcWelder } from "../../require-qc-welders/shared/require-qc-welder.model";
 
 export interface MasterList extends BaseModel {
   MasterProjectListId: number;
@@ -26,6 +27,7 @@ export interface MasterList extends BaseModel {
   ProjectCodeDetailId?: number;
   //ViewModel
   ProjectCodeDetailString?: string;
+  RequireHasWelder?: RequireQcWelder;
   FailQuantity?: number;
   RemarkExter?: string;
 }

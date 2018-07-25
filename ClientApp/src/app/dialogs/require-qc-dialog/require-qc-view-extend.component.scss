@@ -1,14 +1,9 @@
+@import "../../shared/styles/view.style.scss";
 @import "../../shared/mk2/styles/table.style.scss";
 
-.mat-table-edit {
+.mat-table {
   overflow: auto;
-  height: calc(#{$master-vh} - 250px);
-  width: calc(#{$master-vw} - 120px);
-}
-
-.mat-table-dialog {
-  overflow: auto;
-  height: calc(#{$dialog-vh} - 250px);
+  height: calc(#{$dialog-vh} - 350px);
   width: calc(#{$dialog-vw} - 120px);
 }
 

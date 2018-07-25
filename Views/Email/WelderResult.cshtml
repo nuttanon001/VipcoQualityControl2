@@ -1,0 +1,178 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model VipcoQualityControl.ViewModels.EmailTemplateViewModel
+
+<style>
+    .main-body {
+        top: 0px;
+        margin-top: 0px;
+        width: 100%;
+        background-color: #f1f1f4;
+    }
+
+    table.blueTable {
+        border: 1px solid #1C6EA4;
+        background-color: #EEEEEE;
+        width: 100%;
+        text-align: left;
+        border-collapse: collapse;
+    }
+
+        table.blueTable td, table.blueTable th {
+            border: 1px solid #AAAAAA;
+            padding: 3px 2px;
+        }
+
+        table.blueTable tbody td {
+            font-size: 13px;
+        }
+
+        table.blueTable tr:nth-child(even) {
+            background: #D0E4F5;
+        }
+
+        table.blueTable thead {
+            background: #1C6EA4;
+            background: -moz-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+            background: -webkit-linear-gradient(top, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+            background: linear-gradient(to bottom, #5592bb 0%, #327cad 66%, #1C6EA4 100%);
+            border-bottom: 2px solid #444444;
+        }
+
+            table.blueTable thead th {
+                font-size: 15px;
+                font-weight: bold;
+                color: #FFFFFF;
+                border-left: 2px solid #D0E4F5;
+            }
+
+                table.blueTable thead th:first-child {
+                    border-left: none;
+                }
+
+        table.blueTable tfoot {
+            font-size: 14px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background: #D0E4F5;
+            background: -moz-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+            background: -webkit-linear-gradient(top, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+            background: linear-gradient(to bottom, #dcebf7 0%, #d4e6f6 66%, #D0E4F5 100%);
+            border-top: 2px solid #444444;
+        }
+
+            table.blueTable tfoot td {
+                font-size: 14px;
+            }
+
+            table.blueTable tfoot .links {
+                text-align: right;
+            }
+
+                table.blueTable tfoot .links a {
+                    display: inline-block;
+                    background: #1C6EA4;
+                    color: #FFFFFF;
+                    padding: 2px 8px;
+                    border-radius: 5px;
+                }
+</style>
+
+<table class="main-body" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td align="center" valign="top">
+            <table width="600" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td align="left" valign="top" bgcolor="steelblue" style="background-color:steelblue; font-family:Arial, Helvetica, sans-serif; padding:10px;">
+                        <div style="font-size:24px; color:black;">
+                            <b>VIPCO Quality Control System</b>
+                        </div>
+                        <hr />
+                        <div style="font-size:18px; color:black;">
+                            <b>ระบบตรวจสอบคุณภาพ</b>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="left" valign="top" bgcolor="#ffffff" style="background-color:#ffffff;">
+                        <table style="width:100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td align="center" valign="middle" style="padding:10px; color:#564319; font-size:17px; font-family:Georgia, 'Times New Roman', Times, serif;">
+                                    <small>Quality Control Result!</small>
+                                </td>
+                            </tr>
+                        </table>
+                        <table style="width:95%" border="0" align="center" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td align="left" valign="middle" style="color:#525252; font-family:Arial, Helvetica, sans-serif; padding:10px;">
+                                    <div style="font-size:16px;">
+                                        เรียน @Model.ToEmployeeName,
+                                    </div>
+                                    <div style="font-size:15px;">
+                                        <strong>ผลการตรวจสอบคุณภาพงานเลขที่เอกสารที่ @Model.RequireNo</strong>
+                                        @if (Model.Status)
+                                        {<i style='color:steelblue;'>ผลการผ่านเงื่อนไข Visual Examination (VT)</i>}
+                                        else
+                                        { <i style='color:red;'>ไม่ผ่านเงื่อนไข Visual Examination (VT)</i>}
+                                    </div>
+                                    <hr />
+                                    <div style="font-size:14px;">
+                                        โดยมีรายการเรียกตรวจสอบคุณภาพทั้งหมด @Model.ItemLists.Count() รายการ แสดงข้อมูลดังนี้
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        @{
+                            int RowNumber = 1;
+                        }
+                        <table class="blueTable" border="0" align="center" cellpadding="0" cellspacing="0" style="margin-bottom:15px;width:100%">
+                            <thead style="font-size:15px;">
+                                <tr>
+                                    <th>ลำดับ</th>
+                                    <th>เลขที่แบบ</th>
+                                    <th>เลขที่มาร์ค</th>
+                                    <th>กล่อง</th>
+                                    <th>ยูนิค</th>
+                                    <th>จำนวนส่ง</th>
+                                    <th>สถานะ(VT)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.ItemLists)
+                                {
+                                    <tr>
+                                        <td align="center">@RowNumber</td>
+                                        <td>@item.DrawingNo</td>
+                                        <td>@item.MarkNoString</td>
+                                        <td align="center">@item.Box</td>
+                                        <td align="center">@item.UnitNo</td>
+                                        <td align="center">@item.Quantity</td>
+                                        <td>@item.QualityControlReasonString</td>
+                                    </tr>
+                                    <!--Runing Number-->
+                                    RowNumber++;
+                                }
+                            </tbody>
+                        </table>
+                        <table border="0" cellspacing="0" cellpadding="0" style="margin-bottom:10px;width:100%">
+                            <tr>
+                                <td align="left" valign="middle" style="padding:15px; background-color:#564319; font-family:Arial, Helvetica, sans-serif;">
+                                    <div style="font-size:17px; color:#ffe77b;">
+                                        @Model.ToEmployeeName สามารถเข้าไปตรวจติดตามข้อมูลได้จากระบบผ่านทางลิงค์ <a style="color:#ffe77b;text-decoration:underline;" href='@Model.LinkToApp'>คลิกที่นี้</a>
+                                    </div>
+                                    <div style="font-size:12px; color:#fff;">
+                                        <b>This mail auto generated by VIPCO Quality Control SYSTEM. Do not reply this email.</b>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <br>
+        </td>
+    </tr>
+</table>
+

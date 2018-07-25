@@ -42,6 +42,33 @@ export class RequireQcMasterComponent
   @ViewChild(RequireQcTableComponent)
   private tableComponent: RequireQcTableComponent;
   forFail: boolean = false;
+
+  onCloneInfoValue(infoValue?: RequireQc): void {
+    if (infoValue) {
+      if (this.authService.getAuth.LevelUser < 3) {
+        if (this.authService.getAuth.UserName !== infoValue.Creator) {
+          this.dialogsService.error("Access Denied", "You don't have permission to access.", this.viewContainerRef);
+          return;
+        }
+      }
+
+      if (infoValue.RequireStatus != RequireStatusQc.Complate &&
+        infoValue.RequireStatus != RequireStatusQc.Waiting &&
+        infoValue.RequireStatus != RequireStatusQc.Welding &&
+        infoValue.RequireStatus != RequireStatusQc.Revise &&
+        infoValue.RequireStatus != RequireStatusQc.WeldingComplate) {
+        this.dialogsService.error("Access Denied", "คุณไม่สามารถทำสำเนา คำขอตรวจสอบคุณภาพนี้ได้", this.viewContainerRef);
+        return;
+      }
+
+      // If have parent require get it
+      if (infoValue.ParentRequireQcId) {
+        infoValue.RequireQualityControlId = infoValue.ParentRequireQcId;
+      }
+      infoValue.Option = true;
+      super.onDetailEdit(infoValue);
+    }
+  }
   //////////////
   // OverRide //
   //////////////

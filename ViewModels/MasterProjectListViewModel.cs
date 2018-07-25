@@ -11,5 +11,6 @@ namespace VipcoQualityControl.ViewModels
         public string ProjectCodeDetailString { get; set; }
         public double? FailQuantity { get; set; }
         public string RemarkExter { get; set; }
+        public RequireHasWelder RequireHasWelder { get; set; }
     }
 }

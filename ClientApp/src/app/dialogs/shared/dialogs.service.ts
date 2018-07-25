@@ -32,6 +32,7 @@ import { WelderTeamDialogComponent } from "../welder-team-dialog/welder-team-dia
 import { WelderNoDialogComponent } from "../welder-no-dialog/welder-no-dialog.component";
 import { RequireQcWelder } from "../../require-qc-welders/shared/require-qc-welder.model";
 import { RequireQcWelderDialogComponent } from "../require-qc-welder-dialog/require-qc-welder-dialog.component";
+import { ConfirmMessageDialog } from "../confirm-message-dialog/confirm-dialog.component";
 
 @Injectable()
 export class DialogsService {
@@ -48,6 +49,20 @@ export class DialogsService {
     config.viewContainerRef = viewContainerRef;
 
     dialogRef = this.dialog.open(ConfirmDialog, config);
+
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.message = message;
+
+    return dialogRef.afterClosed();
+  }
+
+  public confirmMessage(title: string, message: string, viewContainerRef: ViewContainerRef): Observable<{ result: boolean, message:string}> {
+
+    let dialogRef: MatDialogRef<ConfirmMessageDialog>;
+    let config: MatDialogConfig = new MatDialogConfig();
+    config.viewContainerRef = viewContainerRef;
+
+    dialogRef = this.dialog.open(ConfirmMessageDialog, config);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.message = message;

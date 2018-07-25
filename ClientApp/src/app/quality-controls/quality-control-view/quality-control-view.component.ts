@@ -11,6 +11,8 @@ import { QualityControlService } from "../shared/quality-control.service";
 import { RequireQualityControlService } from "../../require-qulitycontrols/shared/require-qc.service";
 import { RequireHasMasterService } from "../../require-qulitycontrols/shared/require-has-master.service";
 import { JSONP_ERR_WRONG_RESPONSE_TYPE } from "@angular/common/http/src/jsonp";
+import { WelderStatus } from "../../require-qc-welders/shared/welder-status.enum";
+import { WelderProcess } from "../../require-qc-welders/shared/welder-process.enum";
 
 @Component({
   selector: 'app-quality-control-view',
@@ -24,6 +26,7 @@ export class QualityControlViewComponent extends BaseViewComponent<QualityContro
   ) {
     super();
   }
+  isDialog: boolean = false;
   //Parameter
   requireQualityControl: RequireQc;
   requireHasMasters: Array<RequireQcHasMasterList>;
@@ -40,6 +43,10 @@ export class QualityControlViewComponent extends BaseViewComponent<QualityContro
         .subscribe(dbHasMasters => {
           dbHasMasters.forEach((item, index) => {
             item.HasFail = !(item.Quantity.toString() === item.PassQuantity.toString());
+            if (item.RequireHasWelder) {
+              item.RequireHasWelder.VTStausString = WelderStatus[item.RequireHasWelder.VTStaus];
+              item.RequireHasWelder.WelderProcessString = WelderProcess[item.RequireHasWelder.WelderProcess];
+            }
           });
           this.requireHasMasters = dbHasMasters.slice();
         });

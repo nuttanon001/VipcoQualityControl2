@@ -24,6 +24,7 @@ namespace VipcoQualityControl.Controllers
     {
         private readonly IRepositoryQualityControl<RequireQualityControl> repositoryRequireQc;
         private readonly IRepositoryQualityControl<WelderNoViewModel> repositoryWelderNoView;
+        private readonly IRepositoryQualityControl<WelderNo> repositoryWelderNo;
         private readonly IRepositoryQualityControl<RequireHasMasterProject> repositoryRequireHasMaster;
         private readonly IRepositoryQualityControl<RequireQcMoreWorkActvity> repositoryRequireMoreActvity;
         private readonly IRepositoryQualityControl<WorkGroupQualityControl> repositoryQcGroup;
@@ -44,6 +45,7 @@ namespace VipcoQualityControl.Controllers
             IRepositoryQualityControl<RequireHasMasterProject> repoRequireHasMaster,
             IRepositoryQualityControl<RequireQcMoreWorkActvity> reoRequireMoreActivity,
             IRepositoryQualityControl<WorkGroupQualityControl> repoQcGroup,
+            IRepositoryQualityControl<WelderNo> repoWelderNo,
             IRepositoryMachine<ProjectCodeDetail> repoProjectCodeDetail,
             IRepositoryMachine<Employee> repoEmployee,
             IRepositoryMachine<EmployeeGroupMis> repoGroupMis,
@@ -57,6 +59,7 @@ namespace VipcoQualityControl.Controllers
             this.repositoryRequireHasMaster = repoRequireHasMaster;
             this.repositoryRequireMoreActvity = reoRequireMoreActivity;
             this.repositoryQcGroup = repoQcGroup;
+            this.repositoryWelderNo = repoWelderNo;
             //Repository Machine
             this.repositoryEmployee = repoEmployee;
             this.repositoryProjectCodeDetail = repoProjectCodeDetail;
@@ -201,7 +204,70 @@ namespace VipcoQualityControl.Controllers
             }
             return false;
         }
+        private async Task<bool> SendMail3(RequireQualityControl HasData, bool ShellYouCanPass)
+        {
+            if (HasData.RequireQualityControlId > 0)
+            {
+                var HasRequire = await this.repositoryRequireQc.GetFirstOrDefaultAsync
+                    (x => x, x => x.RequireQualityControlId == HasData.RequireQualityControlId);
+                if (HasRequire != null)
+                {
+                    if (string.IsNullOrEmpty(HasRequire.MailReply))
+                        return false;
 
+                    var ListMail = new List<string>();
+                    if (HasRequire.MailReply.IndexOf(',') != -1)
+                        ListMail = HasRequire.MailReply.Split(',').ToList();
+                    else if (HasRequire.MailReply.IndexOf(';') != -1)
+                        ListMail = HasRequire.MailReply.Split(';').ToList();
+                    else
+                        ListMail.Add(HasRequire.MailReply);
+
+                    if (ListMail.Any())
+                    {
+                        var EmpName = (await this.repositoryEmployee.GetFirstOrDefaultAsync(x => x, x => x.EmpCode == HasRequire.RequireEmp)).NameThai ?? "ไม่ระบุ";
+                        var ItemLists = await this.repositoryRequireHasMaster.GetToListAsync(
+                            selector: x => x, predicate: x => x.RequireQualityControlId == HasData.RequireQualityControlId,
+                            include:x => x.Include(z => z.MasterProjectList).Include(z => z.RequireHasWelder));
+
+                        var ReportData = new List<RequireHasMasterProjectViewModel>();
+                        foreach(var item in ItemLists)
+                        {
+                            ReportData.Add(new RequireHasMasterProjectViewModel()
+                            {
+                                DrawingNo = item.MasterProjectList.DrawingNo,
+                                MarkNoString = item.MasterProjectList.MarkNo,
+                                Box = item.MasterProjectList.Box,
+                                UnitNo = item.MasterProjectList.UnitNo,
+                                Quantity = item.Quantity,
+                                WelderStatus = item.RequireHasWelder.QcStatus,
+                                QualityControlReasonString = System.Enum.GetName(typeof(WelderStatus), item.RequireHasWelder.VTStaus)
+                            });
+                         
+                        }
+
+                        var EmailTemplate = new EmailTemplateViewModel()
+                        {
+                            ToEmployeeName = $"คุณ{EmpName}",
+                            ItemLists = ReportData,
+                            LinkToApp = $"http://{Request.Host}/qualitycontrol/require-qc/link-email/{HasData.RequireQualityControlId}",
+                            RequireNo = HasRequire.RequireQualityNo,
+                            ResultDate = HasData.WelderDate.Value.ToString("dd MMM yy"),
+                            Status = ShellYouCanPass
+                        };
+
+                        var result = await viewRenderService.RenderToStringAsync("Email/WelderResult", EmailTemplate);
+
+                        await this.EmailClass.SendMailMessage(ListMail[0], EmpName,
+                                                   ListMail,
+                                                   result, "Notification mail from VIPCO Quality Control system.");
+
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         #endregion
         // GET: api/RequireQualityControl/GenarateFromFailRequireQualityControl/5
         [HttpGet("GenarateFromFailRequireQualityControl")]
@@ -296,6 +362,7 @@ namespace VipcoQualityControl.Controllers
                                         WelderNo2Name = item.RequireHasWelder.WelderNo2Name,
                                         WelderProcess = item.RequireHasWelder.WelderProcess,
                                         Remark = item.RequireHasWelder.Remark,
+                                        Wps = item.RequireHasWelder.Wps,
                                     }
                                 });
                             }
@@ -534,6 +601,7 @@ namespace VipcoQualityControl.Controllers
                                 WelderNo2Name = item.WelderNo2Name,
                                 WelderProcess = item.WelderProcess,
                                 Remark = item.Remark,
+                                Wps = item.Wps
                             }
                         });
                     }
@@ -621,7 +689,15 @@ namespace VipcoQualityControl.Controllers
             var helpRequireQc = new Helper.HelpersClass<RequireQualityControl>();
             record = helpRequireQc.AddHourMethod(record);
             // set 
-            record.RequireStatus = RequireStatus.WeldingReq;
+            // check if only welding check VT only
+            var GroupQc = await this.repositoryQcGroup.GetFirstOrDefaultAsync
+                (x => x, x => x.WorkGroupQualityControlId == (record.WorkGroupQualityControlId ?? 0));
+
+            if (GroupQc != null)
+                record.RequireStatus = GroupQc.Name.ToLower().IndexOf("welder") != -1 ? RequireStatus.WeldingComplate : RequireStatus.WeldingReq;
+            else
+                record.RequireStatus = RequireStatus.WeldingReq;
+
             if (recordViewModel.WelderTime.HasValue)
             {
                 record.WelderDate = new DateTime(record.WelderDate.Value.Year, record.WelderDate.Value.Month, record.WelderDate.Value.Day,
@@ -757,8 +833,107 @@ namespace VipcoQualityControl.Controllers
                 // mail to work group qc
                 await this.SendMail(record, 1);
             }
+            else if (record.RequireStatus == RequireStatus.WeldingComplate)
+            {
+                // mail to employee require
+                await this.SendMail3(record,true);
+            }
 
             return new JsonResult(record, this.DefaultJsonSettings);
         }
+
+        #region Report
+        [HttpGet("WelderReport")]
+        public async Task<IActionResult> WelderReport(int key)
+        {
+            if (key > 0)
+            {
+               var RequireQC = await this.repositoryRequireQc.GetFirstOrDefaultAsync(
+                                       selector: x => x,
+                                       predicate: x => x.RequireQualityControlId == key,
+                                       include: x => x.Include(z => z.RequireHasMasterProjects)
+                                                        .ThenInclude(z => z.RequireHasWelder)
+                                                      .Include(z => z.RequireHasMasterProjects)
+                                                        .ThenInclude(z => z.MasterProjectList));
+                if (RequireQC != null)
+                {
+                    var Project = await this.repositoryProjectCodeDetail.GetFirstOrDefaultAsync(
+                       x => x, x => x.ProjectCodeDetailId == (RequireQC.ProjectCodeDetailId ?? 0), null, x => x.Include(z => z.ProjectCodeMaster));
+
+                    var ReportData = new WelderReportHeader()
+                    {
+                        JobNo = Project.ProjectCodeMaster.ProjectCode,
+                        PartName = Project.ProjectCodeDetailCode,
+                        ProjectName = Project.ProjectCodeMaster.ProjectName,
+                    };
+
+                    var welderDetails = RequireQC.RequireHasMasterProjects.Select(x => new WelderReportDetail()
+                    {
+                        Description = x?.MasterProjectList?.Name ?? "-",
+                        DrawingNo = x?.MasterProjectList?.DrawingNo ?? "-",
+                        MarkNo = x?.MasterProjectList?.MarkNo ?? "-",
+                        UnitNo = x?.MasterProjectList?.UnitNo != null ? (x?.MasterProjectList?.UnitNo).ToString() : "-",
+                        Type1 = x?.MasterProjectList?.TypeMaterial1 ?? "-",
+                        Spec1 = x?.MasterProjectList?.GradeMaterial1 ?? "-",
+                        Size1 = x?.MasterProjectList?.Thickness != null ? (x?.MasterProjectList?.Thickness).ToString() : "-",
+                        Type2 = x?.MasterProjectList?.TypeMaterial2 ?? "-",
+                        Spec2 = x?.MasterProjectList?.GradeMaterial2 ?? "-",
+                        Size2 = x?.MasterProjectList?.Thickness != null ? (x?.MasterProjectList?.Thickness).ToString() : "-",
+                        JointNo = x?.MasterProjectList?.JointNumber != null ? (x?.MasterProjectList?.JointNumber).ToString() : "-",
+                        WPSNo = x.RequireHasWelder != null ? x.RequireHasWelder.Wps ?? "" : "-",
+                        Process = x.RequireHasWelder != null && x?.RequireHasWelder?.WelderProcess != null ?
+                            System.Enum.GetName(typeof(WelderProcess), x.RequireHasWelder.WelderProcess) : "-",
+                        WelderNo1 = x.RequireHasWelder != null && x?.RequireHasWelder?.WelderNo1Id != null ?
+                            this.repositoryWelderNo.GetFirstOrDefault(z => z.WelderNoCode, z => z.WelderNoId == x.RequireHasWelder.WelderNo1Id.Value) : "-",
+                        WelderNo2 = x.RequireHasWelder != null && x?.RequireHasWelder?.WelderNo2Id != null ?
+                            this.repositoryWelderNo.GetFirstOrDefault(z => z.WelderNoCode, z => z.WelderNoId == x.RequireHasWelder.WelderNo2Id.Value) : "-",
+                        Remark = x.RequireHasWelder != null ? x?.RequireHasWelder?.Remark : "",
+                        WelderDate = x.RequireHasWelder != null && x?.RequireHasWelder?.WelderDate != null ? x?.RequireHasWelder?.WelderDate.Value.ToString("dd/MM/yy") : "-"
+                    });
+
+                    ReportData.WelderInfo = welderDetails.ToList();
+                    ReportData.WelderInfo.Add(new WelderReportDetail());
+                    ReportData.WelderInfo.Add(new WelderReportDetail());
+                    ReportData.WelderInfo.Add(new WelderReportDetail());
+                    ReportData.WelderInfo.Add(new WelderReportDetail());
+
+                    return new JsonResult(ReportData, this.DefaultJsonSettings);
+                }
+            }
+            return BadRequest(new { error = "" });
+        }
+        #endregion
+    }
+
+    public class WelderReportHeader
+    {
+        public string JobNo { get; set; }
+        public string PartName { get; set; }
+        public string ProjectName { get; set; }
+        public List<WelderReportDetail> WelderInfo { get; set; } = new List<WelderReportDetail>();
+    }
+
+    public class WelderReportDetail
+    {
+        public string DrawingNo { get; set; }
+        public string Description { get; set; }
+        public string MarkNo { get; set; }
+        public string UnitNo { get; set; }
+        public string Type1 { get; set; }
+        public string Spec1 { get; set; }
+        public string Size1 { get; set; }
+        public string Type2 { get; set; }
+        public string Spec2 { get; set; }
+        public string Size2 { get; set; }
+        public string JointNo { get; set; }
+        public string WPSNo { get; set; }
+        public string Process { get; set; }
+        public string WelderNo1 { get; set; }
+        public string WelderNo2 { get; set; }
+        public string WelderDate { get; set; }
+        public string Remark { get; set; }
+        public string Wps { get; set; }
     }
 }
+
+

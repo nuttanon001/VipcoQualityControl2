@@ -4,7 +4,10 @@
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
   </div>
   <mat-table #table [dataSource]="dataSource" matSort matSortDisableClear
-             matSortActive="MarkNo" matSortDirection="asc">
+             matSortActive="MarkNo" matSortDirection="asc"
+             [ngClass]="{ 'mat-table-edit': isDialog === 0,
+              'mat-table-dialog': isDialog === 1,
+              'mat-table-view': isDialog === 2}">
     <!-- Note that these columns can be defined in any order.
   The actual rendered columns are set as a property on the row definition" -->
     <!-- DrawingNo Column -->
@@ -78,6 +81,43 @@
       </mat-cell>
     </ng-container>
 
+    <!--Welder Column-->
+    <!-- VTStaus Column -->
+    <ng-container matColumnDef="VTStaus">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        VTStaus (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasWelder?.VTStausString || '-') }}</mat-cell>
+    </ng-container>
+    <!-- WelderProcess Column -->
+    <ng-container matColumnDef="WelderProcess">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        WelderProcess (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasWelder?.WelderProcessString || '-') }}</mat-cell>
+    </ng-container>
+    <!-- WelderDate Column -->
+    <ng-container matColumnDef="WelderDate">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        WelderDate (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasWelder?.WelderDate | date: 'dd/MM/yy') || '-' }}</mat-cell>
+    </ng-container>
+    <!-- PercentNDE Column -->
+    <ng-container matColumnDef="PercentNDE">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        PercentNDE (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasWelder?.PercentNDE | number) || '-' }} %</mat-cell>
+    </ng-container>
+    <!-- WelderDate Column -->
+    <ng-container matColumnDef="WelderNo">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        WelderNo (NDE)
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasWelder?.WelderNo1Name ) || '-' }} {{ (row.RequireHasWelder?.WelderNo2Name ? ' | ' + row.RequireHasWelder?.WelderNo2Name : '') }}</mat-cell>
+    </ng-container>
+    <!--Command-->
     <!--FailQuantity Column-->
     <ng-container matColumnDef="FailQuantity">
       <mat-header-cell *matHeaderCellDef mat-sort-header>

@@ -37,7 +37,13 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let row">{{ (row?.WelderNo1Name ) || '-' }} {{ (row.WelderNo2Name ? ' | ' + row.WelderNo2Name : '') }}</mat-cell>
     </ng-container>
-
+    <!-- Wps Column -->
+    <ng-container matColumnDef="Wps">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>
+        Wps
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.Wps ) || '-' }}</mat-cell>
+    </ng-container>
 
     <!--MasterList-->
     <!-- DrawingNo Column -->

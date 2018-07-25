@@ -145,7 +145,7 @@ namespace VipcoQualityControl.Controllers
                 var HasData = await this.repositoryRequireHasMl.GetToListAsync(
                         selector: x => x,
                         predicate: z => z.RequireQualityControlId == key,
-                        include: c => c.Include(z => z.MasterProjectList));
+                        include: c => c.Include(z => z.MasterProjectList).Include(z => z.RequireHasWelder));
                                         
                 if (HasData != null)
                 {
@@ -156,6 +156,7 @@ namespace VipcoQualityControl.Controllers
                         {
                             var MapData = this.mapper.Map<MasterProjectList, MasterProjectListViewModel>(item.MasterProjectList);
                             MapData.Quantity = item.Quantity;
+                            MapData.RequireHasWelder = item.RequireHasWelder != null ? this.mapper.Map<RequireHasWelder, RequireHasWelderViewModel>(item.RequireHasWelder) : null;
                             ListData.Add(MapData);
                         }
                     }

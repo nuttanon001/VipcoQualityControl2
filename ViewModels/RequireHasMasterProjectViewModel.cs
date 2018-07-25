@@ -15,5 +15,6 @@ namespace VipcoQualityControl.ViewModels
         public string Name { get; set; }
         public string QualityControlReasonString { get; set; }
         public RequireHasWelderViewModel RequireHasWelderViewModel { get; set; }
+        public WelderStatus? WelderStatus { get; set; }
     }
 }

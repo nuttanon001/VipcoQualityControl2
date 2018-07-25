@@ -12,7 +12,7 @@ import { WelderProcess } from '../shared/welder-process.enum';
 export class RequireQcWelderSubTableComponent extends BaseTableFontData<RequireQcWelder> {
   constructor() {
     super();
-    this.displayedColumns = ["Command", "VTStaus", "WelderProcess", "WelderDate", "PercentNDE","WelderNo", "DrawingNo", "MarkNo", "Name", "UnitNo", "Quantity",
+    this.displayedColumns = ["Command", "VTStaus", "WelderProcess", "WelderDate", "PercentNDE","WelderNo","Wps", "DrawingNo", "MarkNo", "Name", "UnitNo", "Quantity",
       "JointNumber", "Thickness", "TypeMaterial1", "GradeMaterial1", "FailQuantity", "RemarkExter"];
   }
 }

@@ -14,6 +14,7 @@ import { BaseCommunicateService } from "../../shared/base-communicate.service";
 import { Observable } from "rxjs/Observable";
 import { catchError } from "rxjs/operators";
 import { RequireQcSchedule } from "./require-qc-schedule.model";
+import { RequireQcCancel } from "./require-qc-cancel.model";
 
 @Injectable()
 export class RequireQualityControlService extends BaseRestService<RequireQc> {
@@ -45,9 +46,11 @@ export class RequireQualityControlService extends BaseRestService<RequireQc> {
   }
 
   // ===================== Cancel Require Quality Control ===\\
-  cancelRequireQualityControl(RequireQcId: number): Observable<RequireQc> {
-    return this.http.get<RequireQc>(`${this.baseUrl}CancelRequireQualityControl/`, {
-      params: new HttpParams().set("key", RequireQcId.toString())
+  cancelRequireQualityControl(RequireQcCancel: RequireQcCancel): Observable<RequireQc> {
+    return this.http.post<RequireQc>(`${this.baseUrl}CancelRequireQualityControl/`, JSON.stringify(RequireQcCancel), {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+      })
     }).pipe(catchError(this.handleError("Cancel require qc", <RequireQc>{})));
   }
 

@@ -16,16 +16,12 @@
           <!--VTStaus-->
           <mat-form-field hintLabel="Specify the status for VT">
             <mat-select formControlName="VTStaus"
-                        required
                         placeholder="Select status VT">
               <mat-option>-</mat-option>
               <mat-option *ngFor="let status of welderStatus" [value]="status.data">
                 {{ status.lable }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="InfoValueForm.controls.VTStaus.hasError('required')">
-              VT status is <strong>required</strong>
-            </mat-error>
           </mat-form-field>
 
           <!--WelderProcess-->
@@ -82,14 +78,21 @@
                    class="click-input" (click)="openDialogs('WelderNo2Id')">
           </mat-form-field>
 
-          <mat-action-row>
-            <button mat-button color="accent" (click)="nextStep()">
-              <strong>Next</strong>
-            </button>
-            <button mat-button color="primary" (click)="endStep()">
-              <strong>End</strong>
-            </button>
-          </mat-action-row>
+          <mat-form-field hintLabel="Max 100 characters">
+            <input matInput formControlName="Wps"
+                   required maxlength="100"
+                   placeholder="Specify the Wps. for inspection part">
+            <mat-hint [align]="end">{{InfoValueForm.controls.Wps.value?.length || 0}}/100</mat-hint>
+          </mat-form-field>
+
+            <mat-action-row>
+              <button mat-button color="accent" (click)="nextStep()">
+                <strong>Next</strong>
+              </button>
+              <button mat-button color="primary" (click)="endStep()">
+                <strong>End</strong>
+              </button>
+            </mat-action-row>
         </mat-expansion-panel>
 
         <!--Expansion2-->

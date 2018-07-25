@@ -58,17 +58,14 @@ export class RequireQcWelderInfoDialogComponent extends BaseInfoDialogComponent<
 
     this.InfoValueForm = this.fb.group({
       RequireHasWelderId: [this.InfoValue.RequireHasWelderId],
-      VTStaus: [this.InfoValue.VTStaus,
-      [
-        Validators.required
-      ]
-      ],
+      VTStaus: [this.InfoValue.VTStaus,],
       QcStatus: [this.InfoValue.QcStatus],
       WelderProcess: [this.InfoValue.WelderProcess,
       [
         Validators.required
       ]
       ],
+      Wps: [this.InfoValue.Wps,[Validators.maxLength(100)]],
       WelderDate: [this.InfoValue.WelderDate,
       [
         Validators.required,
@@ -250,8 +247,8 @@ export class RequireQcWelderInfoDialogComponent extends BaseInfoDialogComponent<
         dialogRef.afterClosed().subscribe(result => {
           this.InfoValueForm.patchValue({
             WelderNo1Id: result ? result.WelderNoId : undefined,
-            WelderNo1Name: result ? result.EmployeeString : undefined,
-            WelderNo1String: result ? result.EmployeeString : undefined,
+            WelderNo1Name: result ? result.WelderNoCode : undefined,
+            WelderNo1String: result ? result.WelderNoCode : undefined,
           });
         });
       } else if (type.indexOf("WelderNo2Id") !== -1) {
@@ -259,8 +256,8 @@ export class RequireQcWelderInfoDialogComponent extends BaseInfoDialogComponent<
         dialogRef.afterClosed().subscribe(result => {
           this.InfoValueForm.patchValue({
             WelderNo2Id: result ? result.WelderNoId : undefined,
-            WelderNo2Name: result ? result.EmployeeString : undefined,
-            WelderNo2String: result ? result.EmployeeString : undefined,
+            WelderNo2Name: result ? result.WelderNoCode : undefined,
+            WelderNo2String: result ? result.WelderNoCode : undefined,
           });
         });
       }

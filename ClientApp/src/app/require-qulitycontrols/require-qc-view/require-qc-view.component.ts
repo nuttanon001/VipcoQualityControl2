@@ -11,6 +11,9 @@ import { MasterList } from "../../master-lists/shared/master-list.model";
 import { MasterListService } from "../../master-lists/shared/master-list.service";
 import { RequireMoreWorkactivityService } from "../shared/require-more-workactivity.service";
 import { WorkActivity } from "../../work-activities/shared/work-activity.model";
+import { RequireStatusQc } from "../shared/require-status-qc.enum";
+import { WelderStatus } from "../../require-qc-welders/shared/welder-status.enum";
+import { WelderProcess } from "../../require-qc-welders/shared/welder-process.enum";
 
 @Component({
   selector: 'app-require-qc-view',
@@ -31,8 +34,19 @@ export class RequireQcViewComponent extends BaseViewComponent<RequireQc> {
   moreWorkActivities: string;
   noMasterList: boolean = false;
   @Input() forFail: boolean = false;
+  isDialog: number = 2;
+  colMode: string = "";
   // load more data
   onLoadMoreData(value: RequireQc) {
+    if (this.forFail) {
+      this.colMode = "forFail";
+    } else if (value.RequireStatus !== RequireStatusQc.Waiting &&
+      value.RequireStatus !== RequireStatusQc.InProcess) {
+      this.colMode = "welder";
+    } else {
+      this.colMode = "normal";
+    }
+
     this.attachFiles = new Array;
     this.moreWorkActivities = "";
     this.masterLists = new Array;
@@ -54,7 +68,19 @@ export class RequireQcViewComponent extends BaseViewComponent<RequireQc> {
             this.displayValue.MasterLists = new Array;
 
             dbMaster.forEach((item, index) => {
+              if (item.RequireHasWelder) {
+                this.colMode = "welder";
+              }
+
               this.displayValue.MasterLists.push({
+                RequireHasWelder: item.RequireHasWelder ? {
+                  PercentNDE: item.RequireHasWelder.PercentNDE,
+                  VTStausString : WelderStatus[item.RequireHasWelder.VTStaus],
+                  WelderProcessString: WelderProcess[item.RequireHasWelder.WelderProcess],
+                  WelderDate: item.RequireHasWelder.WelderDate,
+                  WelderNo1Name: item.RequireHasWelder.WelderNo1Name,
+                  WelderNo2Name: item.RequireHasWelder.WelderNo2Name,
+                } : undefined,
                 CreateDate: item.CreateDate,
                 Creator: item.Creator,
                 MarkNo: item.MarkNo,

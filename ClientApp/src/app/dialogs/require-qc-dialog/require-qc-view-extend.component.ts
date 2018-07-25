@@ -9,7 +9,7 @@ import { RequireMoreWorkactivityService } from '../../require-qulitycontrols/sha
 @Component({
   selector: 'app-require-qc-view-extend',
   templateUrl: '../../require-qulitycontrols/require-qc-view/require-qc-view.component.html',
-  styleUrls: ['../../require-qulitycontrols/require-qc-view/require-qc-view.component.scss']
+  styleUrls: ['./require-qc-view-extend.component.scss']
 })
 export class RequireQcViewExtendComponent extends RequireQcViewComponent {
   constructor(
@@ -18,5 +18,6 @@ export class RequireQcViewExtendComponent extends RequireQcViewComponent {
     serviceMoreWorkActivities: RequireMoreWorkactivityService,
   ) {
     super(service, serviceMaster, serviceMoreWorkActivities);
+    this.isDialog = 1;
   }
 }

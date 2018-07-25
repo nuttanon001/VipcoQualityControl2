@@ -7,7 +7,7 @@ import { RequireHasMasterService } from '../../require-qulitycontrols/shared/req
 @Component({
   selector: 'app-qualitycontrol-view-extend',
   templateUrl: "../../quality-controls/quality-control-view/quality-control-view.component.html",
-  styleUrls: ["../../quality-controls/quality-control-view/quality-control-view.component.scss"]
+  styleUrls: ["./qualitycontrol-view-extend.component.scss"]
 })
 export class QualitycontrolViewExtendComponent extends QualityControlViewComponent {
   /**
@@ -20,5 +20,6 @@ export class QualitycontrolViewExtendComponent extends QualityControlViewCompone
     serviceRequireHasMaster: RequireHasMasterService,
   ) {
     super(serviceRequireQc, serviceRequireHasMaster);
+    this.isDialog = true;
   }
 }

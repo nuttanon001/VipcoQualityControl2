@@ -24,6 +24,7 @@ import { RequireHasMasterService } from '../require-qulitycontrols/shared/requir
 import { RequireQualityControlService } from '../require-qulitycontrols/shared/require-qc.service';
 import { RequireMoreWorkactivityService } from '../require-qulitycontrols/shared/require-more-workactivity.service';
 import { SharedModule } from '../shared/shared.module';
+import { RequireQcWelderReportComponent } from './require-qc-welder-report/require-qc-welder-report.component';
 
 @NgModule({
   imports: [
@@ -38,7 +39,8 @@ import { SharedModule } from '../shared/shared.module';
     RequireQcWelderMasterComponent,
     RequireQcWelderInfoComponent,
     RequireQcWelderTableComponent,
-    RequireQcWelderSubTableComponent
+    RequireQcWelderSubTableComponent,
+    RequireQcWelderReportComponent
   ],
   providers: [
     BranchService,

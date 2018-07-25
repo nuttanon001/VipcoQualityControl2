@@ -51,6 +51,10 @@
                   [disabled]="ShowEdit || DisplayDataNull || forFail" matTooltip="Edit" matTooltipPosition="left">
             <i class="fa fa-2x fa-pencil" aria-hidden="true"></i>
           </button>
+          <button type="button" mat-icon-button color="accent" (click)="onCloneInfoValue(displayValue)"
+                  [disabled]="ShowEdit || DisplayDataNull || forFail" matTooltip="Clone" matTooltipPosition="left">
+            <i class="fa fa-2x fa-clone" aria-hidden="true"></i>
+          </button>
           <hr />
           <button type="button" mat-icon-button color="warn" (click)="onCancelEdit()"
                   [disabled]="!ShowEdit" matTooltip="Cancel" matTooltipPosition="left">

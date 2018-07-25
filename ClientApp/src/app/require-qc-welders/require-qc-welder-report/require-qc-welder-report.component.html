@@ -1,0 +1,231 @@
+<div class="control-item">
+  <button type="button" mat-icon-button color="warn" (click)="onBackToMaster()"
+          style="margin:4px;">
+    <i class="fa fa-3x fa-chevron-circle-left" aria-hidden="true" style="margin:0px;"></i>
+  </button>
+
+  <button type="button" mat-icon-button color="primary" (click)="onPrint()"
+          style="margin:4px;">
+    <i class="fa fa-3x fa-print" aria-hidden="true" style="margin:0px;"></i>
+  </button>
+
+  <!--<button type="button" mat-icon-button color="primary" (click)="onPrintPdf()"
+          style="margin:4px;">
+    <i class="fa fa-3x fa-file-pdf-o" aria-hidden="true" style="margin:0px;"></i>
+  </button>-->
+</div>
+<div *ngIf="ReportData" class="report-box" id="printdiv">
+  <table border="0" cellpadding="0" cellspacing="0"
+         style="border-collapse:collapse;table-layout:fixed;">
+    <colgroup>
+      <col width="30"><!--1-->
+      <col width="120"><!--2-->
+      <col width="80"><!--3-->
+      <col width="80"><!--4-->
+      <col width="30"><!--5-->
+      <col width="55"><!--6-->
+      <col width="55"><!--7-->
+      <col width="40"><!--8-->
+      <col width="55"><!--9-->
+      <col width="55"><!--10-->
+      <col width="40"><!--11-->
+      <col width="30"><!--12-->
+      <col width="55"><!--13-->
+      <col width="40"><!--14-->
+      <col width="40"><!--15-->
+      <col width="40"><!--16-->
+      <col width="40"><!--17-->
+      <col width="40"><!--18-->
+      <col width="55"><!--19-->
+    </colgroup>
+    <!--Col13-->
+    <!--Header Table-->
+    <thead class="line-all">
+      <!--Title-->
+      <tr>
+        <td height="30" colspan="5" rowspan="2" class="text-center">
+          <b><strong>Welding Record for Inspection Request</strong></b>
+        </td>
+
+        <td colspan="2" class="line-left line-btm text-right bg-light">
+          JobNo&nbsp;
+        </td>
+        <td colspan="4" class="line-left line-btm">
+          &nbsp;{{ReportData.JobNo}}
+        </td>
+
+        <td colspan="2" class="line-all text-right bg-light">
+          Part Nmae&nbsp;
+        </td>
+        <td colspan="6" class="line-all">
+          &nbsp;{{ReportData.PartName}}
+        </td>
+      </tr>
+      <tr>
+        <td height="30" colspan="2" class="line-left line-btm text-right bg-light">
+          Project Name&nbsp;
+        </td>
+        <td colspan="6" class="line-left line-btm">
+          &nbsp;{{ReportData.ProjectName}}
+        </td>
+        <td colspan="6" class="line-left">
+          &nbsp;
+        </td>
+      </tr>
+
+      <!--End Title-->
+      <!--Header1-->
+      <tr class="bg-light">
+        <td height="20" class="label text-center line-all" colspan="1" rowspan="2">
+          No.
+        </td>
+        <td class="label text-center line-all" colspan="1" rowspan="2">
+          Dwg No.
+        </td>
+        <td class="label text-center line-all" colspan="1" rowspan="2">
+          Desc
+        </td>
+        <td class="label text-center line-all" colspan="1" rowspan="2">
+          Mark No.
+        </td>
+        <td class="label text-center line-all" colspan="1" rowspan="2">
+          Unit No.
+        </td>
+        <td class="label text-center line-all" colspan="3">
+          Meterial #1
+        </td>
+        <td class="label text-center line-all" colspan="3">
+          Meterial #1
+        </td>
+        <td class="label text-center line-all" colspan="1" rowspan="2">
+          Joint No.
+        </td>
+        <td class="label text-center line-all" colspan="2">
+          Welding
+        </td>
+        <td class="label text-center line-all" colspan="2">
+          Welder No.
+        </td>
+        <td class="label text-center line-all" colspan="2">
+          Welder Date
+        </td>
+        <td class="label text-center line-all" colspan="1" rowspan="2">
+          Remark
+        </td>
+      </tr>
+      <!--Header2-->
+      <tr class="bg-light">
+        <td height="20" class="label text-center line-all">
+          Type
+        </td>
+        <td class="label text-center line-all">
+          Sp/Gr
+        </td>
+        <td class="label text-center line-all">
+          Size
+        </td>
+        <td class="label text-center line-all">
+          Type
+        </td>
+        <td class="label text-center line-all">
+          Sp/Gr
+        </td>
+        <td class="label text-center line-all">
+          Size
+        </td>
+        <td class="label text-center line-all">
+          Wps.
+        </td>
+        <td class="label text-center line-all">
+          Pro
+        </td>
+        <td class="label text-center line-all">
+          #1
+        </td>
+        <td class="label text-center line-all">
+          #2
+        </td>
+        <td class="label text-center line-all">
+          Root
+        </td>
+        <td class="label text-center line-all">
+          Cover
+        </td>
+      </tr>
+    </thead>
+    <!--Footer Table-->
+    <tfoot class="line-all">
+      <tr>
+        <td colspan="18"></td>
+      </tr>
+    </tfoot>
+    <!--Body Table-->
+    <tbody class="line-all">
+      <tr *ngFor="let item of ReportData.WelderInfo;let i = index">
+        <!--NewLine-->
+        <td height="20" class="label text-center line-all" colspan="1">
+          {{item.DrawingNo ? (i + 1) : ''}}
+        </td>
+        <td class="label text-left line-all" colspan="1">
+          &nbsp;{{item.DrawingNo ? (item.DrawingNo || "-") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.Description || "-") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.MarkNo || "-") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.UnitNo || "-") : ''}}
+        </td>
+
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.Type1 || "-") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.Spec1 || "-") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.Size1 || "-") : ''}}
+        </td>
+
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.Type2 || "-") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.Spec2 || "-") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.Size2 || "-") : ''}}
+        </td>
+
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.JointNo || "") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.WPSNo || "") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.Process || "") : ''}}
+        </td>
+
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.WelderNo1 || "") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.WelderNo2 || "") : ''}}
+        </td>
+
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.WelderDate || "") : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? '-' : ''}}
+        </td>
+        <td class="label text-center line-btm line-right" colspan="1">
+          {{item.DrawingNo ? (item.Remark || "") : ''}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

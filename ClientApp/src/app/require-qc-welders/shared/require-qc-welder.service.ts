@@ -21,7 +21,12 @@ export class RequireQcWelderService extends BaseRestService<RequireQc> {
       httpErrorHandler
     )
   }
-
+  // ===================== Welder Control Report ==================== \\
+  getWelderReport(RequireQcId: number): Observable<any> {
+    return this.http.get<any>(this.baseUrl + "WelderReport/", {
+      params: new HttpParams().set("key", RequireQcId.toString())
+    }).pipe(catchError(this.handleError("Get require qc welder entity report from api", <any>{})));
+  }
   // ===================== GenarateFromFailRequireQualityControl ===\\
   getGenarateFromFailRequireQualityControl(parentRequireQcId: number): Observable<RequireQc> {
     return this.http.get<RequireQc>(`${this.baseUrl}GenarateFromFailRequireQualityControl/`, {

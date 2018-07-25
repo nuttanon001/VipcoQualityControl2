@@ -1,5 +1,5 @@
 // Angular Core
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 // Components
 import { BaseTableFontData } from "../../shared/base-table-fontdata.component";
 // Module
@@ -39,6 +39,7 @@ export class QualityControlHasMarknoTableComponent extends BaseTableFontData<Req
       "GradeMaterial1",
     ];
   }
+  @Input() isDialog: boolean = false;
   // Parameter
   qcReasons: Array<QcReasons>;
 

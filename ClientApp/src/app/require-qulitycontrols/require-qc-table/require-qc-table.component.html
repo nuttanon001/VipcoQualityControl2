@@ -7,7 +7,7 @@
     <search-box [isDisabled]="isDisabled" [isOnlyCreate]="isOnlyCreate"></search-box>
   </div>
   <mat-table #table [dataSource]="dataSource" class="example-table"
-             matSort matSortActive="RequireDate" matSortDisableClear matSortDirection="asc">
+             matSort matSortActive="RequireQualityNo" matSortDisableClear matSortDirection="asc">
     <!--- Note that these columns can be defined in any order.
     The actual rendered columns are set as a property on the row definition" -->
     <!-- Checkbox Column -->
@@ -55,11 +55,10 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;"
              [ngClass]="{'is-require': row.RequireStatus === 1,
                 'is-wait': row.RequireStatus === 2 || row.RequireStatus === 3 || row.RequireStatus === 4,
-                'is-complate' : row.RequireStatus === 5,
-                'is-cancel' : row.RequireStatus === 6 || row.RequireStatus === 7,
+                'is-complate' : row.RequireStatus === 5 || row.RequireStatus === 12,
+                'is-cancel' : row.RequireStatus === 6 || row.RequireStatus === 7 || row.RequireStatus === 11,
                 'is-revise' : row.RequireStatus === 8,
-                'is-req-welded' : row.RequireStatus === 9 || row.RequireStatus === 10,
-                'is-cancel' : row.RequireStatus === 11 }"
+                'is-req-welded' : row.RequireStatus === 9 || row.RequireStatus === 10}"
              (click)="selection.toggle(row)"></mat-row>
   </mat-table>
 

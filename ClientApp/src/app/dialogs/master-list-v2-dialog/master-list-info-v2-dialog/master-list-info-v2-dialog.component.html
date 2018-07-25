@@ -58,7 +58,7 @@
           <!--UnitNo-->
           <mat-form-field hintLabel="*UnitNo more then 0">
             <input matInput type="number" formControlName="UnitNo"
-                   min="0"
+                   min="0" required
                    placeholder="Specify the unit-no for inspection part">
             <mat-error *ngIf="InfoValueForm.controls.UnitNo.hasError('min')">
               UnitNo minimum number is 0

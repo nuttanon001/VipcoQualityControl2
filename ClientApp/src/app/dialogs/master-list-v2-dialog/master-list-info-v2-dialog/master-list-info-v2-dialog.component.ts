@@ -70,6 +70,7 @@ export class MasterListInfoV2DialogComponent extends BaseInfoDialogComponent<Mas
       ],
       UnitNo: [this.InfoValue.UnitNo,
         [
+          Validators.required,
           Validators.min(0)
         ]
       ],
@@ -88,6 +89,7 @@ export class MasterListInfoV2DialogComponent extends BaseInfoDialogComponent<Mas
       GradeMaterial2: [this.InfoValue.GradeMaterial2, [Validators.maxLength(200)]],
       TypeMaterial1: [this.InfoValue.TypeMaterial1, [Validators.maxLength(200)]],
       TypeMaterial2: [this.InfoValue.TypeMaterial2, [Validators.maxLength(200)]],
+      RequireHasWelder:[this.InfoValue.RequireHasWelder],
       // BaseModel
       Creator: [this.InfoValue.Creator],
       CreateDate: [this.InfoValue.CreateDate],

@@ -4,7 +4,9 @@
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
   </div>
   <mat-table #table [dataSource]="dataSource" matSortDisableClear
-             matSort matSortActive="MarkNo" matSortDirection="asc">
+             matSort matSortActive="MarkNo" matSortDirection="asc"
+             [ngClass]="{ 'mat-table-edit': isDialog === false,
+              'mat-table-dialog': isDialog === true}">
     <!-- Note that these columns can be defined in any order.
   The actual rendered columns are set as a property on the row definition" -->
     <!-- Quantity Column -->

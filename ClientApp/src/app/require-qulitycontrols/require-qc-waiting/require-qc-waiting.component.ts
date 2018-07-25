@@ -146,7 +146,7 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
         let Width100: string = "100px";
         let Width125: string = "125px";
         let Width150: string = "150px";
-        let MainGroupName = (this.status === 1 ? "WorkGroup-QC" : "WeldingData");
+        let MainGroupName = (this.status === 1 ? "WorkGroup-QC" : "WorkGroupName");
         // column Row1
         this.columnUpper.push({ header: MainGroupName, rowspan: 2, style: { "width": Width150, } });
         for (let detail of dbDataSchedule.ColumnUpper) {
@@ -272,13 +272,21 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
                 this.RequireQualityControlId = master.RequireQualityControlId;
                 this.loadReport = !this.loadReport;
               } else if (conditionNumber === -2) {
-                this.serviceDialogs.confirm("Question Message", "Do you want to cancel requrie quality control?",
+                this.serviceDialogs.confirmMessage("Question Message", "Do you want to cancel requrie quality control?",
                   this.viewContainerRef).subscribe(result => {
                     if (result) {
-                      this.service.cancelRequireQualityControl(master.RequireQualityControlId)
-                        .subscribe(dbData => {
-                          setTimeout(() => { this.onGetData(this.reportForm.value); }, 750);
-                        });
+                      if (result.result) {
+                        this.service.cancelRequireQualityControl(
+                          {
+                            RemarkCancel: result.message,
+                            RequireQualityControlId: master.RequireQualityControlId,
+                            ByUser: this.serviceAuth.getAuth.UserName,
+                            EmployeeName: this.serviceAuth.getAuth.NameThai,
+                          })
+                          .subscribe(dbData => {
+                            setTimeout(() => { this.onGetData(this.reportForm.value); }, 750);
+                          });
+                      }
                     }
                   });
               }
@@ -294,14 +302,26 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
                 setTimeout(() => {
                   this.router.navigate(["require-qc-welder/", master.RequireQualityControlId]);
                 }, 750);
+              } else if (conditionNumber === 5) {
+                setTimeout(() => {
+                  this.router.navigate(["require-qc-welder/report-welder", master.RequireQualityControlId]);
+                }, 750);
               } else if (conditionNumber === -2) {
-                this.serviceDialogs.confirm("Question Message", "Do you want to cancel requrie quality control?",
+                this.serviceDialogs.confirmMessage("Question Message", "Do you want to cancel requrie quality control?",
                   this.viewContainerRef).subscribe(result => {
                     if (result) {
-                      this.service.cancelRequireQualityControl(master.RequireQualityControlId)
-                        .subscribe(dbData => {
-                          setTimeout(() => { this.onGetData(this.reportForm.value); }, 750);
-                        });
+                      if (result.result) {
+                        this.service.cancelRequireQualityControl(
+                          {
+                            RemarkCancel: result.message,
+                            RequireQualityControlId: master.RequireQualityControlId,
+                            ByUser: this.serviceAuth.getAuth.UserName,
+                            EmployeeName: this.serviceAuth.getAuth.NameThai,
+                          })
+                          .subscribe(dbData => {
+                            setTimeout(() => { this.onGetData(this.reportForm.value); }, 750);
+                          });
+                      }
                     }
                   });
               }

@@ -48,6 +48,7 @@ export interface RequireQc extends BaseModel {
   RequireQcTimeString?: any;
   WelderTime?: Date;
   WelderTimeString?: any;
+  Option?: boolean;
   // Attach Model
   AttachFile?: FileList;
   RemoveAttach?: Array<number>;

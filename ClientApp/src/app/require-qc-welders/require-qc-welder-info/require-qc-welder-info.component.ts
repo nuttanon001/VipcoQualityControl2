@@ -1,29 +1,36 @@
-import { Component, OnInit, ViewContainerRef } from '@angular/core';
-import { BaseInfoComponent } from '../../shared/mk2/base-info-component';
-import { RequireQcWelder } from '../shared/require-qc-welder.model';
-import { RequireQcWelderService } from '../shared/require-qc-welder.service';
-import { RequireQcWelderCommunicateService } from '../shared/require-qc-welder-communicate.service';
-import { DialogsService } from '../../dialogs/shared/dialogs.service';
+// Angular Core
 import { FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit, ViewContainerRef } from '@angular/core';
+// Components
+import { BaseInfoComponent } from '../../shared/mk2/base-info-component';
+// Models
+import { Branch } from '../../branchs/shared/branch.model';
 import { WelderStatus } from '../shared/welder-status.enum';
+import { AttachFile } from '../../shared/attach-file.model';
 import { WelderProcess } from '../shared/welder-process.enum';
+import { RequireQcWelder } from '../shared/require-qc-welder.model';
+import { WorkActivity } from '../../work-activities/shared/work-activity.model';
 import { RequireQc } from '../../require-qulitycontrols/shared/require-qc.model';
 import { WorkGroupQc } from '../../workgroup-qulitycontrols/shared/workgroup-qc.model';
-import { AttachFile } from '../../shared/attach-file.model';
-import { Branch } from '../../branchs/shared/branch.model';
+import { TypeworkActivity } from '../../work-activities/shared/typework-activity.enum';
 import { InspectionPoint } from '../../inspection-points/shared/inspection-point.model';
-import { WorkActivity } from '../../work-activities/shared/work-activity.model';
-import { RequireMoreWorkactivityService } from '../../require-qulitycontrols/shared/require-more-workactivity.service';
+import { RequireQcHasMasterList } from '../../require-qulitycontrols/shared/require-qc-has-master-list.model';
+// Services
+import { AuthService } from '../../core/auth/auth.service';
 import { BranchService } from '../../branchs/shared/branch.service';
+import { DialogsService } from '../../dialogs/shared/dialogs.service';
+import { RequireQcWelderService } from '../shared/require-qc-welder.service';
 import { MasterListService } from '../../master-lists/shared/master-list.service';
-import { EmployeeGroupMisService } from '../../employees/shared/employee-group-mis.service';
 import { WorkActivityService } from '../../work-activities/shared/work-activity.service';
+import { EmployeeGroupMisService } from '../../employees/shared/employee-group-mis.service';
 import { WorkGroupQcService } from '../../workgroup-qulitycontrols/shared/workgroup-qc.service';
 import { InspectionPointService } from '../../inspection-points/shared/inspection-point.service';
-import { AuthService } from '../../core/auth/auth.service';
-import { TypeworkActivity } from '../../work-activities/shared/typework-activity.enum';
+import { RequireQcWelderCommunicateService } from '../shared/require-qc-welder-communicate.service';
 import { RequireQualityControlService } from '../../require-qulitycontrols/shared/require-qc.service';
-import { RequireQcHasMasterList } from '../../require-qulitycontrols/shared/require-qc-has-master-list.model';
+import { RequireMoreWorkactivityService } from '../../require-qulitycontrols/shared/require-more-workactivity.service';
+// Rxjs
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { retry } from 'rxjs/operator/retry';
 
 @Component({
   selector: 'app-require-qc-welder-info',
@@ -61,7 +68,7 @@ export class RequireQcWelderInfoComponent extends BaseInfoComponent<RequireQc, R
   //On get data from api
   onGetDataByKey(InfoValue?: RequireQc): void {
     if (InfoValue) {
-      console.log(JSON.stringify(InfoValue));
+      // console.log(JSON.stringify(InfoValue));
 
       if (InfoValue.RequireQualityControlId) {
         this.serviceRequreQc.getOneKeyNumber(InfoValue)
@@ -109,6 +116,7 @@ export class RequireQcWelderInfoComponent extends BaseInfoComponent<RequireQc, R
             WelderDate: item.RequireHasWelder.WelderDate,
             PercentNDE: item.RequireHasWelder.PercentNDE,
             Remark: item.RequireHasWelder.Remark,
+            Wps: item.RequireHasWelder.Wps,
             //Relation
             //RequireHasMasterProjectId
             RequireHasMasterProjectId: item.RequireHasWelder.RequireHasMasterProjectId,
@@ -118,8 +126,8 @@ export class RequireQcWelderInfoComponent extends BaseInfoComponent<RequireQc, R
             WelderNo2Id: item.RequireHasWelder.WelderNo2Id,
             WelderNo2Name: item.RequireHasWelder.WelderNo2Name,
             //ViewModel
-            WelderNo1String: item.RequireHasWelder.WelderNo1String,
-            WelderNo2String: item.RequireHasWelder.WelderNo2String,
+            WelderNo1String: item.RequireHasWelder.WelderNo1Name,
+            WelderNo2String: item.RequireHasWelder.WelderNo2Name,
             VTStausString: WelderStatus[item.RequireHasWelder.VTStaus],
             WelderProcessString: WelderProcess[item.RequireHasWelder.WelderProcess],
           });
@@ -230,7 +238,7 @@ export class RequireQcWelderInfoComponent extends BaseInfoComponent<RequireQc, R
       AttachFile: [this.InfoValue.AttachFile],
       RemoveAttach: [this.InfoValue.RemoveAttach],
     });
-    this.InfoValueForm.valueChanges.subscribe((data: any) => this.onValueChanged(data));
+    this.InfoValueForm.valueChanges.pipe(debounceTime(250), distinctUntilChanged()).subscribe((data: any) => this.onValueChanged(data));
   }
 
   // get branchs
@@ -392,7 +400,24 @@ export class RequireQcWelderInfoComponent extends BaseInfoComponent<RequireQc, R
       }
     }
   }
+  //////////////
+  // OverRide //
+  //////////////
+  onFormValid(isValid: boolean): void {
+    if (isValid && !this.denySave) {
+      this.InfoValue = this.InfoValueForm.value;
 
+      let temp = this.InfoValue.RequireQcWelder.find((item, index) => {
+        return item.VTStaus === undefined || item.WelderProcess === undefined || item.WelderNo1Id === undefined
+          || item.Wps === undefined;
+      });
+      if (temp) {
+        this.communicateService.toParent(undefined);
+      } else {
+        this.communicateService.toParent(this.InfoValue);
+      }
+    }
+  }
   ////////////
   // Module //
   ////////////

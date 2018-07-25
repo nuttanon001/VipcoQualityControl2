@@ -72,5 +72,6 @@ namespace VipcoQualityControl.Models.QualityControls
         Welding,
         WeldingReq,
         WeldingFail,
+        WeldingComplate,
     }
 }

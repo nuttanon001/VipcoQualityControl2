@@ -10,6 +10,10 @@ const routes: Routes = [{
     {
       path: "forfail/:condition",
       component: RequireQcWelderMasterComponent,
+    }, 
+    {
+     path: "report-welder/:report",
+      component: RequireQcWelderMasterComponent,
     },
     {
       path: ":key",

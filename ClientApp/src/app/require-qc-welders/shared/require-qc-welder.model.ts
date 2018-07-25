@@ -11,6 +11,7 @@ export interface RequireQcWelder extends BaseModel {
   WelderDate?: Date;
   PercentNDE?: number;
   Remark?: string;
+  Wps?: string;
   //Relation
   //RequireHasMasterProjectId
   RequireHasMasterProjectId?: number;

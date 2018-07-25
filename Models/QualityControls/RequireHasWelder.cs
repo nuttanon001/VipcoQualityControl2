@@ -18,16 +18,18 @@ namespace VipcoQualityControl.Models.QualityControls
         public double PercentNDE { get; set; }
         [StringLength(200)]
         public string Remark { get; set; }
+        [StringLength(100)]
+        public string Wps { get; set; }
         //Relation
         //RequireHasMasterProjectId
         public int RequireHasMasterProjectId { get; set; }
         public RequireHasMasterProject RequireHasMasterProject { get; set; }
         //Welder1
-        public int WelderNo1Id { get; set; }
+        public int? WelderNo1Id { get; set; }
         [StringLength(200)]
         public string WelderNo1Name { get; set; }
         //Welder2
-        public int WelderNo2Id { get; set; }
+        public int? WelderNo2Id { get; set; }
         [StringLength(200)]
         public string WelderNo2Name { get; set; }
 

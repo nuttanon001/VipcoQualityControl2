@@ -1,0 +1,67 @@
+@import "../../shared/styles/report.style.scss";
+
+.report-box {
+  max-width: 1500px;
+  margin: auto;
+  font-size: 15px;
+  line-height: 30px;
+  font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+  color: #555;
+}
+
+@media print {
+  :host /deep/ body, html, .report-box {
+    width: 100%;
+    height: 100%;
+  }
+
+  @page landscape {
+    size: 9in 6in;
+    margin: 5px;
+  }
+
+  div.report-box {
+    page: landscape;
+  }
+}
+
+span {
+  width: 100%;
+  border-bottom: 1px dotted #000;
+}
+
+.img-div {
+  width: 100%;
+  text-align: center;
+}
+
+img {
+  top: 50%;
+  bottom: 50%;
+  width: 135px;
+  margin: 0 auto;
+}
+
+.label {
+  // padding
+  padding-top: 1px;
+  padding-right: 1px;
+  padding-left: 1px;
+  // font
+  color: windowtext;
+  font-size: 12px;
+  font-weight: 400;
+  vertical-align: bottom;
+}
+
+.value {
+  // padding
+  padding-top: 1px;
+  padding-right: 1px;
+  padding-left: 1px;
+  // font
+  color: windowtext;
+  font-size: 12px;
+  font-style: italic;
+  vertical-align: bottom;
+}

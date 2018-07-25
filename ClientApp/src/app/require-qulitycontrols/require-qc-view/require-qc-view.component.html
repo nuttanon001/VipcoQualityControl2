@@ -169,9 +169,10 @@
       <ng-template mat-tab-label>
         <b>Request item && Request mark-no</b>
       </ng-template>
-      <div class="view-container" *ngIf="displayValue.MasterLists">
+      <div class="view-container" *ngIf="displayValue.MasterLists && colMode">
         <app-require-qc-masterlist-table [dataRows]="displayValue.MasterLists"
-                                         [readOnly]="true">
+                                         [readOnly]="true" [isDialog]="isDialog"
+                                         [colMode]="colMode">
         </app-require-qc-masterlist-table>
       </div>
     </mat-tab>

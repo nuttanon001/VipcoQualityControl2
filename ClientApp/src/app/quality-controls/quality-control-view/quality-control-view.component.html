@@ -51,7 +51,7 @@
         <b>Item quality control</b>
       </ng-template>
       <div class="view-container" *ngIf="requireHasMasters">
-        <app-quality-control-has-markno-table [dataRows]="requireHasMasters" [readOnly]="true">
+        <app-quality-control-has-markno-table [dataRows]="requireHasMasters" [readOnly]="true" [isDialog]="isDialog">
         </app-quality-control-has-markno-table>
       </div>
     </mat-tab>

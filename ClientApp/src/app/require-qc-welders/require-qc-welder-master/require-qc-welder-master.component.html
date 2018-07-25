@@ -1,4 +1,4 @@
-<div class="master-container">
+<div class="master-container" *ngIf="!loadReport;else LoadReportBlock">
   <div>
     <!--Title-->
     <h4 class="card-title text-info">
@@ -13,7 +13,7 @@
     <div class="center-content">
       <!--Component-->
       <div *ngIf="!ShowDetail;else InfoBlock">
-        <app-require-qc-welder-table (returnSelectedWith)="onDetailView($event)"
+        <app-require-qc-welder-table (returnSelectedWith)="onDetailView($event)" (returnSelected)="onInfoView($event)"
                                      [isSubAction]="forFail ? 'GetScrollOnFail/' : 'GetScroll/'"></app-require-qc-welder-table>
       </div>
       <ng-template #InfoBlock>
@@ -39,11 +39,18 @@
         <mat-icon>save</mat-icon>
       </button>
       <hr />
-      <button mat-mini-fab color="primary"
+      <button mat-mini-fab color="primary" (click)="onReport(displayValue)"
               matTooltip="Print" matTooltipPosition="left"
-              [disabled]="forFail || DisplayDataNull">
+              [disabled]="forFail || DisplayDataNull || ShowDetail">
         <mat-icon>print</mat-icon>
       </button>
     </div>
   </div>
 </div>
+
+<ng-template #LoadReportBlock>
+  <div *ngIf="displayValue && displayValue.RequireQualityControlId">
+    <app-require-qc-welder-report [RequireQcWelderId]="displayValue.RequireQualityControlId" (Back)="onBack()">
+    </app-require-qc-welder-report>
+  </div>
+</ng-template>

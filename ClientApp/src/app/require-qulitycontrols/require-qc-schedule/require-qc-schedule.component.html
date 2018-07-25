@@ -130,11 +130,10 @@
         <ng-template *ngIf="column.field === 'Progress'" let-col let-data1="rowData" pTemplate="body">
           <div class="m-0 b-0" [ngClass]="{'is-require': data1['QualityControlStatus'] === 1,
                 'is-wait': data1['QualityControlStatus'] === 2 || data1['QualityControlStatus'] === 3 || data1['QualityControlStatus'] === 4,
-                'is-complate' : data1['QualityControlStatus'] === 5,
-                'is-cancel' : data1['QualityControlStatus'] === 6 || data1['QualityControlStatus'] === 7,
+                'is-complate' : data1['QualityControlStatus'] === 5 || data1['QualityControlStatus'] === 12,
+                'is-cancel' : data1['QualityControlStatus'] === 6 || data1['QualityControlStatus'] === 7 || data1['QualityControlStatus'] === 11,
                 'is-revise' : data1['QualityControlStatus'] === 8,
-                'is-req-welded' : data1['QualityControlStatus'] === 9 || data1['QualityControlStatus'] === 10,
-                'is-cancel' : data1['QualityControlStatus'] === 11  }" style="text-align:center;">
+                'is-req-welded' : data1['QualityControlStatus'] === 9 || data1['QualityControlStatus'] === 10}" style="text-align:center;">
             {{data1[col.field]}}
           </div>
         </ng-template>

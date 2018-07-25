@@ -20,6 +20,7 @@ using VipcoQualityControl.Models.QualityControls;
 using VipcoQualityControl.Helper;
 
 using AutoMapper;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace VipcoQualityControl.Controllers
 {
@@ -38,7 +39,9 @@ namespace VipcoQualityControl.Controllers
         private readonly IRepositoryMachine<Employee> repositoryEmployee;
         private readonly IRepositoryMachine<EmployeeGroupMis> repositoryGroupMis;
         private readonly IViewRenderService viewRenderService;
-        private readonly EmailClass EmailClass;
+        private readonly EmailClass EmailClass;// Private 
+        private readonly Func<IQueryable<QualityControlResult>, IIncludableQueryable<QualityControlResult, object>> includes;
+
         public QualityControlResultController(IRepositoryQualityControl<QualityControlResult> repo,
             IRepositoryQualityControl<RequireHasMasterProject> repoRequireHasMaster,
             IRepositoryQualityControl<RequireQualityControl> repoRequireRequireQualityControl,
@@ -68,6 +71,9 @@ namespace VipcoQualityControl.Controllers
             this.EmailClass = new EmailClass();
             //Razor to string
             this.viewRenderService = viewRender;
+            // include
+            this.includes = e => e.Include(z => z.RequireQualityControl.InspectionPoint)
+                                  .Include(z => z.RequireQualityControl.WorkGroupQualityControl);
         }
 
         #region Private
@@ -301,73 +307,70 @@ namespace VipcoQualityControl.Controllers
         {
             if (Scroll == null)
                 return BadRequest();
-
-            var QueryData = this.repository.GetAllAsQueryable()
-                                //.AsNoTracking() Error EF-Core 2.1 Preview2
-                                .AsQueryable();
-
-            if (!string.IsNullOrEmpty(Scroll.Where))
-                QueryData = QueryData.Where(x => x.Creator == Scroll.Where);
-
             // Filter
             var filters = string.IsNullOrEmpty(Scroll.Filter) ? new string[] { "" }
-                                : Scroll.Filter.ToLower().Split(null);
-            foreach (var keyword in filters)
+                                : Scroll.Filter.Split(null);
+
+            var predicate = PredicateBuilder.False<QualityControlResult>();
+            foreach (string keyword in filters)
             {
-                QueryData = QueryData.Where(x => x.RequireQualityControl.InspectionPoint.Name.ToLower().Contains(keyword) ||
-                                                 x.RequireQualityControl.RequireQualityNo.ToLower().Contains(keyword) ||
-                                                 x.RequireQualityControl.WorkGroupQualityControl.Name.ToLower().Contains(keyword) ||
-                                                 x.Remark.ToLower().Contains(keyword) ||
-                                                 x.Description.ToLower().Contains(keyword));
+                string temp = keyword;
+                predicate = predicate.Or(x => x.RequireQualityControl.InspectionPoint.Name.ToLower().Contains(keyword) ||
+                                            x.RequireQualityControl.RequireQualityNo.ToLower().Contains(keyword) ||
+                                            x.RequireQualityControl.WorkGroupQualityControl.Name.ToLower().Contains(keyword) ||
+                                            x.Remark.ToLower().Contains(keyword) ||
+                                            x.Description.ToLower().Contains(keyword));
             }
+            if (!string.IsNullOrEmpty(Scroll.Where))
+                predicate = predicate.And(p => p.Creator == Scroll.Where);
+            // Where
+            //Order by
+            Func<IQueryable<QualityControlResult>, IOrderedQueryable<QualityControlResult>> order;
             // Order
             switch (Scroll.SortField)
             {
                 case "RequireQualityControlNo":
                     if (Scroll.SortOrder == -1)
-                        QueryData = QueryData.OrderByDescending(e => e.RequireQualityControl.RequireQualityNo);
+                        order = o => o.OrderByDescending(x => x.RequireQualityControl.RequireQualityNo);
                     else
-                        QueryData = QueryData.OrderBy(e => e.RequireQualityControl.RequireQualityNo);
+                        order = o => o.OrderBy(x => x.RequireQualityControl.RequireQualityNo);
                     break;
                 case "WorkGroupQualityControlString":
                     if (Scroll.SortOrder == -1)
-                        QueryData = QueryData.OrderByDescending(e => e.RequireQualityControl.WorkGroupQualityControl.Name);
+                        order = o => o.OrderByDescending(x => x.RequireQualityControl.WorkGroupQualityControl.Name);
                     else
-                        QueryData = QueryData.OrderBy(e => e.RequireQualityControl.WorkGroupQualityControl.Name);
+                        order = o => o.OrderBy(x => x.RequireQualityControl.WorkGroupQualityControl.Name);
                     break;
                 case "QualityControlResultDate":
                     if (Scroll.SortOrder == -1)
-                        QueryData = QueryData.OrderByDescending(e => e.QualityControlResultDate);
+                        order = o => o.OrderByDescending(x => x.QualityControlResultDate);
                     else
-                        QueryData = QueryData.OrderBy(e => e.QualityControlResultDate);
+                        order = o => o.OrderBy(x => x.QualityControlResultDate);
                     break;
                 default:
-                    QueryData = QueryData.OrderByDescending(e => e.QualityControlResultDate);
+                    order = o => o.OrderByDescending(x => x.QualityControlResultDate);
                     break;
             }
 
-            var Message = "";
+            var QueryData = await this.repository.GetToListAsync(
+                                    selector: selected => selected,  // Selected
+                                    predicate: predicate, // Where
+                                    orderBy: order, // Order
+                                    include: this.includes, // Include
+                                    skip: Scroll.Skip ?? 0, // Skip
+                                    take: Scroll.Take ?? 10); // Take
 
-            try
+            // Get TotalRow
+            Scroll.TotalRow = await this.repository.GetLengthWithAsync(predicate: predicate);
+
+            var mapDatas = new List<QualityControlResultViewModel>();
+            foreach (var item in QueryData)
             {
-                // Get TotalRow
-                Scroll.TotalRow = await QueryData.CountAsync();
-                // Skip Take
-                QueryData = QueryData.Skip(Scroll.Skip ?? 0).Take(Scroll.Take ?? 50);
-                // Mapper
-                var HasMapper = new List<QualityControlResultViewModel>();
-                foreach (var item in await QueryData.ToListAsync())
-                    HasMapper.Add(this.mapper.Map<QualityControlResult, QualityControlResultViewModel>(item));
-                //JsonResult
-                return new JsonResult(new ScrollDataViewModel<QualityControlResultViewModel>(Scroll,
-                    HasMapper), this.DefaultJsonSettings);
-            }
-            catch (Exception ex)
-            {
-                Message = $"Has error {ex.ToString()}";
+                var MapItem = this.mapper.Map<QualityControlResult, QualityControlResultViewModel>(item);
+                mapDatas.Add(MapItem);
             }
 
-            return BadRequest(new { Error = Message });
+            return new JsonResult(new ScrollDataViewModel<QualityControlResultViewModel>(Scroll, mapDatas), this.DefaultJsonSettings);
         }
 
         //POST: api/QualityControlResult/CreateV2
@@ -522,17 +525,26 @@ namespace VipcoQualityControl.Controllers
             {
                 var RequireQC = new RequireQualityControl();
                 if (type == "RequireQc")
-                    RequireQC = await this.repositoryRequireQualityControl.GetAsync(key, true);
+                    RequireQC = await this.repositoryRequireQualityControl.GetFirstOrDefaultAsync(
+                        selector:x => x,
+                        predicate: x => x.RequireQualityControlId == key,
+                        include: x => x.Include(z => z.RequireQcMoreWorkActvities).Include(z => z.Branch)
+                        );
                 else
                 {
-                    var QuailtyControlData = await this.repository.GetAsync(key, true);
-                    RequireQC = QuailtyControlData.RequireQualityControl;
+                    RequireQC = await this.repository.GetFirstOrDefaultAsync(
+                        selector:x => x.RequireQualityControl,
+                        predicate:x => x.QualityControlResultId == key,
+                        include: x => x.Include(z => z.RequireQualityControl.RequireQcMoreWorkActvities)
+                                       .Include(z => z.RequireQualityControl.Branch));
                 }
 
                 if (RequireQC != null)
                 {
-                    var Project = await this.repositoryProject.GetAsync(RequireQC.ProjectCodeDetailId ?? 0, true);
-                    var workActivities = (await this.repositoryWorkActivity.GetAllAsync()).ToList();
+                    var Project = await this.repositoryProject.GetFirstOrDefaultAsync(
+                        x => x,x => x.ProjectCodeDetailId == (RequireQC.ProjectCodeDetailId ?? 0),null,x => x.Include(z => z.ProjectCodeMaster));
+
+                    var workActivities = await this.repositoryWorkActivity.GetToListAsync(x => x);
 
                     var WorkActivitiesCheck = new List<WorkActivitiesCheckViewModel>();
                     var WorkActivityCheck = new WorkActivitiesCheckViewModel();
@@ -601,25 +613,20 @@ namespace VipcoQualityControl.Controllers
                         }
                     }
 
-                    var MarkNos = (await this.repositoryRequireHasMaster.GetAllAsQueryable()
-                                            .Where(x => x.RequireQualityControlId == RequireQC.RequireQualityControlId)
-                                            .ToListAsync())
-                                            .Select((item, index) => new
-                                            {
-                                                RowNumber = index + 1,
-                                                item.MasterProjectList.DrawingNo,
-                                                item.MasterProjectList.MarkNo,
-                                                item.MasterProjectList.Name,
-                                                item.MasterProjectList.Box,
-                                                item.MasterProjectList.UnitNo,
-                                                item.Quantity,
-                                                TestResult = item.PassQuantity,
-                                                Remark = item.QualityControlReason != null ? item.QualityControlReason.Name : ""
-                                            }).ToList();
+                    var MarkNos = await this.repositoryRequireHasMaster.GetToListAsync(item => new
+                    {
+                        item.MasterProjectList.DrawingNo,
+                        item.MasterProjectList.MarkNo,
+                        item.MasterProjectList.Name,
+                        item.MasterProjectList.Box,
+                        item.MasterProjectList.UnitNo,
+                        item.Quantity,
+                        TestResult = item.PassQuantity,
+                        Remark = item.QualityControlReason != null ? item.QualityControlReason.Name : ""
+                    }, x => x.RequireQualityControlId == RequireQC.RequireQualityControlId,null,x => x.Include(z => z.MasterProjectList));
 
                     var workActivityId = RequireQC?.RequireQcMoreWorkActvities.Select(x => x.WorkActivityId).ToList();
-                    var WorkShop = (await this.repositoryWorkShop.GetAllAsQueryable()
-                                              .FirstOrDefaultAsync(x => x.GroupMis == RequireQC.GroupMIS));
+                    var WorkShop = await this.repositoryWorkShop.GetFirstOrDefaultAsync(x => x, x => x.GroupMis == RequireQC.GroupMIS,null,x => x.Include(z => z.LocationQualityControl));
                     var locationInfo = "";
                     if (RequireQC.Branch != null)
                     {
@@ -650,6 +657,82 @@ namespace VipcoQualityControl.Controllers
             }
 
             return BadRequest(new { Error = "Not been found." });
+        }
+
+        #endregion
+
+        #region NoUse
+        public async Task<IActionResult> GetScroll2([FromBody] ScrollViewModel Scroll)
+        {
+            if (Scroll == null)
+                return BadRequest();
+
+            var QueryData = this.repository.GetAllAsQueryable()
+                                //.AsNoTracking() Error EF-Core 2.1 Preview2
+                                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(Scroll.Where))
+                QueryData = QueryData.Where(x => x.Creator == Scroll.Where);
+
+            // Filter
+            var filters = string.IsNullOrEmpty(Scroll.Filter) ? new string[] { "" }
+                                : Scroll.Filter.ToLower().Split(null);
+            foreach (var keyword in filters)
+            {
+                QueryData = QueryData.Where(x => x.RequireQualityControl.InspectionPoint.Name.ToLower().Contains(keyword) ||
+                                                 x.RequireQualityControl.RequireQualityNo.ToLower().Contains(keyword) ||
+                                                 x.RequireQualityControl.WorkGroupQualityControl.Name.ToLower().Contains(keyword) ||
+                                                 x.Remark.ToLower().Contains(keyword) ||
+                                                 x.Description.ToLower().Contains(keyword));
+            }
+            // Order
+            switch (Scroll.SortField)
+            {
+                case "RequireQualityControlNo":
+                    if (Scroll.SortOrder == -1)
+                        QueryData = QueryData.OrderByDescending(e => e.RequireQualityControl.RequireQualityNo);
+                    else
+                        QueryData = QueryData.OrderBy(e => e.RequireQualityControl.RequireQualityNo);
+                    break;
+                case "WorkGroupQualityControlString":
+                    if (Scroll.SortOrder == -1)
+                        QueryData = QueryData.OrderByDescending(e => e.RequireQualityControl.WorkGroupQualityControl.Name);
+                    else
+                        QueryData = QueryData.OrderBy(e => e.RequireQualityControl.WorkGroupQualityControl.Name);
+                    break;
+                case "QualityControlResultDate":
+                    if (Scroll.SortOrder == -1)
+                        QueryData = QueryData.OrderByDescending(e => e.QualityControlResultDate);
+                    else
+                        QueryData = QueryData.OrderBy(e => e.QualityControlResultDate);
+                    break;
+                default:
+                    QueryData = QueryData.OrderByDescending(e => e.QualityControlResultDate);
+                    break;
+            }
+
+            var Message = "";
+
+            try
+            {
+                // Get TotalRow
+                Scroll.TotalRow = await QueryData.CountAsync();
+                // Skip Take
+                QueryData = QueryData.Skip(Scroll.Skip ?? 0).Take(Scroll.Take ?? 50);
+                // Mapper
+                var HasMapper = new List<QualityControlResultViewModel>();
+                foreach (var item in await QueryData.ToListAsync())
+                    HasMapper.Add(this.mapper.Map<QualityControlResult, QualityControlResultViewModel>(item));
+                //JsonResult
+                return new JsonResult(new ScrollDataViewModel<QualityControlResultViewModel>(Scroll,
+                    HasMapper), this.DefaultJsonSettings);
+            }
+            catch (Exception ex)
+            {
+                Message = $"Has error {ex.ToString()}";
+            }
+
+            return BadRequest(new { Error = Message });
         }
 
         #endregion

@@ -1,14 +1,34 @@
 @import "../../shared/styles/table2.style.scss";
 
-.mat-table {
+/*.mat-table {
   overflow: auto;
   height:  calc(#{$master-vh} - 175px);
   width: calc(#{$master-vw} - 150px);
+}*/
+
+@mixin table-master {
+  overflow: auto;
+  height: calc(#{$master-vh} - 250px);
 }
 
-/*.mat-row, .mat-header-row {
+.mat-table-edit {
+  @include table-master;
+  width: calc(#{$master-vw} - 120px);
+}
+
+.mat-table-dialog {
+  @include table-master;
+  width: calc(#{$dialog-vw} - 120px);
+}
+
+.mat-table-view {
+  @include table-master;
+  width: calc(#{$dialog-vw} - 14vw);
+}
+
+.mat-row, .mat-header-row {
   width: 150vw;
-}*/
+}
 
 .mat-column-UnitNo, .mat-column-Quantity,
 .mat-column-JointNumber, .mat-column-Thickness,
