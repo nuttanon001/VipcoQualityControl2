@@ -21,6 +21,8 @@ namespace VipcoQualityControl.Models.QualityControls
         public string Description { get; set; }
         [StringLength(200)]
         public string Remark { get; set; }
+        [StringLength(50)]
+        public string TelPhone { get; set; }
         [StringLength(200)]
         public string MailReply { get; set; }
         public RequireStatus RequireStatus { get; set; }

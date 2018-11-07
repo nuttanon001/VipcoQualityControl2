@@ -148,20 +148,41 @@
                 </div>
               </div>
               <!--Row6-->
-              <!--
-               <div class="row-form">
+              <div class="row-form">
                 <div class="left-content">
                   <mat-form-field>
-                    <input matInput placeholder="Selected location" class="click-input"
-                           (click)="openDialog('Location')" readonly required
-                           id="LocationQualityControlString" formControlName="LocationQualityControlString">
+                    <input matInput placeholder="Telephone number" type="text"
+                           formControlName="TelPhone" required>
+                    <mat-hint>Telephone.</mat-hint>
+                    <mat-hint [align]="end">{{editValueForm.controls.TelPhone.value?.length || 0}}/50</mat-hint>
+                    <mat-error *ngIf="editValueForm.controls.TelPhone.hasError('required')">
+                      Telephone number is <strong>required</strong>
+                    </mat-error>
+                    <mat-error *ngIf="editValueForm.controls.TelPhone.hasError('minlength')">
+                      Only mobile phone number
+                    </mat-error>
                   </mat-form-field>
                 </div>
+
                 <div class="right-content">
-                  &nbsp;
+                 <span></span>
                 </div>
               </div>
-              -->
+
+  <!--
+   <div class="row-form">
+    <div class="left-content">
+      <mat-form-field>
+        <input matInput placeholder="Selected location" class="click-input"
+               (click)="openDialog('Location')" readonly required
+               id="LocationQualityControlString" formControlName="LocationQualityControlString">
+      </mat-form-field>
+    </div>
+    <div class="right-content">
+      &nbsp;
+    </div>
+  </div>
+  -->
               <!--Row7-->
               <div class="row-form">
                 <div class="left-content">

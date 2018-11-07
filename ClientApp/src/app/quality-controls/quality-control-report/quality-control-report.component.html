@@ -55,9 +55,7 @@
         </td>
         <td colspan="3">
           <span>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {{ReportData.RequireQualityNo}}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -153,8 +151,7 @@
         </td>
         <td colspan="3" class="value line-btm text-left">
           <span>
-            {{ReportData.Project}}
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {{ (ReportData.Project.length > 25) ? (ReportData.Project | slice:0:25)+'.-':(ReportData.Project) }}
           </span>
         </td>
         <!--Col2-->
@@ -428,7 +425,7 @@
       </tr>
       <tr>
         <td height="30" colspan="4" class="line-left line-right">
-          &nbsp;
+          &nbsp;เบอร์ติดต่อ. {{ReportData.Telephone}}
         </td>
         <td colspan="1" class="line-left line-right">
           &nbsp;
@@ -460,9 +457,7 @@
         </td>
         <td colspan="2" class="value line-top">
           <span>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {{ReportData.RequireBy}}
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           </span>
         </td>
@@ -510,10 +505,7 @@
         </td>
         <td colspan="2" class="value">
           <span>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            {{ (ReportData.GroupDesc.length > 20) ? (ReportData.GroupDesc | slice:0:20)+'.-':(ReportData.GroupDesc) }}
           </span>
         </td>
         <!--Col2-->

@@ -182,7 +182,7 @@ export class RequireQcScheduleComponent implements OnInit, OnDestroy {
 
     // column Row1
     this.columnsUpper.push({ header: "JobNumber", rowspan: 3, style: { "width": Width150, } });
-    this.columnsUpper.push({ header: "WorkGroupQC", rowspan: 3, style: { "width": Width150, } });
+    this.columnsUpper.push({ header: "WorkGroupQC", rowspan: 3, style: { "width": Width150, "max-width": Width150 } });
     this.columnsUpper.push({ header: "Inspection", rowspan: 3, style: { "width": Width125, } });
     this.columnsUpper.push({ header: "Progress", rowspan: 3, style: { "width": Width100, } });
     // this.columnsUpper.push({ header: "QualityControlStatus", rowspan: 2, style: { "width": Width100, } });

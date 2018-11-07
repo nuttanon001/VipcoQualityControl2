@@ -36,7 +36,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         UnitNo
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ (row?.UnitNo | number) || '-' }}</mat-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.UnitNo) || '-' }}</mat-cell>
     </ng-container>
     <!-- Quantity Column -->
     <ng-container matColumnDef="Quantity">
@@ -51,36 +51,38 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         JointNumber
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ (row?.JointNumber | number) || '-' }}</mat-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.JointNumber) || '-' }}</mat-cell>
     </ng-container>
     <!-- Thickness Column -->
     <ng-container matColumnDef="Thickness">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
-        Thickness
+        Thickness #1/#2
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ (row?.Thickness | number) || '-' }}</mat-cell>
+      <mat-cell *matCellDef="let row">
+        {{ (row?.Thickness | number) || '-' }}
+        {{ row.Thickness2 ? (' / ' + row.Thickness2) : '' }}
+      </mat-cell>
     </ng-container>
-    <!-- Thickness Column -->
+    <!-- TypeMaterial Column -->
     <ng-container matColumnDef="TypeMaterial1">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
-        TypeMaterial#1/#2
+        TypeMaterial #1/#2
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
         {{ (row?.TypeMaterial1) || '-' }}
         {{ row.TypeMaterial2 ? (' / ' + row.TypeMaterial2) : '' }}
       </mat-cell>
     </ng-container>
-    <!-- Thickness Column -->
+    <!-- GradeMaterial2 Column -->
     <ng-container matColumnDef="GradeMaterial1">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
-        GradeMaterial#1/#2
+        GradeMaterial #1/#2
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
         {{ (row?.GradeMaterial1) || '-' }}
         {{ row.GradeMaterial2 ? (' / ' + row.GradeMaterial2) : '' }}
       </mat-cell>
     </ng-container>
-
     <!--Welder Column-->
     <!-- VTStaus Column -->
     <ng-container matColumnDef="VTStaus">
@@ -132,8 +134,6 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let row">{{ row.RemarkExter }}</mat-cell>
     </ng-container>
-
-
     <!-- edit Column -->
     <ng-container matColumnDef="edit">
       <mat-header-cell *matHeaderCellDef>
@@ -146,6 +146,14 @@
         <button mat-icon-button color="primary" (click)="onActionClick(row,1)"
                 [disabled]="readOnly" matTooltip="Update">
           <mat-icon>create</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="onActionClick(row,2)"
+                [disabled]="readOnly" matTooltip="Replicate">
+          <mat-icon>content_copy</mat-icon>
+        </button>
+        <button mat-icon-button color="accent" (click)="onActionClick(row,3)"
+                [disabled]="readOnly" matTooltip="Replicate n loop">
+          <mat-icon>filter_9_plus</mat-icon>
         </button>
         <button mat-icon-button color="warn" (click)="onActionClick(row,0)"
                 [disabled]="readOnly" matTooltip="Remove">

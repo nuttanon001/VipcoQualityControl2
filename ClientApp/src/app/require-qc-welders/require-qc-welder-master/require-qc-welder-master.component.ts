@@ -10,6 +10,7 @@ import { RequireQcWelderTableComponent } from '../require-qc-welder-table/requir
 import { RequireQc } from '../../require-qulitycontrols/shared/require-qc.model';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { RequireQualityControlService } from '../../require-qulitycontrols/shared/require-qc.service';
+import { WorkActivity } from '../../work-activities/shared/work-activity.model';
 
 @Component({
   selector: 'app-require-qc-welder-master',
@@ -138,6 +139,16 @@ export class RequireQcWelderMasterComponent extends BaseMasterComponent<RequireQ
       value["Creator"] = this.authService.getAuth.UserName || "";
     }
     let attachs: FileList | undefined = value.AttachFile;
+
+    value.MoreWorkActvities.forEach((item, index) => {
+      if (value.MoreWorkActvities) {
+        let newData: WorkActivity = {
+          WorkActivityId: item.WorkActivityId,
+          Name: item.Name
+        };
+        value.MoreWorkActvities[index] = newData;
+      }
+    });
 
     // insert data
     this.service.addModel(value).subscribe(

@@ -18,7 +18,7 @@
           <mat-form-field hintLabel="*Required and max 200 characters">
             <input matInput formControlName="DrawingNo" [matAutocomplete]="DrawingNo"
                    required maxlength="200"
-                   placeholder="Specify the drawing no. for inspection part">
+                   placeholder="Specify the drawing no">
 
             <mat-autocomplete #DrawingNo="matAutocomplete">
               <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
@@ -35,7 +35,7 @@
           <mat-form-field hintLabel="*Required and max 200 characters">
             <input matInput formControlName="MarkNo" [matAutocomplete]="MarkNo"
                    required maxlength="200"
-                   placeholder="Specify the mark-no for inspection part">
+                   placeholder="Specify the mark-no">
 
             <mat-autocomplete #MarkNo="matAutocomplete">
               <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
@@ -52,23 +52,23 @@
           <mat-form-field hintLabel="Max 50 characters">
             <input matInput formControlName="Name"
                    maxlength="50"
-                   placeholder="Specify the name for inspection part">
+                   placeholder="Specify the name">
             <mat-hint [align]="end">{{InfoValueForm.controls.Name.value?.length || 0}}/50</mat-hint>
           </mat-form-field>
           <!--UnitNo-->
           <mat-form-field hintLabel="*UnitNo more then 0">
-            <input matInput type="number" formControlName="UnitNo"
-                   min="0" required
-                   placeholder="Specify the unit-no for inspection part">
-            <mat-error *ngIf="InfoValueForm.controls.UnitNo.hasError('min')">
-              UnitNo minimum number is 0
+            <input matInput type="text" formControlName="UnitNo"
+                   required
+                   placeholder="Specify the unit-no">
+            <mat-error *ngIf="InfoValueForm.controls.UnitNo.hasError('required')">
+              UnitNo is <strong>required</strong>
             </mat-error>
           </mat-form-field>
           <!--Box-->
           <mat-form-field hintLabel="*Box more then 0">
             <input type="number" matInput formControlName="Box"
                    min="0"
-                   placeholder="Specify the box no for inspection part">
+                   placeholder="Specify the box no">
             <mat-error *ngIf="InfoValueForm.controls.Box.hasError('min')">
               Box minimum number is 0
             </mat-error>
@@ -77,7 +77,7 @@
           <mat-form-field hintLabel="*Required and min quailty 1">
             <input type="number" matInput formControlName="Quantity"
                    required min="1"
-                   placeholder="Specify the quantity for inspection part">
+                   placeholder="Specify the quantity">
             <mat-error *ngIf="InfoValueForm.controls.Quantity.hasError('required')">
               Quantity is <strong>required</strong>
             </mat-error>
@@ -112,7 +112,7 @@
           <mat-form-field hintLabel="*Required and max 200 characters">
             <input matInput formControlName="TypeMaterial1" [matAutocomplete]="TypeMaterial1"
                    required maxlength="200"
-                   placeholder="Specify the type material#1 for inspection part">
+                   placeholder="Specify the type/part-no #1">
             <mat-hint [align]="end">{{InfoValueForm.controls.TypeMaterial1.value?.length || 0}}/200</mat-hint>
 
             <mat-autocomplete #TypeMaterial1="matAutocomplete">
@@ -129,7 +129,7 @@
           <mat-form-field hintLabel="Max 200 characters">
             <input matInput formControlName="TypeMaterial2" [matAutocomplete]="TypeMaterial2"
                    maxlength="200"
-                   placeholder="Specify the type material#2 for inspection part">
+                   placeholder="Specify the type/part-no #2">
             <mat-hint [align]="end">{{InfoValueForm.controls.TypeMaterial2.value?.length || 0}}/200</mat-hint>
 
             <mat-autocomplete #TypeMaterial2="matAutocomplete">
@@ -142,7 +142,7 @@
           <mat-form-field hintLabel="*Required and max 200 characters">
             <input matInput formControlName="GradeMaterial1" [matAutocomplete]="GradeMaterial1"
                    required maxlength="200"
-                   placeholder="Specify the grade material#1 for inspection part">
+                   placeholder="Specify the grade material#1">
 
             <mat-autocomplete #GradeMaterial1="matAutocomplete">
               <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
@@ -159,7 +159,7 @@
           <mat-form-field hintLabel="Max 200 characters">
             <input matInput formControlName="GradeMaterial2" [matAutocomplete]="GradeMaterial2"
                    maxlength="200"
-                   placeholder="Specify the grade material#2 for inspection part">
+                   placeholder="Specify the grade material#2">
 
             <mat-autocomplete #GradeMaterial2="matAutocomplete">
               <mat-option *ngFor="let result of resultAutoComplate" [value]="result.AutoComplate">
@@ -169,20 +169,11 @@
 
             <mat-hint [align]="end">{{InfoValueForm.controls.GradeMaterial2.value?.length || 0}}/200</mat-hint>
           </mat-form-field>
-          <!--JointNumber-->
-          <mat-form-field hintLabel="JointNumber more then 0">
-            <input matInput type="number" formControlName="JointNumber"
-                   min="0" 
-                   placeholder="Specify the joint-no for inspection part">
-            <mat-error *ngIf="InfoValueForm.controls.JointNumber.hasError('min')">
-              JointNumber minimum number is 0
-            </mat-error>
-          </mat-form-field>
           <!--Thickness-->
           <mat-form-field hintLabel="*Thickness more then 0">
             <input matInput type="number" formControlName="Thickness"
                    min="0" required
-                   placeholder="Specify the thickness for inspection part">
+                   placeholder="Specify the thickness">
             <mat-error *ngIf="InfoValueForm.controls.Thickness.hasError('min')">
               Thickness minimum number is 0
             </mat-error>
@@ -190,6 +181,21 @@
               Thickness is <strong>required</strong>
             </mat-error>
           </mat-form-field>
+          <!--Thickness2-->
+          <mat-form-field hintLabel="*Thickness2 more then 0">
+            <input matInput type="number" formControlName="Thickness2"
+                   min="0"
+                   placeholder="Specify the thickness2">
+            <mat-error *ngIf="InfoValueForm.controls.Thickness2.hasError('min')">
+              Thickness2 minimum number is 0
+            </mat-error>
+          </mat-form-field>
+          <!--JointNumber-->
+          <mat-form-field hintLabel="JointNumber more then 0">
+            <input matInput type="text" formControlName="JointNumber"
+                   placeholder="Specify the joint-no">
+          </mat-form-field>
+
 
           <mat-action-row>
             <button mat-button color="warn" (click)="prevStep()">

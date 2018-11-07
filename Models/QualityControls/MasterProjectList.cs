@@ -20,7 +20,8 @@ namespace VipcoQualityControl.Models.QualityControls
         public string DrawingNo { get; set; }
         [StringLength(200)]
         public string MarkNo { get; set; }
-        public int? UnitNo { get; set; }
+        [StringLength(50)]
+        public string UnitNo { get; set; }
         public int? Box { get; set; }
         public double? Length { get; set; }
         public double? Width { get; set; }
@@ -30,7 +31,9 @@ namespace VipcoQualityControl.Models.QualityControls
         public int? Revised { get; set; }
         // Update 11/07/18 add welder information
         public double? Thickness { get; set; }
-        public double? JointNumber { get; set; }
+        public double? Thickness2 { get; set; }
+        [StringLength(50)]
+        public string JointNumber { get; set; }
         [StringLength(200)]
         public string TypeMaterial1 { get; set; }
         [StringLength(200)]

@@ -136,6 +136,7 @@ export class RequireQcWelderInfoDialogComponent extends BaseInfoDialogComponent<
         ProjectCodeDetailString: [this.InfoValue.RequireHasMasterProject.ProjectCodeDetailString],
         // Update Welder
         Thickness: [this.InfoValue.RequireHasMasterProject.Thickness, [Validators.min(0)]],
+        Thickness2: [this.InfoValue.RequireHasMasterProject.Thickness2, [Validators.min(0)]],
         JointNumber: [this.InfoValue.RequireHasMasterProject.JointNumber, [Validators.min(0)]],
         GradeMaterial1: [this.InfoValue.RequireHasMasterProject.GradeMaterial1, [Validators.maxLength(200)]],
         GradeMaterial2: [this.InfoValue.RequireHasMasterProject.GradeMaterial2, [Validators.maxLength(200)]],

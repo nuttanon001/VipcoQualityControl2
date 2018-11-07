@@ -83,7 +83,8 @@ export class MasterListInfoV2DialogComponent extends BaseInfoDialogComponent<Mas
       ProjectCodeDetailId: [this.InfoValue.ProjectCodeDetailId],
       ProjectCodeDetailString: [this.InfoValue.ProjectCodeDetailString],
       // Update Welder
-      Thickness: [this.InfoValue.Thickness,[Validators.min(0)]],
+      Thickness: [this.InfoValue.Thickness, [Validators.min(0)]],
+      Thickness2: [this.InfoValue.Thickness2, [Validators.min(0)]],
       JointNumber: [this.InfoValue.JointNumber, [Validators.min(0)]],
       GradeMaterial1: [this.InfoValue.GradeMaterial1, [Validators.maxLength(200)]],
       GradeMaterial2: [this.InfoValue.GradeMaterial2, [Validators.maxLength(200)]],

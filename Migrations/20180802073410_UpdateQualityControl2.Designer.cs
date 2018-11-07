@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VipcoQualityControl.Models.QualityControls;
 
 namespace VipcoQualityControl.Migrations
 {
     [DbContext(typeof(QualityControlContext))]
-    partial class QualityControlContextModelSnapshot : ModelSnapshot
+    [Migration("20180802073410_UpdateQualityControl2")]
+    partial class UpdateQualityControl2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -182,8 +184,7 @@ namespace VipcoQualityControl.Migrations
 
                     b.Property<double?>("Heigth");
 
-                    b.Property<string>("JointNumber")
-                        .HasMaxLength(50);
+                    b.Property<double?>("JointNumber");
 
                     b.Property<double?>("Length");
 
@@ -217,8 +218,7 @@ namespace VipcoQualityControl.Migrations
                     b.Property<string>("TypeMaterial2")
                         .HasMaxLength(200);
 
-                    b.Property<string>("UnitNo")
-                        .HasMaxLength(50);
+                    b.Property<int?>("UnitNo");
 
                     b.Property<double?>("Weigth");
 

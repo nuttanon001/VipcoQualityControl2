@@ -72,7 +72,7 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         UnitNo
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ (row?.RequireHasMasterProject?.UnitNo | number) || '-' }}</mat-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasMasterProject?.UnitNo) || '-' }}</mat-cell>
     </ng-container>
     <!-- Quantity Column -->
     <ng-container matColumnDef="Quantity">
@@ -87,14 +87,17 @@
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         JointNumber
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ (row?.RequireHasMasterProject?.JointNumber | number) || '-' }}</mat-cell>
+      <mat-cell *matCellDef="let row">{{ (row?.RequireHasMasterProject?.JointNumber) || '-' }}</mat-cell>
     </ng-container>
     <!-- Thickness Column -->
     <ng-container matColumnDef="Thickness">
       <mat-header-cell *matHeaderCellDef mat-sort-header>
         Thickness
       </mat-header-cell>
-      <mat-cell *matCellDef="let row">{{ (row?.RequireHasMasterProject?.Thickness | number) || '-' }}</mat-cell>
+      <mat-cell *matCellDef="let row">
+        {{ (row?.RequireHasMasterProject?.Thickness | number) || '-' }}
+        {{ row?.RequireHasMasterProject?.Thickness2 ? (' / ' + row?.RequireHasMasterProject?.Thickness2) : '' }}
+      </mat-cell>
     </ng-container>
     <!-- Thickness Column -->
     <ng-container matColumnDef="TypeMaterial1">

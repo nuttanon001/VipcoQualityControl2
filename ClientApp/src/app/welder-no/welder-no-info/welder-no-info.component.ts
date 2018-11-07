@@ -84,11 +84,7 @@ export class WelderNoInfoComponent extends BaseInfoComponent<WelderNo, WelderNoS
       Modifyer: [this.InfoValue.Modifyer],
       ModifyDate: [this.InfoValue.ModifyDate],
       // ViewModel
-      EmployeeString: [this.InfoValue.EmployeeString,
-        [
-          Validators.required,
-        ]
-      ],
+      EmployeeString: [this.InfoValue.EmployeeString],
     });
     this.InfoValueForm.valueChanges.pipe(debounceTime(250), distinctUntilChanged()).subscribe(data => this.onValueChanged(data));
   }

@@ -6,4 +6,5 @@ export interface OptionRequireQc {
   Skip?: number;
   Take?: number;
   Status?: number;
+  GroupQcId?: number;
 }

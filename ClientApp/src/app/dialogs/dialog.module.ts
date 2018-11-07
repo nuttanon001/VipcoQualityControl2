@@ -39,6 +39,7 @@ import { WelderNoTableDailogComponent } from './welder-no-dialog/welder-no-table
 import { RequireQcWelderDialogComponent } from './require-qc-welder-dialog/require-qc-welder-dialog.component';
 import { RequireQcWelderInfoDialogComponent } from './require-qc-welder-dialog/require-qc-welder-info-dialog/require-qc-welder-info-dialog.component';
 import { ConfirmMessageDialog } from "./confirm-message-dialog/confirm-dialog.component";
+import { NumberMessageDialog } from "./number-message-dialog/number-message-dialog.component";
 
 @NgModule({
   imports: [
@@ -55,6 +56,7 @@ import { ConfirmMessageDialog } from "./confirm-message-dialog/confirm-dialog.co
     ConfirmDialog,
     ContextDialog,
     ConfirmMessageDialog,
+    NumberMessageDialog,
     EmployeeDialogComponent,
     EmployeeTableComponent,
     ProjectDialogComponent,
@@ -92,6 +94,7 @@ import { ConfirmMessageDialog } from "./confirm-message-dialog/confirm-dialog.co
     ConfirmDialog,
     ContextDialog,
     ConfirmMessageDialog,
+    NumberMessageDialog,
     GroupmisTableComponent,
     ProjectDialogComponent,
     EmployeeDialogComponent,

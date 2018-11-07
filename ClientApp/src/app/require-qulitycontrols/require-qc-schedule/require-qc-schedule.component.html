@@ -127,6 +127,9 @@
             </i>
           </div>
         </ng-template>
+        <ng-template *ngIf="column.field === 'WorkGroupQualityControl'" let-col let-data1="rowData" pTemplate="body">
+          {{(data1[col.field] === 'QC NDE' && data1['QualityControlStatus'] === 9 ? 'Welder' : data1[col.field])}}
+        </ng-template>
         <ng-template *ngIf="column.field === 'Progress'" let-col let-data1="rowData" pTemplate="body">
           <div class="m-0 b-0" [ngClass]="{'is-require': data1['QualityControlStatus'] === 1,
                 'is-wait': data1['QualityControlStatus'] === 2 || data1['QualityControlStatus'] === 3 || data1['QualityControlStatus'] === 4,

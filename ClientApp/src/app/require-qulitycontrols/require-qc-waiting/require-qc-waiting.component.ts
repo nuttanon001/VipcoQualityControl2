@@ -13,6 +13,8 @@ import { DialogsService } from "../../dialogs/shared/dialogs.service";
 import { AuthService } from "../../core/auth/auth.service";
 import { RequireQualityControlService } from "../shared/require-qc.service";
 import { RequireQc } from "../shared/require-qc.model";
+import { WorkGroupQcService } from "../../workgroup-qulitycontrols/shared/workgroup-qc.service";
+import { WorkGroupQc } from "../../workgroup-qulitycontrols/shared/workgroup-qc.model";
 
 @Component({
   selector: 'app-require-qc-waiting',
@@ -23,6 +25,7 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
 
   constructor(
     private service: RequireQualityControlService,
+    private serviceWorkGroupQc: WorkGroupQcService,
     private serviceDialogs: DialogsService,
     private serviceAuth: AuthService,
     private viewContainerRef: ViewContainerRef,
@@ -52,17 +55,10 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
   RequireQualityControlId: number;
   // form
   reportForm: FormGroup;
-
+  // array data
+  workGroupQcs: Array<WorkGroupQc>;
   // called by Angular after jobcard-waiting component initialized
   ngOnInit(): void {
-    if (window.innerWidth >= 1600) {
-      this.scrollHeight = 75 + "vh";
-    } else if (window.innerWidth > 1360 && window.innerWidth < 1600) {
-      this.scrollHeight = 68 + "vh";
-    } else {
-      this.scrollHeight = 65 + "vh";
-    }
-
     this.requireQc = new Array;
     this.buildForm();
 
@@ -105,16 +101,30 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
       Filter: [this.schedule.Filter],
       ProjectId: [this.schedule.ProjectId],
       ProjectString: [this.ProjectString],
+      GroupQcId:[this.schedule.GroupQcId],
       SDate: [this.schedule.SDate],
       EDate: [this.schedule.EDate],
       Status: [this.schedule.Status],
       Skip: [this.schedule.Skip],
       Take: [this.schedule.Take],
+
     });
 
     this.reportForm.valueChanges.debounceTime(350)
         .subscribe((data: any) => this.onValueChanged(data));
     // this.onValueChanged();
+    this.getWorkGroupQuailtyControl();
+  }
+
+  // get work group quailty control
+  getWorkGroupQuailtyControl(): void {
+    if (!this.workGroupQcs) {
+      this.workGroupQcs = new Array;
+    }
+    this.serviceWorkGroupQc.getAll()
+      .subscribe(dbData => {
+        this.workGroupQcs = dbData.slice();
+      });
   }
 
   // on value change
@@ -153,9 +163,9 @@ export class RequireQcWaitingComponent implements OnInit, OnDestroy {
           // debug here
           //console.log("detail", JSON.stringify(detail));
           this.columnUpper.push({
-            header: detail,
-            colspan: 2,
-            style: { "width": (2 * 150).toString() + "px", }
+            header: detail.ColumnName,
+            colspan: detail.ColumnSpan,
+            style: { "width": (detail.ColumnSpan * 150).toString() + "px", }
           });
         }
         // debug here

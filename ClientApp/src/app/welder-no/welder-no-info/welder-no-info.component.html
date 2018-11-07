@@ -28,9 +28,6 @@
             <input matInput formControlName="EmployeeString"
                    (click)="openDialog('Employee')" readonly
                    class="click-input" placeholder="Employee name for welder employee">
-            <mat-error *ngIf="InfoValueForm.controls.EmployeeString.hasError('required')">
-              Employee name is <strong>required</strong>
-            </mat-error>
           </mat-form-field>
           <!--NameThai-->
           <mat-form-field hintLabel="Specify the name welder.">

@@ -14,6 +14,7 @@ export interface RequireQc extends BaseModel {
   Description?: string;
   Remark?: string;
   MailReply?: string;
+  TelPhone?: string;
   RequireStatus?: RequireStatusQc;
   //FK
   //ParentRequireQcId

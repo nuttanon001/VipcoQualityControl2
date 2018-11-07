@@ -628,17 +628,16 @@ namespace VipcoQualityControl.Controllers
                     var workActivityId = RequireQC?.RequireQcMoreWorkActvities.Select(x => x.WorkActivityId).ToList();
                     var WorkShop = await this.repositoryWorkShop.GetFirstOrDefaultAsync(x => x, x => x.GroupMis == RequireQC.GroupMIS,null,x => x.Include(z => z.LocationQualityControl));
                     var locationInfo = "";
+                    var GroupName = await this.repositoryGroupMis.GetAsync(RequireQC.GroupMIS);
                     if (RequireQC.Branch != null)
                     {
                         if (RequireQC.Branch.Name.IndexOf("Subcontract") != -1)
-                        {
-                            var groupName = await this.repositoryGroupMis.GetAsync(RequireQC.GroupMIS);
-                            locationInfo = groupName != null ? groupName.GroupDesc : (WorkShop != null ? WorkShop.LocationQualityControl.Name : "-");
-                        }
+                            locationInfo = GroupName != null ? GroupName.GroupDesc : (WorkShop != null ? WorkShop.LocationQualityControl.Name : "-");
                         else
                             locationInfo = WorkShop != null ? WorkShop.LocationQualityControl.Name : "-";
                     }
 
+                    var RequireBy = await this.repositoryEmployee.GetFirstOrDefaultAsync(z => z.NameThai, z => z.EmpCode == RequireQC.RequireEmp);
                     var HasDataReport = new
                     {
                         JobNo = Project?.ProjectCodeMaster?.ProjectCode ?? "",
@@ -649,6 +648,10 @@ namespace VipcoQualityControl.Controllers
                         Location = locationInfo,
                         Inspections = WorkActivitiesCheck,
                         ListMarkNos = MarkNos,
+                        RequireQC.RequireQualityNo,
+                        RequireBy,
+                        GroupName.GroupDesc,
+                        Telephone = RequireQC.TelPhone ?? "-"
                     };
 
                     if (HasDataReport != null)

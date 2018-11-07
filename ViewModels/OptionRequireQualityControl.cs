@@ -16,5 +16,6 @@ namespace VipcoQualityControl.ViewModels
         /// <summary>
         /// </summary>
         public int? Status { get; set; }
+        public int? GroupQcId { get; set; }
     }
 }

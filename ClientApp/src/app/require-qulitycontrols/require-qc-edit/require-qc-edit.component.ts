@@ -113,11 +113,12 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
                       GradeMaterial2: item.GradeMaterial2,
                       JointNumber: item.JointNumber,
                       Thickness: item.Thickness,
+                      Thickness2: item.Thickness2,
                       TypeMaterial1: item.TypeMaterial1,
                       TypeMaterial2: item.TypeMaterial2,
                       Box: item.Box,
                       Quantity: item.Quantity,
-                      MasterProjectListId: item.MasterProjectListId,
+                      // MasterProjectListId: item.MasterProjectListId,
                       RequireHasWelder: item.RequireHasWelder ? {
                         VTStaus: item.RequireHasWelder.VTStaus,
                         QcStatus: item.RequireHasWelder.QcStatus,
@@ -177,6 +178,7 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
                         GradeMaterial2: item.GradeMaterial2,
                         JointNumber: item.JointNumber,
                         Thickness: item.Thickness,
+                        Thickness2: item.Thickness2,
                         TypeMaterial1: item.TypeMaterial1,
                         TypeMaterial2: item.TypeMaterial2,
                         Box: item.Box,
@@ -294,6 +296,13 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
       ],
       MailReply: [this.editValue.MailReply],
       RequireStatus: [this.editValue.RequireStatus],
+      TelPhone: [this.editValue.TelPhone,
+        [
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.minLength(10)
+        ]
+      ],
       //FK
       ParentRequireQcId: [this.editValue.ParentRequireQcId],
       GroupMIS: [this.editValue.GroupMIS],
@@ -581,7 +590,57 @@ export class RequireQcEditComponent extends BaseEditComponent<RequireQc, Require
                 MasterLists: this.editValue.MasterLists
               });
             }
-          })
+          });
+      }
+      else if (Item.option === 2) {
+        let detailInfoValue: MasterList;
+        // IF Edit data
+        if (Item.data) {
+          detailInfoValue = Object.assign({}, Item.data);
+          detailInfoValue.UnitNo = undefined;
+          detailInfoValue.MasterProjectListId = 0;
+        }
+
+        // Send to dialog BomLowLevel
+        this.serviceDialogs.dialogInfoMasterList(this.viewContainerRef, { InfoValue: detailInfoValue, NeedWelder: this.needWelder })
+          .subscribe(complateData => {
+            if (complateData) {
+              // cloning an object
+              this.editValue.MasterLists.push(Object.assign({}, complateData));
+              this.editValue.MasterLists = this.editValue.MasterLists.slice();
+              // Update to form
+              this.editValueForm.patchValue({
+                MasterLists: this.editValue.MasterLists
+              });
+            }
+          });
+      }
+      else if (Item.option === 3) {
+        if (this.needWelder) {
+          this.serviceDialogs.numberMessage("Running Joint number", "Specify joint number for clone row data.", this.viewContainerRef)
+            .subscribe(data => {
+              if (data) {
+                if (data.result && data.numberReturn) {
+                  for (let i = 0; i < data.numberReturn; i++) {
+                    let detailInfoValue: MasterList;
+                    // IF Edit data
+                    if (Item.data) {
+                      detailInfoValue = Object.assign({}, Item.data);
+                      detailInfoValue.MasterProjectListId = 0;
+                      detailInfoValue.JointNumber = (i + 1).toString();
+                      // cloning an object
+                      this.editValue.MasterLists.push(Object.assign({}, detailInfoValue));
+                    }
+                  }
+
+                  this.editValue.MasterLists = this.editValue.MasterLists.slice();
+                  this.editValueForm.patchValue({
+                    MasterLists: this.editValue.MasterLists
+                  });
+                }
+              }
+            });
+        }
       }
       else if (Item.option === 0) // Remove
       {

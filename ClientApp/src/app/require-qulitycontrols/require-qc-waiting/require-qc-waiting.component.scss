@@ -1,1 +1,40 @@
 @import "../../shared/styles/schedule.style.scss";
+
+.child-col-container {
+  display: flex;
+  flex-direction: column;
+  order: 0;
+}
+
+.bottom-container {
+  position: absolute;
+  order: 1;
+  display: flex;
+  flex-grow: 1;
+  top: 175px;
+}
+
+.material-icons {
+  font-size: 24px;
+  align-items: center;
+  vertical-align: middle;
+  justify-content: space-around;
+}
+
+.is-req-welded {
+  background-color: hotpink;
+  // color: lightgreen !important;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

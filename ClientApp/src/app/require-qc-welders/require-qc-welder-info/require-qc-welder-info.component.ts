@@ -29,7 +29,7 @@ import { RequireQcWelderCommunicateService } from '../shared/require-qc-welder-c
 import { RequireQualityControlService } from '../../require-qulitycontrols/shared/require-qc.service';
 import { RequireMoreWorkactivityService } from '../../require-qulitycontrols/shared/require-more-workactivity.service';
 // Rxjs
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { retry } from 'rxjs/operator/retry';
 
 @Component({
@@ -101,6 +101,7 @@ export class RequireQcWelderInfoComponent extends BaseInfoComponent<RequireQc, R
       }
     }
   }
+
   //Inti Array
   intiArray(RequireHasMaster?: Array<RequireQcHasMasterList>): void {
     this.InfoValue.RequireQcWelder = new Array;

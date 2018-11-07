@@ -484,6 +484,8 @@ namespace VipcoQualityControl.Controllers
                 // Option ProjectCodeMaster
                 if (Option.ProjectId.HasValue)
                     predicate = predicate.And(p => p.ProjectCodeDetailId == Option.ProjectId);
+                if (Option.GroupQcId.HasValue)
+                    predicate = predicate.And(p => p.WorkGroupQualityControlId == Option.GroupQcId);
 
                 if (Option.Status.HasValue)
                 {
@@ -512,7 +514,7 @@ namespace VipcoQualityControl.Controllers
 
                 if (GetData.Any())
                 {
-                    List<string> ColumnUpper = new List<string>();
+                    List<ColumnUpper> ColumnUpper = new List<ColumnUpper>();
                     IDictionary<DateTime, string> ColumnLower = new Dictionary<DateTime, string>();
 
                     var MinDate = GetData.Min(x => x.RequireDate);
@@ -523,13 +525,24 @@ namespace VipcoQualityControl.Controllers
 
                     foreach (DateTime day in EachDay(MinDate, MaxDate))
                     {
+                        var ColUpper = new ColumnUpper();
                         if (GetData.Any(x => x.RequireDate.Date == day.Date))
                         {
-                            ColumnUpper.Add(day.Date.ToString("dd/MM/yy"));
-                            ColumnLower.Add(new DateTime(day.Year, day.Month, day.Day, 8, 0, 0), $"Col{countCol.ToString("00")}");
-                            countCol++;
-                            ColumnLower.Add(new DateTime(day.Year, day.Month, day.Day, 13, 0, 0), $"Col{countCol.ToString("00")}");
-                            countCol++;
+                            if (GetData.Any(z => z.RequireDate.Date == day.Date && z.RequireDate.Hour < 12))
+                            {
+                                ColumnLower.Add(new DateTime(day.Year, day.Month, day.Day, 8, 0, 0), $"Col{countCol.ToString("00")}");
+                                countCol++;
+                                ColUpper.ColumnSpan += 1;
+                            }
+
+                            if (GetData.Any(z => z.RequireDate.Date == day.Date && z.RequireDate.Hour >= 12))
+                            {
+                                ColumnLower.Add(new DateTime(day.Year, day.Month, day.Day, 12, 0, 0), $"Col{countCol.ToString("00")}");
+                                countCol++;
+                                ColUpper.ColumnSpan += 1;
+                            }
+                            ColUpper.ColumnName = day.Date.ToString("dd/MM/yy");
+                            ColumnUpper.Add(ColUpper);
                         }
                     }
 
@@ -573,10 +586,10 @@ namespace VipcoQualityControl.Controllers
                         var Key = "";
                         if (ColumnLower.Any(x => x.Key.Date == Data.RequireDate.Date))
                         {
-                            if (Data.RequireDate.Hour > 12)
-                                Key = ColumnLower.FirstOrDefault(x => x.Key.Date == Data.RequireDate.Date && x.Key.Hour > 12).Value;
+                            if (Data.RequireDate.Hour >= 12)
+                                Key = ColumnLower.FirstOrDefault(x => x.Key.Date == Data.RequireDate.Date && x.Key.Hour >= 12).Value;
                             else
-                                Key = ColumnLower.FirstOrDefault(x => x.Key.Date == Data.RequireDate.Date && x.Key.Hour <= 12).Value;
+                                Key = ColumnLower.FirstOrDefault(x => x.Key.Date == Data.RequireDate.Date && x.Key.Hour < 12).Value;
                         }
                         // New Data
                         var Master = new RequireQualityControlViewModel()
@@ -593,7 +606,8 @@ namespace VipcoQualityControl.Controllers
                                                 
                         };
 
-                        Master.RequireEmpString += Data.RequireDate != null ? $" {Data.RequireDate.ToString("HH:mm")}น." : "";
+                        Master.RequireEmpString += Data.WelderDate != null ? (Data.WelderDate != null ? $" {Data.WelderDate.Value.ToString("HH:mm")}น." : "")
+                            : (Data.RequireDate != null ? $" {Data.RequireDate.ToString("HH:mm")}น." : "");
 
                         if (rowData.Any(x => x.Key == Key))
                         {
@@ -1303,6 +1317,14 @@ namespace VipcoQualityControl.Controllers
                                 dbMasterList.UnitNo = item.UnitNo;
                                 dbMasterList.Box = item.Box;
                                 dbMasterList.Quantity = item.Quantity;
+                                dbMasterList.GradeMaterial1 = item.GradeMaterial1;
+                                dbMasterList.GradeMaterial2 = item.GradeMaterial2;
+                                dbMasterList.TypeMaterial1 = item.TypeMaterial1;
+                                dbMasterList.TypeMaterial2 = item.TypeMaterial2;
+                                dbMasterList.JointNumber = item.JointNumber;
+                                dbMasterList.Thickness = item.Thickness;
+                                dbMasterList.Thickness2 = item.Thickness2;
+
                                 dbMasterList.ModifyDate = record.ModifyDate;
                                 dbMasterList.Modifyer = record.Modifyer;
                                 // Await
@@ -1317,24 +1339,17 @@ namespace VipcoQualityControl.Controllers
                         }
                         else
                         {
+                            item.CreateDate = record.CreateDate;
+                            item.Creator = record.Creator;
+
                             var RequireHasMaster = new RequireHasMasterProject
                             {
-                                CreateDate = record.ModifyDate,
-                                Creator = record.Modifyer,
                                 RequireQualityControlId = record.RequireQualityControlId,
+                                CreateDate = record.CreateDate,
+                                Creator = record.Creator,
                                 Quantity = item.Quantity,
-                                MasterProjectList = new MasterProjectList()
-                                {
-                                    CreateDate = record.ModifyDate,
-                                    Creator = record.Modifyer,
-                                    Quantity = item.Quantity,
-                                    Name = item.Name,
-                                    MarkNo = item.MarkNo,
-                                    DrawingNo = item.DrawingNo,
-                                    UnitNo = item.UnitNo,
-                                    Box = item.Box,
-
-                                }
+                                MasterProjectList = item,
+                                RequireHasWelder = item.RequireHasWelder ?? null
                             };
                             await this.RepositoryRequireHasMaster.AddAsync(RequireHasMaster);
 
@@ -1869,4 +1884,12 @@ namespace VipcoQualityControl.Controllers
 
         #endregion
     }
+
+    public class ColumnUpper
+    {
+        public string ColumnName { get; set; }
+        public int ColumnSpan { get; set; }
+    }
 }
+
+

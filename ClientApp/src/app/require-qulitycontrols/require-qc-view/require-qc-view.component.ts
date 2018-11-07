@@ -91,6 +91,7 @@ export class RequireQcViewComponent extends BaseViewComponent<RequireQc> {
                 GradeMaterial2: item.GradeMaterial2,
                 JointNumber: item.JointNumber,
                 Thickness: item.Thickness,
+                Thickness2: item.Thickness2,
                 TypeMaterial1: item.TypeMaterial1,
                 TypeMaterial2: item.TypeMaterial2,
                 Box: item.Box,

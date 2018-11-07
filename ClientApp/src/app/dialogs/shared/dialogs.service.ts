@@ -33,6 +33,7 @@ import { WelderNoDialogComponent } from "../welder-no-dialog/welder-no-dialog.co
 import { RequireQcWelder } from "../../require-qc-welders/shared/require-qc-welder.model";
 import { RequireQcWelderDialogComponent } from "../require-qc-welder-dialog/require-qc-welder-dialog.component";
 import { ConfirmMessageDialog } from "../confirm-message-dialog/confirm-dialog.component";
+import { NumberMessageDialog } from "../number-message-dialog/number-message-dialog.component";
 
 @Injectable()
 export class DialogsService {
@@ -69,6 +70,21 @@ export class DialogsService {
 
     return dialogRef.afterClosed();
   }
+
+  public numberMessage(title: string, message: string, viewContainerRef: ViewContainerRef): Observable<{ result: boolean, numberReturn: number }> {
+
+    let dialogRef: MatDialogRef<NumberMessageDialog>;
+    let config: MatDialogConfig = new MatDialogConfig();
+    config.viewContainerRef = viewContainerRef;
+
+    dialogRef = this.dialog.open(NumberMessageDialog, config);
+
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.message = message;
+
+    return dialogRef.afterClosed();
+  }
+
 
   public context(title: string, message: string, viewContainerRef: ViewContainerRef): Observable<boolean> {
 

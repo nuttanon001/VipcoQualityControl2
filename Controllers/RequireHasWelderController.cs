@@ -546,6 +546,7 @@ namespace VipcoQualityControl.Controllers
             // Set date for CrateDate Entity
             if (recordViewModel == null)
                 return BadRequest();
+                      
             var record = this.mapper.Map<RequireQualityControlViewModel, RequireQualityControl>(recordViewModel);
             // +7 Hour
             var helpRequireQc = new Helper.HelpersClass<RequireQualityControl>();
@@ -724,7 +725,9 @@ namespace VipcoQualityControl.Controllers
                     {
                         var requireQcWelder = this.helper.AddHourMethod(item);
                         if (requireQcWelder.RequireHasMasterProject != null)
+                        {
                             requireQcWelder.RequireHasMasterProject = null;
+                        }
 
                         if (requireQcWelder.RequireHasWelderId > 0)
                         {
@@ -878,7 +881,7 @@ namespace VipcoQualityControl.Controllers
                         Size1 = x?.MasterProjectList?.Thickness != null ? (x?.MasterProjectList?.Thickness).ToString() : "-",
                         Type2 = x?.MasterProjectList?.TypeMaterial2 ?? "-",
                         Spec2 = x?.MasterProjectList?.GradeMaterial2 ?? "-",
-                        Size2 = x?.MasterProjectList?.Thickness != null ? (x?.MasterProjectList?.Thickness).ToString() : "-",
+                        Size2 = x?.MasterProjectList?.Thickness2 != null ? (x?.MasterProjectList?.Thickness2).ToString() : "-",
                         JointNo = x?.MasterProjectList?.JointNumber != null ? (x?.MasterProjectList?.JointNumber).ToString() : "-",
                         WPSNo = x.RequireHasWelder != null ? x.RequireHasWelder.Wps ?? "" : "-",
                         Process = x.RequireHasWelder != null && x?.RequireHasWelder?.WelderProcess != null ?

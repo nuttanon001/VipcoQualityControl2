@@ -38,7 +38,7 @@
                 Date :
               </div>
               <div class="my-value">
-                {{(displayValue.RequireDate | date:'dd/MM/yyyy | HH:mm')|| "-"}}
+                {{ (displayValue.WelderDate ? (displayValue.WelderDate | date:'dd/MM/yyyy | HH:mm') || "-" : (displayValue.RequireDate | date:'dd/MM/yyyy | HH:mm')|| "-")}}
               </div>
             </div>
             <!--Row2-->
@@ -122,7 +122,7 @@
                 Description :
               </div>
               <textarea [value]="displayValue.Description" rows="3" readonly class="my-value">
-          </textarea>
+              </textarea>
 
               <div class="my-label">
                 Remark :
@@ -132,6 +132,13 @@
             </div>
             <!--Row8-->
             <div class="row my-1">
+              <div class="my-label">
+                Telephone number :
+              </div>
+              <div class="my-value">
+                {{displayValue.TelPhone || "-"}}
+              </div>
+
               <div class="my-label">
                 Status :
               </div>

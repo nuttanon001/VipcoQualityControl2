@@ -90,8 +90,9 @@
               </mat-form-field>
 
               <mat-form-field>
+                <!--required-->
                 <mat-select placeholder="WorkActivity"
-                            required [disabled]="forFail" multiple
+                            [disabled]="forFail" multiple
                             id="MoreWorkActvities" formControlName="MoreWorkActvities">
                   <mat-select-trigger>
                     {{InfoValueForm.controls.MoreWorkActvities.value ? InfoValueForm.controls.MoreWorkActvities?.value[0]?.Name : ''}}

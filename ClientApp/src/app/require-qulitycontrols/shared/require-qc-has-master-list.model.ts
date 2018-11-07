@@ -19,6 +19,6 @@ export interface RequireQcHasMasterList extends BaseModel {
   MarkNoString?: string;
   HasFail?: boolean;
   DrawingNo ?: string;
-  UnitNo ?:number;
+  UnitNo ?:string;
   Box ?:number;
 }

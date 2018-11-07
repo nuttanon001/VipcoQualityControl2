@@ -1,1 +1,9 @@
-@import "../../shared/styles/master.style.scss";
+// @import "../../shared/styles/master.style.scss";
+@import "../../shared/mk2/styles/master.style.scss";
+
+/* Structure */
+.master-container {
+  height: $master-vh;
+  width: 99vw;
+  @include block-master;
+}

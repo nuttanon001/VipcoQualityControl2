@@ -37,6 +37,14 @@ namespace VipcoQualityControl
             // Add AutoMap
             AutoMapper.Mapper.Reset();
             services.AddAutoMapper(typeof(Startup));
+            // Setting up CORS
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod());
+            });
             // AddDbContextPool
             // Change AddDbContextPool if EF Core 2.1
             services.AddDbContextPool<QualityControlContext>(option =>
@@ -82,6 +90,8 @@ namespace VipcoQualityControl
                 app.UseHsts();
             }
 
+            // Shows UseCors with named policy.
+            app.UseCors("AllowAllOrigins");
             // Http to Https
             // app.UseHttpsRedirection();
 

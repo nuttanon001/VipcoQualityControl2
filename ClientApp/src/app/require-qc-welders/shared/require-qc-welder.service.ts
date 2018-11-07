@@ -36,6 +36,7 @@ export class RequireQcWelderService extends BaseRestService<RequireQc> {
 
   /** add Model @param nObject */
   addModel(nObject: RequireQc): Observable<RequireQc> {
+    // console.log(JSON.stringify(nObject));
     return this.http.post<RequireQc>(this.baseUrl + "CreateV2/", JSON.stringify(nObject),
       {
         headers: new HttpHeaders({
